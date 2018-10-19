@@ -66,7 +66,7 @@ export default {
 			this.instance.destroy()
 			this.instance = null;
 		}
-		
+
 		// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
 		// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
 		this.$emit( 'destroy', this.instance );
@@ -75,11 +75,7 @@ export default {
 	watch: {
 		// Synchronize changes of #value.
 		value: function( val ) {
-			const data = this.instance.getData();
-
-			if ( val !== data ) {
-				this.instance.setData( val );
-			}
+			this.instance.setData( val );
 		},
 
 		// Synchronize changes of #disabled.

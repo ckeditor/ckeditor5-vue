@@ -129,7 +129,7 @@ __webpack_require__.r(__webpack_exports__);
 		},
 		config: {
 			type: Object,
-			default: {}
+			default: null
 		},
 		tagName: {
 			type: String,
@@ -170,21 +170,20 @@ __webpack_require__.r(__webpack_exports__);
 	},
 
 	beforeDestroy() {
-		this.instance.destroy();
+		if (this.instance) {
+			this.instance.destroy();
+			this.instance = null;
+		}
+
 		// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
 		// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
 		this.$emit('destroy', this.instance);
-		this.instance = null;
 	},
 
 	watch: {
 		// Synchronize changes of #value.
 		value: function (val) {
-			const data = this.instance.getData();
-
-			if (val !== data) {
-				this.instance.setData(val);
-			}
+			this.instance.setData(val);
 		},
 
 		// Synchronize changes of #disabled.
