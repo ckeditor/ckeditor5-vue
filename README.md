@@ -13,7 +13,7 @@ Official [CKEditor 5](https://ckeditor.com/ckeditor-5/) rich text editor compone
 
 ## Documentation
 
-TODO
+See the [Vue.js component](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html) article in the [CKEditor 5 documentation](https://ckeditor.com/docs/ckeditor5/latest).
 
 ## Contributing
 
