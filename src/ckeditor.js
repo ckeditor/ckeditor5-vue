@@ -3,6 +3,8 @@
  * For licensing, see LICENSE.md.
  */
 
+import Vue from 'vue';
+
 export default {
 	name: 'ckeditor',
 
@@ -39,7 +41,7 @@ export default {
 	},
 
 	mounted() {
-		this._editorTypes[ this.editor ]
+		this.$_ckeditor_types[ this.editor ]
 			.create( this.$el, this.config )
 			.then( editor => {
 				// Save the reference to the instance for further use.
@@ -75,7 +77,9 @@ export default {
 	watch: {
 		// Synchronize changes of #value.
 		value: function( val ) {
-			this.instance.setData( val );
+			if ( this.instance.getData() !== val ) {
+				this.instance.setData( val );
+			}
 		},
 
 		// Synchronize changes of #disabled.

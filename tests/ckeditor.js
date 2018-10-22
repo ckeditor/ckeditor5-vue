@@ -6,41 +6,10 @@
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditorComponent from '../src/ckeditor';
+import MockEditor from './_utils/mockeditor';
+import { ModelDocument, ViewlDocument } from './_utils/mockeditor';
 
-class ModelDocument {
-	on() {}
-};
-
-class ViewlDocument {
-	on() {}
-};
-
-class Editor {
-	constructor( el, config ) {
-		this.element = el;
-		this.config = config;
-
-		this.model = {
-			document: new ModelDocument()
-		};
-
-		this.editing = {
-			view: {
-				document: new ViewlDocument()
-			}
-		};
-	}
-
-	setData() {}
-	getData() {}
-	destroy() { return Promise.resolve() }
-}
-
-Editor.create = ( el, config ) => {
-	const editor = new Editor( el, config );
-
-	return Promise.resolve( editor );
-};
+Vue.prototype.$_ckeditor_types = { classic: MockEditor };
 
 describe( 'CKEditor Component', () => {
 	let sandbox, wrapper, vm;
@@ -61,7 +30,7 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	it( 'calls editor#create when initializing', done => {
-		const stub = sandbox.stub( Editor, 'create' ).resolves( new Editor() );
+		const stub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 		const { wrapper } = createComponent();
 
 		Vue.nextTick( () => {
@@ -73,7 +42,7 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	it( 'calls editor#destroy when destroying', done => {
-		const stub = sandbox.stub( Editor.prototype, 'destroy' ).resolves();
+		const stub = sandbox.stub( MockEditor.prototype, 'destroy' ).resolves();
 		const { wrapper, vm } = createComponent();
 
 		Vue.nextTick( () => {
@@ -89,7 +58,7 @@ describe( 'CKEditor Component', () => {
 		const error = new Error( 'Something went wrong.' );
 		const consoleErrorStub = sandbox.stub( console, 'error' );
 
-		sandbox.stub( Editor, 'create' ).rejects( error );
+		sandbox.stub( MockEditor, 'create' ).rejects( error );
 
 		const { wrapper, vm } = createComponent();
 
@@ -113,7 +82,7 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should set the initial data', done => {
-				const setDataStub = sandbox.stub( Editor.prototype, 'setData' );
+				const setDataStub = sandbox.stub( MockEditor.prototype, 'setData' );
 				const { wrapper, vm } = createComponent( {
 					value: 'foo'
 				} );
@@ -182,7 +151,7 @@ describe( 'CKEditor Component', () => {
 
 		it( '#instance should be defined', done => {
 			Vue.nextTick( () => {
-				expect( vm.instance ).to.be.instanceOf( Editor );
+				expect( vm.instance ).to.be.instanceOf( MockEditor );
 
 				done();
 			} );
@@ -249,7 +218,7 @@ describe( 'CKEditor Component', () => {
 
 		it( 'emits #input when editor data changes', done => {
 			sandbox.stub( ModelDocument.prototype, 'on' );
-			sandbox.stub( Editor.prototype, 'getData' ).returns( 'foo' );
+			sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
 			Vue.nextTick( () => {
 				const on = vm.instance.model.document.on;
@@ -325,12 +294,7 @@ describe( 'CKEditor Component', () => {
 		const wrapper = mount( CKEditorComponent, {
 			propsData: Object.assign( {}, {
 				editor: 'classic'
-			}, props ),
-			mocks: {
-				_editorTypes: {
-					classic: Editor
-				}
-			}
+			}, props )
 		} );
 
 		return { wrapper, vm: wrapper.vm };

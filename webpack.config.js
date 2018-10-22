@@ -16,7 +16,7 @@ module.exports = {
 	mode: 'production',
 	context: __dirname,
 	devtool: 'source-map',
-	entry: path.join( __dirname, 'src', 'index.js' ),
+	entry: path.join( __dirname, 'src', 'plugin.js' ),
 
 	output: {
 		library: 'CKEditor',
