@@ -200,7 +200,7 @@ __webpack_require__.r(__webpack_exports__);
 				const data = editor.getData();
 
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
-				this.$emit('input', data, editor, data);
+				this.$emit('input', data, evt, editor);
 			});
 
 			editor.editing.view.document.on('focus', evt => {

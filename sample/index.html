@@ -20,12 +20,12 @@
 
 		<!-- :value="editorData"  -->
 
-		<ckeditor 
-			editor="classic" 
+		<ckeditor
+			editor="classic"
 			tag-name="textarea"
 			v-model="editorData"
 			:config="editorConfig"
-			:disabled="editorDisabled"			
+			:disabled="editorDisabled"
 			@ready="onEditorReady"
 			@focus="onEditorFocus"
 			@blur="onEditorBlur"
@@ -34,10 +34,10 @@
 		></ckeditor>
 		<button v-on:click="toggleEditorDisabled()">
 			{{ editorDisabled ? 'Enable' : 'Disable' }} editor
-		</button>		
+		</button>
 		<button v-on:click="destroyApp()">
 			Destroy the app
-		</button>		
+		</button>
 
 		<h2>Editor data</h2>
 		<code>{{ editorData }}</code>
@@ -74,7 +74,7 @@
 				onEditorBlur( event, editor ) {
 					console.log( 'Editor blurred.', { event, editor } );
 				},
-				onEditorInput( event, editor, data ) {
+				onEditorInput( data, event, editor ) {
 					console.log( 'Editor data input.', { event, editor, data } );
 				},
 				onEditorDestroy( editor ) {

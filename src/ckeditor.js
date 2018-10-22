@@ -44,16 +44,16 @@ export default {
 			.then( editor => {
 				// Save the reference to the instance for further use.
 				this.instance = editor;
-	
+
 				// Set the initial data of the editor.
 				editor.setData( this.value );
 
 				// Set initial disabled state.
 				editor.isReadOnly = this.disabled;
-				
+
 				// Let the world know the editor is ready.
 				this.$emit( 'ready', editor );
-	
+
 				this.$_setUpEditorEvents();
 			} )
 			.catch( error => {
@@ -87,18 +87,18 @@ export default {
 	methods: {
 		$_setUpEditorEvents() {
 			const editor = this.instance;
-	
+
 			editor.model.document.on( 'change:data', ( evt ) => {
 				const data = editor.getData();
-	
+
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
-				this.$emit( 'input', data, editor, data );
+				this.$emit( 'input', data, evt, editor );
 			} );
-	
+
 			editor.editing.view.document.on( 'focus', ( evt ) => {
 				this.$emit( 'focus', evt, editor );
 			} );
-	
+
 			editor.editing.view.document.on( 'blur', ( evt ) => {
 				this.$emit( 'blur', evt, editor );
 			} );
