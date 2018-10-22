@@ -8,19 +8,9 @@ import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import MockEditor from '../_utils/mockeditor';
 
-class FooEditor extends MockEditor {
-	constructor() {
-		super();
-	}
+class FooEditor extends MockEditor {}
 
-	asd() {}
-}
-
-class BarEditor extends MockEditor {
-	constructor() {
-		super();
-	}
-}
+class BarEditor extends MockEditor {}
 
 Vue.use( CKEditor, {
 	editors: {
