@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md.
  */
 
-import CKEditorComponent from './ckeditor.js'
+import CKEditorComponent from './ckeditor.js';
 
 const CKEditor = {
 	install( Vue, config ) {

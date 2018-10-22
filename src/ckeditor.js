@@ -3,13 +3,13 @@
  * For licensing, see LICENSE.md.
  */
 
-import Vue from 'vue';
+/* global console */
 
 export default {
 	name: 'ckeditor',
 
-	render: function( createElement ) {
-		return createElement( this.tagName )
+	render( createElement ) {
+		return createElement( this.tagName );
 	},
 
 	props: {
@@ -32,12 +32,12 @@ export default {
 		}
 	},
 
-	data: function() {
+	data() {
 		return {
 			// Don't define it in #props because it produces a warning.
 			// https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
 			instance: null
-		}
+		};
 	},
 
 	mounted() {
@@ -76,7 +76,7 @@ export default {
 
 	watch: {
 		// Synchronize changes of #value.
-		value: function( val ) {
+		value( val ) {
 			// If the change is the result of typing, the #value is the same as instance.getData().
 			// In that case, the change has been triggered by instance.model.document#change:data
 			// so #value and instance.getData() are already in sync. Executing instance#setData()
@@ -87,7 +87,7 @@ export default {
 		},
 
 		// Synchronize changes of #disabled.
-		disabled: function( val ) {
+		disabled( val ) {
 			this.instance.isReadOnly = val;
 		}
 	},
@@ -96,18 +96,18 @@ export default {
 		$_setUpEditorEvents() {
 			const editor = this.instance;
 
-			editor.model.document.on( 'change:data', ( evt ) => {
+			editor.model.document.on( 'change:data', evt => {
 				const data = editor.getData();
 
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
 				this.$emit( 'input', data, evt, editor );
 			} );
 
-			editor.editing.view.document.on( 'focus', ( evt ) => {
+			editor.editing.view.document.on( 'focus', evt => {
 				this.$emit( 'focus', evt, editor );
 			} );
 
-			editor.editing.view.document.on( 'blur', ( evt ) => {
+			editor.editing.view.document.on( 'blur', evt => {
 				this.$emit( 'blur', evt, editor );
 			} );
 		}

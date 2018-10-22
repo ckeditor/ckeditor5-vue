@@ -5,11 +5,11 @@
 
 export class ModelDocument {
 	on() {}
-};
+}
 
 export class ViewlDocument {
 	on() {}
-};
+}
 
 export default class MockEditor {
 	constructor( el, config ) {
