@@ -17,19 +17,25 @@ Vue.use( CKEditor, {
 describe( 'CKEditor plugin', () => {
 	it( 'works with an actual editor build', done => {
 		const wrapper = mount( {
-			template: '<ckeditor editor="classic" @ready="onReady()"></ckeditor>',
+			template: '<ckeditor editor="classic" @ready="onReady()" v-model="editorData"></ckeditor>',
 			methods: {
 				onReady: () => {
-					expect( wrapper.vm.$children[ 0 ].instance ).to.be.instanceOf( ClassicEditor );
+					const instance = wrapper.vm.$children[ 0 ].instance;
 
-					Vue.nextTick( () => {
-						wrapper.destroy();
-						done();
-					} );
+					expect( instance ).to.be.instanceOf( ClassicEditor );
+					expect( instance.getData() ).to.equal( '<p>foo</p>' );
+
+					wrapper.destroy();
+					done();
 				}
 			}
+		}, {
+			attachToDocument: true,
+			data: () => {
+				return {
+					editorData: '<p>foo</p>'
+				};
+			}
 		} );
-
-		document.body.appendChild( wrapper.element );
 	} );
 } );

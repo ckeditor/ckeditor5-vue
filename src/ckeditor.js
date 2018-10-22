@@ -53,10 +53,10 @@ export default {
 				// Set initial disabled state.
 				editor.isReadOnly = this.disabled;
 
+				this.$_setUpEditorEvents();
+
 				// Let the world know the editor is ready.
 				this.$emit( 'ready', editor );
-
-				this.$_setUpEditorEvents();
 			} )
 			.catch( error => {
 				console.error( error );
