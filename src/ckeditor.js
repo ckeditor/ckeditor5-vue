@@ -65,7 +65,7 @@ export default {
 
 	beforeDestroy() {
 		if ( this.instance ) {
-			this.instance.destroy()
+			this.instance.destroy();
 			this.instance = null;
 		}
 

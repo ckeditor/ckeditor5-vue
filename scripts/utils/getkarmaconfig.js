@@ -23,6 +23,7 @@ module.exports = function getKarmaConfig() {
 				{
 					test: /\.js$/,
 					loader: 'babel-loader',
+					exclude: /node_modules/,
 					query: {
 						compact: false,
 						presets: [ 'react', 'env' ]

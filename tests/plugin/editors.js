@@ -9,7 +9,6 @@ import CKEditor from '../../src/plugin';
 import MockEditor from '../_utils/mockeditor';
 
 class FooEditor extends MockEditor {}
-
 class BarEditor extends MockEditor {}
 
 Vue.use( CKEditor, {
@@ -20,7 +19,7 @@ Vue.use( CKEditor, {
 } );
 
 describe( 'CKEditor plugin', () => {
-	it( 'registers different kinds of editors', done => {
+	it( 'works with different kinds of editors', done => {
 		const wrapperFoo = mount( {
 			template: '<ckeditor editor="foo"></ckeditor>'
 		} );

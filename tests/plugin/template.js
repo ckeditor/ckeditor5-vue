@@ -16,7 +16,7 @@ Vue.use( CKEditor, {
 } );
 
 describe( 'CKEditor plugin', () => {
-	it( 'allows different component names', done => {
+	it( 'allows configuring component name (template)', done => {
 		const wrapper = mount( {
 			template: '<myEditor editor="classic"></myEditor>'
 		} );
