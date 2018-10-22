@@ -72,6 +72,19 @@ describe( 'CKEditor Component', () => {
 		} );
 	} );
 
+	it( 'calls editor#destroy when destroying', done => {
+		const stub = sandbox.stub( Editor.prototype, 'destroy' ).resolves();
+		const { wrapper, vm } = createComponent();
+
+		Vue.nextTick( () => {
+			wrapper.destroy();
+			sinon.assert.calledOnce( stub );
+			expect( vm.instance ).to.be.null;
+
+			done();
+		} );
+	} );
+
 	it( 'passes editor promise rejection error to console.error', done => {
 		const error = new Error( 'Something went wrong.' );
 		const consoleErrorStub = sandbox.stub( console, 'error' );
@@ -214,6 +227,20 @@ describe( 'CKEditor Component', () => {
 			Vue.nextTick( () => {
 				expect( wrapper.emitted().ready.length ).to.equal( 1 );
 				expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
+
+				done();
+			} );
+
+		} );
+
+		it( 'emits #destroy when editor is destroyed', done => {
+			const { wrapper, vm } = createComponent();
+
+			Vue.nextTick( () => {
+				wrapper.destroy();
+
+				expect( wrapper.emitted().destroy.length ).to.equal( 1 );
+				expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.instance ] );
 
 				done();
 			} );
