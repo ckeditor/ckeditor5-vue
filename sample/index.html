@@ -35,11 +35,9 @@
 		<button v-on:click="toggleEditorDisabled()">
 			{{ editorDisabled ? 'Enable' : 'Disable' }} editor
 		</button>
-		<button v-on:click="destroyApp()">
-			Destroy the app
-		</button>
+		<button v-on:click="destroyApp()">Destroy the app</button>
 
-		<h2>Editor data</h2>
+		<h2>Live editor data</h2>
 		<code>{{ editorData }}</code>
 	</div>
 

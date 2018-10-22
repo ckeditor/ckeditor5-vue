@@ -15,6 +15,7 @@ export default class MockEditor {
 	constructor( el, config ) {
 		this.element = el;
 		this.config = config;
+		this.data = '';
 
 		this.model = {
 			document: new ModelDocument()
@@ -33,9 +34,16 @@ export default class MockEditor {
 		return Promise.resolve( editor );
 	}
 
-	destroy() { return Promise.resolve() }
+	destroy() {
+		return Promise.resolve();
+	}
 
-	setData() {}
-	getData() {}
+	setData( data ) {
+		this.data = data;
+	}
+
+	getData() {
+		return this.data;
+	}
 }
 

@@ -8695,10 +8695,10 @@ __webpack_require__.r(__webpack_exports__);
 			// Set initial disabled state.
 			editor.isReadOnly = this.disabled;
 
+			this.$_setUpEditorEvents();
+
 			// Let the world know the editor is ready.
 			this.$emit('ready', editor);
-
-			this.$_setUpEditorEvents();
 		}).catch(error => {
 			console.error(error);
 		});
@@ -8718,6 +8718,10 @@ __webpack_require__.r(__webpack_exports__);
 	watch: {
 		// Synchronize changes of #value.
 		value: function (val) {
+			// If the change is the result of typing, the #value is the same as instance.getData().
+			// In that case, the change has been triggered by instance.model.document#change:data
+			// so #value and instance.getData() are already in sync. Executing instance#setData()
+			// would demolish the selection.
 			if (this.instance.getData() !== val) {
 				this.instance.setData(val);
 			}

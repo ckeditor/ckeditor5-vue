@@ -77,6 +77,10 @@ export default {
 	watch: {
 		// Synchronize changes of #value.
 		value: function( val ) {
+			// If the change is the result of typing, the #value is the same as instance.getData().
+			// In that case, the change has been triggered by instance.model.document#change:data
+			// so #value and instance.getData() are already in sync. Executing instance#setData()
+			// would demolish the selection.
 			if ( this.instance.getData() !== val ) {
 				this.instance.setData( val );
 			}
