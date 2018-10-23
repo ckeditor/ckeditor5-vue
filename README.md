@@ -62,6 +62,22 @@ npm run build
 npm run changelog
 ```
 
+### Testing component with Vue CLI
+
+When symlinking the component in an application generated using [Vue CLI](https://cli.vuejs.org/), make sure your `vue.config.js` file configures webpack in the following way:
+
+```js
+module.exports = {
+	configureWebpack: {
+		resolve: {
+			symlinks: false
+		}
+	}
+};
+```
+
+Otherwise, the application will fail to load the component correctly and, as a result, it will throw a build error.
+
 ### Releasing
 
 Before starting to release the package, you need to generate the changelog.
