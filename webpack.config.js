@@ -14,7 +14,6 @@ const UglifyJsWebpackPlugin = require( 'uglifyjs-webpack-plugin' );
 
 module.exports = {
 	mode: 'production',
-	context: __dirname,
 	devtool: 'source-map',
 	entry: path.join( __dirname, 'src', 'plugin.js' ),
 
