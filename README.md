@@ -46,7 +46,7 @@ an environment variable, e.g.:
 BROWSER_STACK_USERNAME=[...] BROWSER_STACK_ACCESS_KEY=[...] npm t -- -b BrowserStack_Edge,BrowserStack_Safari -c
 ```
 
-If you are going to change the source (`src/ckeditor.jsx`) file, remember about rebuilding the package. You can use `npm run develop` in order to do it automatically.
+If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `npm run develop` in order to do it automatically.
 
 ### Building the package
 
