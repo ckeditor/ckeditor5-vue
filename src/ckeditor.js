@@ -20,7 +20,7 @@ export default {
 		},
 		config: {
 			type: Object,
-			default: null
+			default: () => ( {} )
 		},
 		tagName: {
 			type: String,

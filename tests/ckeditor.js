@@ -156,8 +156,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		describe( '#config', () => {
-			it( 'should not be defined', () => {
-				expect( vm.config ).to.be.null;
+			it( 'should be empty', () => {
+				expect( vm.config ).to.deep.equal( {} );
 			} );
 
 			it( 'should set the initial editor#config', done => {
