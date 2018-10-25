@@ -26,7 +26,7 @@ module.exports = function getKarmaConfig() {
 					exclude: /node_modules/,
 					query: {
 						compact: false,
-						presets: [ 'react', 'env' ]
+						presets: [ 'env' ]
 					}
 				}
 			]
