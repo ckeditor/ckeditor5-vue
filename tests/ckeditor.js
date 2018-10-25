@@ -65,6 +65,7 @@ describe( 'CKEditor Component', () => {
 		const { wrapper } = createComponent();
 
 		setTimeout( () => {
+			consoleErrorStub.restore()
 			expect( consoleErrorStub.calledOnce ).to.be.true;
 			expect( consoleErrorStub.firstCall.args[ 0 ] ).to.equal( error );
 
