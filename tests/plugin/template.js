@@ -16,15 +16,17 @@ Vue.use( CKEditor, {
 } );
 
 describe( 'CKEditor plugin', () => {
-	it( 'allows configuring component name (template)', done => {
-		const wrapper = mount( {
-			template: '<myEditor editor="classic"></myEditor>'
-		} );
+	describe( 'Vue.use()', () => {
+		it( 'allows configuring #componentName', done => {
+			const wrapper = mount( {
+				template: '<myEditor editor="classic"></myEditor>'
+			} );
 
-		Vue.nextTick( () => {
-			expect( wrapper.vm.$children[ 0 ].instance ).to.be.instanceOf( MockEditor );
+			Vue.nextTick( () => {
+				expect( wrapper.vm.$children[ 0 ].instance ).to.be.instanceOf( MockEditor );
 
-			done();
+				done();
+			} );
 		} );
 	} );
 } );

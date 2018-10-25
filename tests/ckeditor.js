@@ -3,6 +3,8 @@
  * For licensing, see LICENSE.md.
  */
 
+/* global console, setTimeout */
+
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditorComponent from '../src/ckeditor';
@@ -60,7 +62,7 @@ describe( 'CKEditor Component', () => {
 
 		sandbox.stub( MockEditor, 'create' ).rejects( error );
 
-		const { wrapper, vm } = createComponent();
+		const { wrapper } = createComponent();
 
 		setTimeout( () => {
 			expect( consoleErrorStub.calledOnce ).to.be.true;
@@ -72,8 +74,30 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	describe( 'properties', () => {
-		it( '#editor should be defined', () => {
-			expect( vm.editor ).to.equal( 'classic' );
+		it( '#editor', () => {
+			it( 'accepts a string', done => {
+				expect( vm.editor ).to.equal( 'classic' );
+
+				Vue.nextTick( () => {
+					expect( vm.instance ).to.be.instanceOf( MockEditor );
+
+					done();
+				} );
+			} );
+
+			it( 'accepts an editor constructor', done => {
+				const { wrapper, vm } = createComponent( {
+					editor: MockEditor
+				} );
+
+				Vue.nextTick( () => {
+					expect( vm.editor ).to.equal( MockEditor );
+					expect( vm.instance ).to.be.instanceOf( MockEditor );
+
+					wrapper.destroy();
+					done();
+				} );
+			} );
 		} );
 
 		describe( '#value', () => {
@@ -83,7 +107,7 @@ describe( 'CKEditor Component', () => {
 
 			it( 'should set the initial data', done => {
 				const setDataStub = sandbox.stub( MockEditor.prototype, 'setData' );
-				const { wrapper, vm } = createComponent( {
+				const { wrapper } = createComponent( {
 					value: 'foo'
 				} );
 
@@ -148,7 +172,6 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-
 		it( '#instance should be defined', done => {
 			Vue.nextTick( () => {
 				expect( vm.instance ).to.be.instanceOf( MockEditor );
@@ -207,7 +230,6 @@ describe( 'CKEditor Component', () => {
 
 				done();
 			} );
-
 		} );
 
 		it( 'emits #destroy when editor is destroyed', done => {
@@ -221,7 +243,6 @@ describe( 'CKEditor Component', () => {
 
 				done();
 			} );
-
 		} );
 
 		it( 'emits #input when editor data changes', done => {

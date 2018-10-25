@@ -11,22 +11,29 @@ import MockEditor from '../_utils/mockeditor';
 class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
 
-Vue.use( CKEditor, {
-	editors: {
-		foo: FooEditor,
-		bar: BarEditor
-	}
-} );
+Vue.use( CKEditor );
 
 describe( 'CKEditor plugin', () => {
 	describe( 'Vue.use()', () => {
-		it( 'allows configuring #editors', done => {
+		it( 'works without configuration (editor constructor provided by view)', done => {
 			const wrapperFoo = mount( {
-				template: '<ckeditor editor="foo"></ckeditor>'
+				template: '<ckeditor :editor="editorType"></ckeditor>'
+			}, {
+				data: () => {
+					return {
+						editorType: FooEditor
+					};
+				}
 			} );
 
 			const wrapperBar = mount( {
-				template: '<ckeditor editor="bar"></ckeditor>'
+				template: '<ckeditor :editor="editorType"></ckeditor>'
+			}, {
+				data: () => {
+					return {
+						editorType: BarEditor
+					};
+				}
 			} );
 
 			Vue.nextTick( () => {
