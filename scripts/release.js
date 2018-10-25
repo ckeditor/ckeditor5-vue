@@ -115,7 +115,7 @@ cli.provideToken()
 		// Create a release on GitHub.
 		return createGithubRelease( token, {
 			repositoryOwner: 'ckeditor',
-			repositoryName: 'ckeditor5-react',
+			repositoryName: 'ckeditor5-vue',
 			version: `v${ changelogVersion }`,
 			description: releaseDescription
 		} ).then( () => changelogVersion );
