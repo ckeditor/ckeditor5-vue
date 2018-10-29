@@ -13,7 +13,7 @@ Official [CKEditor 5](https://ckeditor.com/ckeditor-5/) rich text editor compone
 
 ## Documentation
 
-TODO
+See the [Vue.js component](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html) article in the [CKEditor 5 documentation](https://ckeditor.com/docs/ckeditor5/latest).
 
 ## Contributing
 
@@ -46,7 +46,7 @@ an environment variable, e.g.:
 BROWSER_STACK_USERNAME=[...] BROWSER_STACK_ACCESS_KEY=[...] npm t -- -b BrowserStack_Edge,BrowserStack_Safari -c
 ```
 
-If you are going to change the source (`src/ckeditor.jsx`) file, remember about rebuilding the package. You can use `npm run develop` in order to do it automatically.
+If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `npm run develop` in order to do it automatically.
 
 ### Building the package
 
@@ -61,6 +61,22 @@ npm run build
 ```bash
 npm run changelog
 ```
+
+### Testing component with Vue CLI
+
+When symlinking the component in an application generated using [Vue CLI](https://cli.vuejs.org/), make sure your `vue.config.js` file configures webpack in the following way:
+
+```js
+module.exports = {
+	configureWebpack: {
+		resolve: {
+			symlinks: false
+		}
+	}
+};
+```
+
+Otherwise, the application will fail to load the component correctly and, as a result, it will throw a build error.
 
 ### Releasing
 
