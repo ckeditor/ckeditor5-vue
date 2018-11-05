@@ -8,17 +8,13 @@ import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-Vue.use( CKEditor, {
-	editors: {
-		classic: ClassicEditor
-	}
-} );
+Vue.use( CKEditor );
 
 describe( 'CKEditor plugin', () => {
 	describe( 'Vue.use()', () => {
 		it( 'works with an actual editor build', done => {
 			const wrapper = mount( {
-				template: '<ckeditor editor="classic" @ready="onReady()" v-model="editorData"></ckeditor>',
+				template: '<ckeditor :editor="editor" @ready="onReady()" v-model="editorData"></ckeditor>',
 				methods: {
 					onReady: () => {
 						const instance = wrapper.vm.$children[ 0 ].instance;
@@ -34,6 +30,7 @@ describe( 'CKEditor plugin', () => {
 				attachToDocument: true,
 				data: () => {
 					return {
+						editor: ClassicEditor,
 						editorData: '<p>foo</p>'
 					};
 				}

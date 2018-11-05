@@ -13,7 +13,10 @@ export default {
 	},
 
 	props: {
-		editor: null,
+		editor: {
+			type: Function,
+			default: null
+		},
 		value: {
 			type: String,
 			default: ''
@@ -41,9 +44,7 @@ export default {
 	},
 
 	mounted() {
-		const creator = typeof this.editor === 'string' ? this.$_ckeditor_types[ this.editor ] : this.editor;
-
-		creator.create( this.$el, this.config )
+		this.editor.create( this.$el, this.config )
 			.then( editor => {
 				// Save the reference to the instance for further use.
 				this.instance = editor;
