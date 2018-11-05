@@ -12,13 +12,12 @@ const CKEditor = {
 	 * @param {Vue} Vue The Vue object.
 	 * @param {Object} [config] Plugin configuration.
 	 * @param {Object.<String,Function>} [config.editors] The configuration of editor constructors and their names.
-	 * @param {String>} [config.componentName] The name of the component used in the template. `'ckeditor'` by default.
 	 */
 	install( Vue, config ) {
 		// https://github.com/gotwarlost/istanbul/issues/665
 		config = config || {};
 
-		Vue.component( config.componentName || 'ckeditor', CKEditorComponent );
+		Vue.component( 'ckeditor', CKEditorComponent );
 
 		Vue.prototype.$_ckeditor_types = config.editors;
 	},
