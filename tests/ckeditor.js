@@ -11,8 +11,6 @@ import CKEditorComponent from '../src/ckeditor';
 import MockEditor from './_utils/mockeditor';
 import { ModelDocument, ViewlDocument } from './_utils/mockeditor';
 
-Vue.prototype.$_ckeditor_types = { classic: MockEditor };
-
 describe( 'CKEditor Component', () => {
 	let sandbox, wrapper, vm;
 
@@ -323,7 +321,7 @@ describe( 'CKEditor Component', () => {
 	function createComponent( props ) {
 		const wrapper = mount( CKEditorComponent, {
 			propsData: Object.assign( {}, {
-				editor: 'classic'
+				editor: MockEditor
 			}, props )
 		} );
 

@@ -22,6 +22,7 @@
 			editor="classic"
 			tag-name="textarea"
 			v-model="editorData"
+			:editor="editor"
 			:config="editorConfig"
 			:disabled="editorDisabled"
 			@ready="onEditorReady"
@@ -40,15 +41,12 @@
 	</div>
 
 	<script>
-		Vue.use( CKEditor, {
-			editors: {
-				classic: ClassicEditor
-			}
-		} );
+		Vue.use( CKEditor );
 
 		const app = new Vue( {
 			el: '#app',
 			data: {
+				editor: ClassicEditor,
 				editorData: '<p>Hello world!</p>',
 				editorConfig: { toolbar: [ 'heading', '|', 'bold', 'italic' ] },
 				editorDisabled: false
