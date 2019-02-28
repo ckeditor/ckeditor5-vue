@@ -126,7 +126,7 @@ cli.provideToken()
 		// Restore the template `package.json` to state before the publishing process.
 		tools.updateJSONFile( packageJsonTemplatePath, () => packageJsonTemplateCopy );
 
-		const url = `https://github.com/ckeditor/ckeditor5-react/releases/tag/v${ version }`;
+		const url = `https://github.com/ckeditor/ckeditor5-vue/releases/tag/v${ version }`;
 		log.info( `Created the release: ${ url }` );
 	} )
 	.catch( err => {
