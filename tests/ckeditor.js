@@ -205,11 +205,13 @@ describe( 'CKEditor Component', () => {
 				wrapper.setProps( { value: 'bar' } );
 				wrapper.setProps( { value: 'bar' } );
 
+				sinon.assert.calledTwice( spy );
+
 				// Simulate typing: The #value changes but at the same time, the instance update
 				// its own data so instance.getData() and #value are immediately the same.
 				// Make sure instance.setData() is not called in this situation because it would destroy
 				// the selection.
-				sandbox.stub( vm.instance, 'getData' ).returns( 'barq' );
+				wrapper.vm.$_lastEditorData = 'barq';
 				wrapper.setProps( { value: 'barq' } );
 
 				sinon.assert.calledTwice( spy );
