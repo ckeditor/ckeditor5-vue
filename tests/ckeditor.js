@@ -104,6 +104,20 @@ describe( 'CKEditor Component', () => {
 				expect( vm.value ).to.equal( '' );
 			} );
 
+			it( 'should set the initial data by using innerHTML, not by "setData()"', done => {
+				const { wrapper, vm } = createComponent( {
+					value: 'foo'
+				} );
+
+				Vue.nextTick( () => {
+
+					expect( vm.$el.innerHTML ).to.equal( 'foo' );
+					expect( vm.instance.setDataCounter).to.equal(0);
+
+					wrapper.destroy();
+					done();
+				} );
+			} );
 		} );
 
 		describe( '#tagName', () => {

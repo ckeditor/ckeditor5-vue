@@ -16,6 +16,7 @@ export default class MockEditor {
 		this.element = el;
 		this.config = config;
 		this.data = '';
+		this.setDataCounter = 0;
 
 		this.model = {
 			document: new ModelDocument()
@@ -39,6 +40,7 @@ export default class MockEditor {
 	}
 
 	setData( data ) {
+		this.setDataCounter++;
 		this.data = data;
 	}
 
