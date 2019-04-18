@@ -7,9 +7,14 @@
 
 export default {
 	name: 'ckeditor',
+	domContainer: null,
 
 	render( createElement ) {
-		return createElement( this.tagName );
+		return createElement(this.tagName, {
+			domProps: {
+				innerHTML: this.value || ''
+			}
+		});
 	},
 
 	props: {
@@ -48,9 +53,6 @@ export default {
 			.then( editor => {
 				// Save the reference to the instance for further use.
 				this.instance = editor;
-
-				// Set the initial data of the editor.
-				editor.setData( this.value );
 
 				// Set initial disabled state.
 				editor.isReadOnly = this.disabled;

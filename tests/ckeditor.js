@@ -104,19 +104,6 @@ describe( 'CKEditor Component', () => {
 				expect( vm.value ).to.equal( '' );
 			} );
 
-			it( 'should set the initial data', done => {
-				const setDataStub = sandbox.stub( MockEditor.prototype, 'setData' );
-				const { wrapper } = createComponent( {
-					value: 'foo'
-				} );
-
-				Vue.nextTick( () => {
-					sinon.assert.calledWithExactly( setDataStub, 'foo' );
-
-					wrapper.destroy();
-					done();
-				} );
-			} );
 		} );
 
 		describe( '#tagName', () => {
