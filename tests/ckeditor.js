@@ -246,7 +246,7 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-		it( 'emits #input when editor data changes', done => {
+		it( 'emits debounced #input when editor data changes', done => {
 			sandbox.stub( ModelDocument.prototype, 'on' );
 			sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
@@ -262,12 +262,14 @@ describe( 'CKEditor Component', () => {
 
 				on.firstCall.args[ 1 ]( evtStub );
 
-				expect( wrapper.emitted().input.length ).to.equal( 1 );
-				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-					'foo', evtStub, vm.instance
-				] );
+				setTimeout( () => {
+					expect( wrapper.emitted().input.length ).to.equal( 1 );
+					expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
+						'foo', evtStub, vm.instance
+					] );
 
-				done();
+					done();
+				}, 350 );
 			} );
 		} );
 

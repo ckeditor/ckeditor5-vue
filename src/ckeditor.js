@@ -5,6 +5,10 @@
 
 /* global console */
 
+import { debounce } from 'lodash-es';
+
+const INPUT_EVENT_DEBOUNCE_WAIT = 300;
+
 export default {
 	name: 'ckeditor',
 
@@ -103,6 +107,8 @@ export default {
 			// lot of data we make sure:
 			//    * the new value is at least different than the old value (Case 1.)
 			//    * the new value is different than the last internal instance state (Case 2.)
+			//
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
 			if ( newValue !== oldValue && newValue !== this.$_lastEditorData ) {
 				this.instance.setData( newValue );
 			}
@@ -117,8 +123,7 @@ export default {
 	methods: {
 		$_setUpEditorEvents() {
 			const editor = this.instance;
-
-			editor.model.document.on( 'change:data', evt => {
+			const emitInputEvent = evt => {
 				// Cache the last editor data. This kind of data is a result of typing,
 				// editor command execution, collaborative changes to the document, etc.
 				// This data is compared when the component value changes in a 2-way binding.
@@ -126,7 +131,13 @@ export default {
 
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
 				this.$emit( 'input', data, evt, editor );
-			} );
+			};
+
+			// Debounce emitting the #input event. When data is huge, instance#getData()
+			// takes a lot of time to execute on every single key press and ruins the UX.
+			//
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+			editor.model.document.on( 'change:data', debounce( emitInputEvent, INPUT_EVENT_DEBOUNCE_WAIT ) );
 
 			editor.editing.view.document.on( 'focus', evt => {
 				this.$emit( 'focus', evt, editor );
