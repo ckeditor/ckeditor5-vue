@@ -30,6 +30,8 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	it( 'calls editor#create when initializing', done => {
+		Vue.config.errorHandler = done;
+
 		const stub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 		const { wrapper } = createComponent();
 
@@ -42,6 +44,8 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	it( 'calls editor#destroy when destroying', done => {
+		Vue.config.errorHandler = done;
+
 		const stub = sandbox.stub( MockEditor.prototype, 'destroy' ).resolves();
 		const { wrapper, vm } = createComponent();
 
@@ -55,6 +59,8 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	it( 'passes editor promise rejection error to console.error', done => {
+		Vue.config.errorHandler = done;
+
 		const error = new Error( 'Something went wrong.' );
 		const consoleErrorStub = sandbox.stub( console, 'error' );
 
@@ -75,6 +81,8 @@ describe( 'CKEditor Component', () => {
 	describe( 'properties', () => {
 		it( '#editor', () => {
 			it( 'accepts a string', done => {
+				Vue.config.errorHandler = done;
+
 				expect( vm.editor ).to.equal( 'classic' );
 
 				Vue.nextTick( () => {
@@ -85,6 +93,8 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'accepts an editor constructor', done => {
+				Vue.config.errorHandler = done;
+
 				const { wrapper, vm } = createComponent( {
 					editor: MockEditor
 				} );
@@ -105,6 +115,8 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should set the initial data', done => {
+				Vue.config.errorHandler = done;
+
 				const setDataStub = sandbox.stub( MockEditor.prototype, 'setData' );
 				const { wrapper } = createComponent( {
 					value: 'foo'
@@ -141,6 +153,8 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should set the initial editor#isReadOnly', done => {
+				Vue.config.errorHandler = done;
+
 				const { wrapper, vm } = createComponent( {
 					disabled: true
 				} );
@@ -159,6 +173,8 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should set the initial editor#config', done => {
+				Vue.config.errorHandler = done;
+
 				const { wrapper, vm } = createComponent( {
 					config: { foo: 'bar' }
 				} );
@@ -172,6 +188,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( '#instance should be defined', done => {
+			Vue.config.errorHandler = done;
+
 			Vue.nextTick( () => {
 				expect( vm.instance ).to.be.instanceOf( MockEditor );
 
@@ -182,6 +200,8 @@ describe( 'CKEditor Component', () => {
 
 	describe( 'bindings', () => {
 		it( '#disabled should control editor#isReadOnly', done => {
+			Vue.config.errorHandler = done;
+
 			const { wrapper, vm } = createComponent( {
 				disabled: true
 			} );
@@ -198,6 +218,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( '#value should trigger editor#setData', done => {
+			Vue.config.errorHandler = done;
+
 			Vue.nextTick( () => {
 				const spy = sandbox.spy( vm.instance, 'setData' );
 
@@ -225,6 +247,8 @@ describe( 'CKEditor Component', () => {
 
 	describe( 'events', () => {
 		it( 'emits #ready when editor is created', done => {
+			Vue.config.errorHandler = done;
+
 			Vue.nextTick( () => {
 				expect( wrapper.emitted().ready.length ).to.equal( 1 );
 				expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
@@ -234,6 +258,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( 'emits #destroy when editor is destroyed', done => {
+			Vue.config.errorHandler = done;
+
 			const { wrapper, vm } = createComponent();
 
 			Vue.nextTick( () => {
@@ -247,6 +273,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( 'emits debounced #input when editor data changes', done => {
+			Vue.config.errorHandler = done;
+
 			sandbox.stub( ModelDocument.prototype, 'on' );
 			sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
@@ -274,6 +302,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( 'emits #focus when editor editable is focused', done => {
+			Vue.config.errorHandler = done;
+
 			sandbox.stub( ViewlDocument.prototype, 'on' );
 
 			Vue.nextTick( () => {
@@ -298,6 +328,8 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( 'emits #blur when editor editable is focused', done => {
+			Vue.config.errorHandler = done;
+
 			sandbox.stub( ViewlDocument.prototype, 'on' );
 
 			Vue.nextTick( () => {
