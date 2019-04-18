@@ -7,7 +7,6 @@
 
 export default {
 	name: 'ckeditor',
-	domContainer: null,
 
 	render( createElement ) {
 		return createElement(this.tagName, {
