@@ -17,7 +17,7 @@ export default {
 			domProps: {
 				innerHTML: this.value || ''
 			}
-		});
+		} );
 	},
 
 	props: {
