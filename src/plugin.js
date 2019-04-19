@@ -7,7 +7,7 @@ import CKEditorComponent from './ckeditor.js';
 
 const CKEditor = {
 	/**
-	 * Instals the plugin, registering the `<ckeditor>` component.
+	 * Installs the plugin, registering the `<ckeditor>` component.
 	 *
 	 * @param {Vue} Vue The Vue object.
 	 */
