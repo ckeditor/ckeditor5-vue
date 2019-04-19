@@ -8,8 +8,11 @@
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditorComponent from '../src/ckeditor';
-import MockEditor from './_utils/mockeditor';
-import { ModelDocument, ViewlDocument } from './_utils/mockeditor';
+import {
+	MockEditor,
+	ModelDocument,
+	ViewDocument
+} from './_utils/mockeditor';
 
 describe( 'CKEditor Component', () => {
 	let sandbox, wrapper, vm;
@@ -69,7 +72,8 @@ describe( 'CKEditor Component', () => {
 		const { wrapper } = createComponent();
 
 		setTimeout( () => {
-			consoleErrorStub.restore()
+			consoleErrorStub.restore();
+
 			expect( consoleErrorStub.calledOnce ).to.be.true;
 			expect( consoleErrorStub.firstCall.args[ 0 ] ).to.equal( error );
 
@@ -114,16 +118,17 @@ describe( 'CKEditor Component', () => {
 				expect( vm.value ).to.equal( '' );
 			} );
 
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/47.
 			it( 'should set the initial data', done => {
 				Vue.config.errorHandler = done;
 
-				const setDataStub = sandbox.stub( MockEditor.prototype, 'setData' );
-				const { wrapper } = createComponent( {
+				const { wrapper, vm } = createComponent( {
 					value: 'foo'
 				} );
 
 				Vue.nextTick( () => {
-					sinon.assert.calledWithExactly( setDataStub, 'foo' );
+					expect( vm.$el.innerHTML ).to.equal( 'foo' );
+					expect( vm.instance.setDataCounter ).to.equal( 0 );
 
 					wrapper.destroy();
 					done();
@@ -304,7 +309,7 @@ describe( 'CKEditor Component', () => {
 		it( 'emits #focus when editor editable is focused', done => {
 			Vue.config.errorHandler = done;
 
-			sandbox.stub( ViewlDocument.prototype, 'on' );
+			sandbox.stub( ViewDocument.prototype, 'on' );
 
 			Vue.nextTick( () => {
 				const on = vm.instance.editing.view.document.on;
@@ -330,7 +335,7 @@ describe( 'CKEditor Component', () => {
 		it( 'emits #blur when editor editable is focused', done => {
 			Vue.config.errorHandler = done;
 
-			sandbox.stub( ViewlDocument.prototype, 'on' );
+			sandbox.stub( ViewDocument.prototype, 'on' );
 
 			Vue.nextTick( () => {
 				const on = vm.instance.editing.view.document.on;

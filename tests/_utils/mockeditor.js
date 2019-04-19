@@ -7,15 +7,16 @@ export class ModelDocument {
 	on() {}
 }
 
-export class ViewlDocument {
+export class ViewDocument {
 	on() {}
 }
 
-export default class MockEditor {
+export class MockEditor {
 	constructor( el, config ) {
 		this.element = el;
 		this.config = config;
 		this.data = '';
+		this.setDataCounter = 0;
 
 		this.model = {
 			document: new ModelDocument()
@@ -23,7 +24,7 @@ export default class MockEditor {
 
 		this.editing = {
 			view: {
-				document: new ViewlDocument()
+				document: new ViewDocument()
 			}
 		};
 	}
@@ -39,6 +40,7 @@ export default class MockEditor {
 	}
 
 	setData( data ) {
+		this.setDataCounter++;
 		this.data = data;
 	}
 
