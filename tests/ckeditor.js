@@ -104,6 +104,7 @@ describe( 'CKEditor Component', () => {
 				expect( vm.value ).to.equal( '' );
 			} );
 
+			//See: https://github.com/ckeditor/ckeditor5-vue/issues/47
 			it( 'should set the initial data by using innerHTML, not by "setData()"', done => {
 				const { wrapper, vm } = createComponent( {
 					value: 'foo'
