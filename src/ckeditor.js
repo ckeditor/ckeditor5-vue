@@ -9,7 +9,7 @@ export default {
 	name: 'ckeditor',
 
 	render( createElement ) {
-		return createElement(this.tagName, {
+		return createElement( this.tagName, {
 			domProps: {
 				innerHTML: this.value || ''
 			}

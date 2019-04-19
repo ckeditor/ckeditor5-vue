@@ -112,7 +112,7 @@ describe( 'CKEditor Component', () => {
 				Vue.nextTick( () => {
 
 					expect( vm.$el.innerHTML ).to.equal( 'foo' );
-					expect( vm.instance.setDataCounter).to.equal(0);
+					expect( vm.instance.setDataCounter ).to.equal(0);
 
 					wrapper.destroy();
 					done();
