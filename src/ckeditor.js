@@ -5,6 +5,10 @@
 
 /* global console */
 
+import { debounce } from 'lodash-es';
+
+const INPUT_EVENT_DEBOUNCE_WAIT = 300;
+
 export default {
 	name: 'ckeditor',
 
@@ -43,7 +47,12 @@ export default {
 		return {
 			// Don't define it in #props because it produces a warning.
 			// https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
-			instance: null
+			instance: null,
+
+			$_lastEditorData: {
+				type: String,
+				default: ''
+			}
 		};
 	},
 
@@ -78,14 +87,31 @@ export default {
 	},
 
 	watch: {
-		// Synchronize changes of #value.
-		value( val ) {
-			// If the change is the result of typing, the #value is the same as instance.getData().
-			// In that case, the change has been triggered by instance.model.document#change:data
-			// so #value and instance.getData() are already in sync. Executing instance#setData()
-			// would demolish the selection.
-			if ( this.instance.getData() !== val ) {
-				this.instance.setData( val );
+		value( newValue, oldValue ) {
+			// Synchronize changes of instance#value. There are two sources of changes:
+			//
+			//                     External value change      ------\
+			//                                                       -----> +-----------+
+			//                                                              | Component |
+			//                                                       -----> +-----------+
+			//                     Internal data change       ------/
+			//              (typing, commands, collaboration)
+			//
+			// Case 1: If the change was external (via props), the editor data must be synced with
+			// the component using instance#setData() and it is OK to destroy the selection.
+			//
+			// Case 2: If the change is the result of internal data change, the #value is the same as
+			// instance#$_lastEditorData, which has been cached on instance#change:data. If we called
+			// instance#setData() at this point, that would demolish the selection.
+			//
+			// To limit the number of instance#setData() which is time-consuming when there is a
+			// lot of data we make sure:
+			//    * the new value is at least different than the old value (Case 1.)
+			//    * the new value is different than the last internal instance state (Case 2.)
+			//
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
+			if ( newValue !== oldValue && newValue !== this.$_lastEditorData ) {
+				this.instance.setData( newValue );
 			}
 		},
 
@@ -98,13 +124,21 @@ export default {
 	methods: {
 		$_setUpEditorEvents() {
 			const editor = this.instance;
-
-			editor.model.document.on( 'change:data', evt => {
-				const data = editor.getData();
+			const emitInputEvent = evt => {
+				// Cache the last editor data. This kind of data is a result of typing,
+				// editor command execution, collaborative changes to the document, etc.
+				// This data is compared when the component value changes in a 2-way binding.
+				const data = this.$_lastEditorData = editor.getData();
 
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
 				this.$emit( 'input', data, evt, editor );
-			} );
+			};
+
+			// Debounce emitting the #input event. When data is huge, instance#getData()
+			// takes a lot of time to execute on every single key press and ruins the UX.
+			//
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+			editor.model.document.on( 'change:data', debounce( emitInputEvent, INPUT_EVENT_DEBOUNCE_WAIT ) );
 
 			editor.editing.view.document.on( 'focus', evt => {
 				this.$emit( 'focus', evt, editor );
