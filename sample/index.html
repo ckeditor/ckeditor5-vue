@@ -8,6 +8,12 @@
 			max-width: 800px;
 			margin: 20px auto;
 		}
+
+		textarea {
+			width: 100%;
+			height: 100px;
+			font-family: monospace;
+		}
 	</style>
 </head>
 <body>
@@ -37,7 +43,7 @@
 		<button v-on:click="destroyApp()">Destroy the app</button>
 
 		<h2>Live editor data</h2>
-		<code>{{ editorData }}</code>
+		<textarea v-model="editorData"></textarea>
 	</div>
 
 	<script>
