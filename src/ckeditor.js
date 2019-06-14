@@ -13,11 +13,7 @@ export default {
 	name: 'ckeditor',
 
 	render( createElement ) {
-		return createElement( this.tagName, {
-			domProps: {
-				innerHTML: this.value || ''
-			}
-		} );
+		return createElement( this.tagName );
 	},
 
 	props: {
@@ -57,6 +53,12 @@ export default {
 	},
 
 	mounted() {
+		if ( this.value ) {
+			Object.assign( this.config, {
+				initialData: this.value
+			} );
+		}
+
 		this.editor.create( this.$el, this.config )
 			.then( editor => {
 				// Save the reference to the instance for further use.
