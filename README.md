@@ -84,12 +84,32 @@ module.exports = {
 
 Otherwise, the application will fail to load the component correctly and, as a result, it will throw a build error.
 
-### Releasing
+## Releasing package
 
-Before starting to release the package, you need to generate the changelog.
+### Changelog
+
+Before starting the release process, you need to generate the changelog:
 
 ```bash
-npm run release
+npm run changelog
+```
+
+### Publishing
+
+After generating the changelog, you are able to release the package.
+
+First, you need to bump the version:
+
+```bash
+npm run release:bump-version
+```
+
+You can also use the `--dry-run` option in order to see what this task does.
+
+After bumping the version, you can publish the changes:
+
+```bash
+npm run release:publish
 ```
 
 Note: Only the `dist/` directory will be published.
