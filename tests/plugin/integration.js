@@ -13,6 +13,8 @@ Vue.use( CKEditor );
 describe( 'CKEditor plugin', () => {
 	describe( 'Vue.use()', () => {
 		it( 'works with an actual editor build', done => {
+			Vue.config.errorHandler = done;
+
 			const wrapper = mount( {
 				template: '<ckeditor :editor="editor" @ready="onReady()" v-model="editorData"></ckeditor>',
 				methods: {

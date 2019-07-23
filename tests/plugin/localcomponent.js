@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
-import MockEditor from '../_utils/mockeditor';
+import { MockEditor } from '../_utils/mockeditor';
 
 class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
