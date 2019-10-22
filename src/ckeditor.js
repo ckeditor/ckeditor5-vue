@@ -53,13 +53,15 @@ export default {
 	},
 
 	mounted() {
+		// Clone the config first so it never gets mutated (across multiple editor instances).
+		// https://github.com/ckeditor/ckeditor5-vue/issues/101
+		const editorConfig = Object.assign( {}, this.config );
+
 		if ( this.value ) {
-			Object.assign( this.config, {
-				initialData: this.value
-			} );
+			editorConfig.initialData = this.value;
 		}
 
-		this.editor.create( this.$el, this.config )
+		this.editor.create( this.$el, editorConfig )
 			.then( editor => {
 				// Save the reference to the instance for further use.
 				this.instance = editor;
