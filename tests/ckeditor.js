@@ -190,6 +190,53 @@ describe( 'CKEditor Component', () => {
 					done();
 				} );
 			} );
+
+			// https://github.com/ckeditor/ckeditor5-vue/issues/101
+			it( 'should not be mutated', done => {
+				const createStub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
+
+				const ParentComponent = {
+					data() {
+						return {
+							editor: MockEditor,
+							editorConfig: {
+								foo: 'bar'
+							},
+							editorFooData: 'foo',
+							editorBarData: 'bar',
+							editorBazData: 'baz'
+						};
+					},
+					template: `
+						<div>
+							<ckeditor :editor="editor" tag-name="textarea" v-model="editorFooData" :config="editorConfig">foo</ckeditor>
+							<ckeditor :editor="editor" tag-name="textarea" v-model="editorBarData" :config="editorConfig">bar</ckeditor>
+							<ckeditor :editor="editor" tag-name="textarea" v-model="editorBazData" :config="editorConfig">baz</ckeditor>
+						</div>
+					`
+				};
+
+				const { vm } = mount( ParentComponent, {
+					stubs: {
+						ckeditor: CKEditorComponent
+					}
+				} );
+
+				Vue.nextTick( () => {
+					const fooEditorConfig = createStub.firstCall.args[ 1 ];
+					const barEditorConfig = createStub.secondCall.args[ 1 ];
+					const bazEditorConfig = createStub.thirdCall.args[ 1 ];
+
+					expect( fooEditorConfig ).to.not.equal( barEditorConfig );
+					expect( fooEditorConfig ).to.not.equal( bazEditorConfig );
+					expect( barEditorConfig ).to.not.equal( bazEditorConfig );
+
+					expect( vm.editorConfig.initialData ).to.be.undefined;
+
+					wrapper.destroy();
+					done();
+				} );
+			} );
 		} );
 
 		it( '#instance should be defined', done => {
