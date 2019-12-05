@@ -262,10 +262,13 @@ describe( 'CKEditor Component', () => {
 				expect( vm.instance.isReadOnly ).to.be.true;
 
 				wrapper.setProps( { disabled: false } );
-				expect( vm.instance.isReadOnly ).to.be.false;
 
-				wrapper.destroy();
-				done();
+				Vue.nextTick( () => {
+					expect( vm.instance.isReadOnly ).to.be.false;
+
+					wrapper.destroy();
+					done();
+				} );
 			} );
 		} );
 
@@ -276,23 +279,33 @@ describe( 'CKEditor Component', () => {
 				const spy = sandbox.spy( vm.instance, 'setData' );
 
 				wrapper.setProps( { value: 'foo' } );
-				wrapper.setProps( { value: 'bar' } );
-				wrapper.setProps( { value: 'bar' } );
 
-				sinon.assert.calledTwice( spy );
+				Vue.nextTick( () => {
+					wrapper.setProps( { value: 'bar' } );
 
-				// Simulate typing: The #value changes but at the same time, the instance update
-				// its own data so instance.getData() and #value are immediately the same.
-				// Make sure instance.setData() is not called in this situation because it would destroy
-				// the selection.
-				wrapper.vm.$_lastEditorData = 'barq';
-				wrapper.setProps( { value: 'barq' } );
+					Vue.nextTick( () => {
+						wrapper.setProps( { value: 'bar' } );
 
-				sinon.assert.calledTwice( spy );
-				sinon.assert.calledWithExactly( spy.firstCall, 'foo' );
-				sinon.assert.calledWithExactly( spy.secondCall, 'bar' );
+						Vue.nextTick( () => {
+							sinon.assert.calledTwice( spy );
 
-				done();
+							// Simulate typing: The #value changes but at the same time, the instance update
+							// its own data so instance.getData() and #value are immediately the same.
+							// Make sure instance.setData() is not called in this situation because it would destroy
+							// the selection.
+							wrapper.vm.$_lastEditorData = 'barq';
+							wrapper.setProps( { value: 'barq' } );
+
+							Vue.nextTick( () => {
+								sinon.assert.calledTwice( spy );
+								sinon.assert.calledWithExactly( spy.firstCall, 'foo' );
+								sinon.assert.calledWithExactly( spy.secondCall, 'bar' );
+
+								done();
+							} );
+						} );
+					} );
+				} );
 			} );
 		} );
 	} );
