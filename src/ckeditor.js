@@ -143,6 +143,13 @@ export default {
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
 			editor.model.document.on( 'change:data', debounce( emitInputEvent, INPUT_EVENT_DEBOUNCE_WAIT ) );
+			
+			// Because emitting #input event is debouced and processing data takes tome time,
+			// there could be a situation when user changed huge data and imediatenly push some SAVE button. 
+			// But real data is not updated yet.
+			// The #changing event if fired right after change.
+			// You can combine 'value' property, #changing and #input event to be sure that data is updated.
+			editor.model.document.on( 'change:data', evt => this.$emit('changing', evt, editor ));
 
 			editor.editing.view.document.on( 'focus', evt => {
 				this.$emit( 'focus', evt, editor );
