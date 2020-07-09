@@ -148,7 +148,6 @@ export default {
 			// But real data is not updated yet.
 			// The #changing event if fired right after change.
 			// You can combine 'value' property, #changing and #input event to be sure that data is updated.
-			editor.model.document.on( 'change:data', evt => this.$emit('changing', evt, editor ));
 			const debouncedInput = debounce(emitInputEvent, INPUT_EVENT_DEBOUNCE_WAIT)
 			editor.model.document.on('change:data', (evt) => {
 				this.$emit('changing', evt, editor);
