@@ -44,7 +44,11 @@ export default {
 			// Don't define it in #props because it produces a warning.
 			// https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
 			instance: null,
-
+			
+			// Changing has to be true when there are some changes which was made by user
+			// but not emitted yet by #input event because of debounce.
+			changing: false,
+			
 			$_lastEditorData: {
 				type: String,
 				default: ''
@@ -140,18 +144,19 @@ export default {
 			
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
-			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
 			//
-			// As #input event is debouced and processing data may take some time,
-			// there could be a situation when user changed huge data and imediatenly push some SAVE button. 
+			// As #input event is debounced and processing data takes some time,
+			// there could be a situation when user change huge text and quick push some SAVE button.
 			// But real data is not updated yet.
-			// The #changing event if fired right after change.
-			// You can combine 'value' property, #changing and #input event to be sure that data is updated.
+			// To prevent this case use #changing event that is emitted right after change.
 			const debouncedInput = debounce(emitInputEvent, INPUT_EVENT_DEBOUNCE_WAIT)
 			editor.model.document.on('change:data', (evt) => {
-				this.$emit('changing', evt, editor);
 				debouncedInput(evt);
+				if (!this.changing) {
+					this.changing = true;
+					this.$emit('changing', evt, editor);
+				}
 			});
 			
 
