@@ -25,8 +25,7 @@ module.exports = function getKarmaConfig() {
 					loader: 'babel-loader',
 					exclude: /node_modules/,
 					query: {
-						compact: false,
-						presets: [ '@babel/preset-env' ]
+						compact: false
 					}
 				}
 			]
@@ -187,7 +186,7 @@ function parseArguments( args ) {
 			c: 'coverage',
 			r: 'reporter',
 			s: 'source-map',
-			w: 'watch',
+			w: 'watch'
 		},
 
 		default: {
@@ -195,7 +194,7 @@ function parseArguments( args ) {
 			reporter: 'mocha',
 			watch: false,
 			coverage: false,
-			'source-map': false,
+			'source-map': false
 		}
 	};
 
