@@ -83,19 +83,7 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	describe( 'properties', () => {
-		it( '#editor', () => {
-			it( 'accepts a string', done => {
-				Vue.config.errorHandler = done;
-
-				expect( vm.editor ).to.equal( 'classic' );
-
-				Vue.nextTick( () => {
-					expect( vm.instance ).to.be.instanceOf( MockEditor );
-
-					done();
-				} );
-			} );
-
+		describe( '#editor', () => {
 			it( 'accepts an editor constructor', done => {
 				Vue.config.errorHandler = done;
 
