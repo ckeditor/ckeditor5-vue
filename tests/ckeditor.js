@@ -28,11 +28,11 @@ describe( 'CKEditor Component', () => {
 		wrapper.destroy();
 	} );
 
-	it( 'component should have a name', () => {
+	it( 'should have a name', () => {
 		expect( CKEditorComponent.name ).to.equal( 'ckeditor' );
 	} );
 
-	it( 'calls editor#create when initializing', async () => {
+	it( 'should call editor#create when initializing', async () => {
 		const stub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 		const { wrapper } = createComponent();
 
@@ -42,7 +42,7 @@ describe( 'CKEditor Component', () => {
 		wrapper.destroy();
 	} );
 
-	it( 'calls editor#destroy when destroying', async () => {
+	it( 'should call editor#destroy when destroying', async () => {
 		const stub = sandbox.stub( MockEditor.prototype, 'destroy' ).resolves();
 		const { wrapper, vm } = createComponent();
 
@@ -53,7 +53,7 @@ describe( 'CKEditor Component', () => {
 		expect( vm.instance ).to.be.null;
 	} );
 
-	it( 'passes editor promise rejection error to console.error', async () => {
+	it( 'should pass the editor promise rejection error to console#error()', async () => {
 		const error = new Error( 'Something went wrong.' );
 		const consoleErrorStub = sandbox.stub( console, 'error' );
 
@@ -73,7 +73,7 @@ describe( 'CKEditor Component', () => {
 
 	describe( 'properties', () => {
 		describe( '#editor', () => {
-			it( 'accepts an editor constructor', async () => {
+			it( 'should accept an editor constructor', async () => {
 				const { wrapper, vm } = createComponent( {
 					editor: MockEditor
 				} );
@@ -145,7 +145,7 @@ describe( 'CKEditor Component', () => {
 				expect( vm.config ).to.deep.equal( {} );
 			} );
 
-			it( 'should set the initial editor#config', async () => {
+			it( 'should be set according to the initial editor#config', async () => {
 				const { wrapper, vm } = createComponent( {
 					config: { foo: 'bar' }
 				} );
@@ -259,14 +259,14 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	describe( 'events', () => {
-		it( 'emits #ready when editor is created', async () => {
+		it( 'should emit #ready when the editor is created', async () => {
 			await Vue.nextTick();
 
 			expect( wrapper.emitted().ready.length ).to.equal( 1 );
 			expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
 		} );
 
-		it( 'emits #destroy when editor is destroyed', async () => {
+		it( 'should emit #destroy when the editor is destroyed', async () => {
 			const { wrapper, vm } = createComponent();
 
 			await Vue.nextTick();
@@ -328,7 +328,7 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-		it( 'emits #focus when editor editable is focused', async () => {
+		it( 'should emit #focus when the editor editable is focused', async () => {
 			sandbox.stub( ViewDocument.prototype, 'on' );
 
 			await Vue.nextTick();
@@ -350,7 +350,7 @@ describe( 'CKEditor Component', () => {
 			] );
 		} );
 
-		it( 'emits #blur when editor editable is focused', async () => {
+		it( 'should emits #blur when the editor editable is blurred', async () => {
 			sandbox.stub( ViewDocument.prototype, 'on' );
 
 			await Vue.nextTick();

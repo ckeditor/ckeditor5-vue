@@ -12,7 +12,7 @@ class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
 
 describe( 'CKEditor plugin', () => {
-	it( 'works when the component is used locally', async () => {
+	it( 'should work when the component is used locally', async () => {
 		const wrapperFoo = mount( {
 			template: '<ckeditor :editor="editorType"></ckeditor>',
 			components: {

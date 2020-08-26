@@ -14,7 +14,7 @@ Vue.use( CKEditor );
 
 describe( 'CKEditor plugin', () => {
 	describe( 'Vue.use()', () => {
-		it( 'works with an actual editor build', done => {
+		it( 'should work with an actual editor build', done => {
 			const domElement = document.createElement( 'div' );
 			document.body.appendChild( domElement );
 
