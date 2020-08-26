@@ -44,7 +44,7 @@ module.exports = {
 		new webpack.BannerPlugin( {
 			banner: bundler.getLicenseBanner(),
 			raw: true
-		} ),
+		} )
 	],
 
 	module: {
@@ -52,8 +52,8 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules/,
+				exclude: /node_modules/
 			}
 		]
-	},
+	}
 };
