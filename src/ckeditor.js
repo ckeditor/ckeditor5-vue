@@ -128,7 +128,11 @@ export default {
 	methods: {
 		$_setUpEditorEvents() {
 			const editor = this.instance;
-			const emitInputEvent = evt => {
+			// Use the leading edge so the first event in the series is emitter immediatelly.
+			// Failing to do so leads to race conditions, for instance, when the component value
+			// is set twice in a time span shorter than the debounce time.
+			// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
+			const emitDebouncedInputEvent = debounce( evt => {
 				// Cache the last editor data. This kind of data is a result of typing,
 				// editor command execution, collaborative changes to the document, etc.
 				// This data is compared when the component value changes in a 2-way binding.
@@ -136,13 +140,13 @@ export default {
 
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
 				this.$emit( 'input', data, evt, editor );
-			};
+			}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
 
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
-			editor.model.document.on( 'change:data', debounce( emitInputEvent, INPUT_EVENT_DEBOUNCE_WAIT ) );
+			editor.model.document.on( 'change:data', emitDebouncedInputEvent );
 
 			editor.editing.view.document.on( 'focus', evt => {
 				this.$emit( 'focus', evt, editor );

@@ -337,32 +337,62 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-		it( 'emits debounced #input when editor data changes', done => {
-			Vue.config.errorHandler = done;
+		describe( '#input event', () => {
+			it( 'should be emitted but debounced when editor data changes', done => {
+				Vue.config.errorHandler = done;
 
-			sandbox.stub( ModelDocument.prototype, 'on' );
-			sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
+				sandbox.stub( ModelDocument.prototype, 'on' );
+				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
-			Vue.nextTick( () => {
-				const on = vm.instance.model.document.on;
-				const evtStub = {};
+				Vue.nextTick( () => {
+					const on = vm.instance.model.document.on;
+					const evtStub = {};
 
-				expect( on.calledOnce ).to.be.true;
-				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
-				expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
+					expect( on.calledOnce ).to.be.true;
+					expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
+					expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
 
-				expect( wrapper.emitted().input ).to.be.undefined;
+					expect( wrapper.emitted().input ).to.be.undefined;
 
-				on.firstCall.args[ 1 ]( evtStub );
+					on.firstCall.args[ 1 ]( evtStub );
 
-				setTimeout( () => {
+					setTimeout( () => {
+						expect( wrapper.emitted().input.length ).to.equal( 1 );
+						expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
+							'foo', evtStub, vm.instance
+						] );
+
+						done();
+					}, 350 );
+				} );
+			} );
+
+			// https://github.com/ckeditor/ckeditor5-vue/issues/149
+			it( 'should be emitted immediatelly despite being debounced', done => {
+				Vue.config.errorHandler = done;
+
+				sandbox.stub( ModelDocument.prototype, 'on' );
+				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
+
+				Vue.nextTick( () => {
+					const on = vm.instance.model.document.on;
+					const evtStub = {};
+
+					expect( on.calledOnce ).to.be.true;
+					expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
+					expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
+
+					expect( wrapper.emitted().input ).to.be.undefined;
+
+					on.firstCall.args[ 1 ]( evtStub );
+
 					expect( wrapper.emitted().input.length ).to.equal( 1 );
 					expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
 						'foo', evtStub, vm.instance
 					] );
 
 					done();
-				}, 350 );
+				} );
 			} );
 		} );
 
