@@ -32,38 +32,28 @@ describe( 'CKEditor Component', () => {
 		expect( CKEditorComponent.name ).to.equal( 'ckeditor' );
 	} );
 
-	it( 'calls editor#create when initializing', done => {
-		Vue.config.errorHandler = done;
-
+	it( 'calls editor#create when initializing', async () => {
 		const stub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 		const { wrapper } = createComponent();
 
-		Vue.nextTick( () => {
-			sinon.assert.calledOnce( stub );
+		await Vue.nextTick();
 
-			wrapper.destroy();
-			done();
-		} );
+		sinon.assert.calledOnce( stub );
+		wrapper.destroy();
 	} );
 
-	it( 'calls editor#destroy when destroying', done => {
-		Vue.config.errorHandler = done;
-
+	it( 'calls editor#destroy when destroying', async () => {
 		const stub = sandbox.stub( MockEditor.prototype, 'destroy' ).resolves();
 		const { wrapper, vm } = createComponent();
 
-		Vue.nextTick( () => {
-			wrapper.destroy();
-			sinon.assert.calledOnce( stub );
-			expect( vm.instance ).to.be.null;
+		await Vue.nextTick();
 
-			done();
-		} );
+		wrapper.destroy();
+		sinon.assert.calledOnce( stub );
+		expect( vm.instance ).to.be.null;
 	} );
 
-	it( 'passes editor promise rejection error to console.error', done => {
-		Vue.config.errorHandler = done;
-
+	it( 'passes editor promise rejection error to console.error', async () => {
 		const error = new Error( 'Something went wrong.' );
 		const consoleErrorStub = sandbox.stub( console, 'error' );
 
@@ -71,33 +61,29 @@ describe( 'CKEditor Component', () => {
 
 		const { wrapper } = createComponent();
 
-		setTimeout( () => {
-			consoleErrorStub.restore();
+		await timeout( 0 );
 
-			expect( consoleErrorStub.calledOnce ).to.be.true;
-			expect( consoleErrorStub.firstCall.args[ 0 ] ).to.equal( error );
+		consoleErrorStub.restore();
 
-			wrapper.destroy();
-			done();
-		} );
+		expect( consoleErrorStub.calledOnce ).to.be.true;
+		expect( consoleErrorStub.firstCall.args[ 0 ] ).to.equal( error );
+
+		wrapper.destroy();
 	} );
 
 	describe( 'properties', () => {
 		describe( '#editor', () => {
-			it( 'accepts an editor constructor', done => {
-				Vue.config.errorHandler = done;
-
+			it( 'accepts an editor constructor', async () => {
 				const { wrapper, vm } = createComponent( {
 					editor: MockEditor
 				} );
 
-				Vue.nextTick( () => {
-					expect( vm.editor ).to.equal( MockEditor );
-					expect( vm.instance ).to.be.instanceOf( MockEditor );
+				await Vue.nextTick();
 
-					wrapper.destroy();
-					done();
-				} );
+				expect( vm.editor ).to.equal( MockEditor );
+				expect( vm.instance ).to.be.instanceOf( MockEditor );
+
+				wrapper.destroy();
 			} );
 		} );
 
@@ -107,20 +93,17 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/47.
-			it( 'should set the initial data', done => {
-				Vue.config.errorHandler = done;
-
+			it( 'should set the initial data', async () => {
 				const { wrapper, vm } = createComponent( {
 					value: 'foo'
 				} );
 
-				Vue.nextTick( () => {
-					expect( vm.instance.config.initialData ).to.equal( 'foo' );
-					expect( vm.instance.setDataCounter ).to.equal( 0 );
+				await Vue.nextTick();
 
-					wrapper.destroy();
-					done();
-				} );
+				expect( vm.instance.config.initialData ).to.equal( 'foo' );
+				expect( vm.instance.setDataCounter ).to.equal( 0 );
+
+				wrapper.destroy();
 			} );
 		} );
 
@@ -145,18 +128,15 @@ describe( 'CKEditor Component', () => {
 				expect( vm.disabled ).to.be.false;
 			} );
 
-			it( 'should set the initial editor#isReadOnly', done => {
-				Vue.config.errorHandler = done;
-
+			it( 'should set the initial editor#isReadOnly', async () => {
 				const { wrapper, vm } = createComponent( {
 					disabled: true
 				} );
 
-				Vue.nextTick( () => {
-					expect( vm.instance.isReadOnly ).to.be.true;
-					wrapper.destroy();
-					done();
-				} );
+				await Vue.nextTick();
+
+				expect( vm.instance.isReadOnly ).to.be.true;
+				wrapper.destroy();
 			} );
 		} );
 
@@ -165,22 +145,19 @@ describe( 'CKEditor Component', () => {
 				expect( vm.config ).to.deep.equal( {} );
 			} );
 
-			it( 'should set the initial editor#config', done => {
-				Vue.config.errorHandler = done;
-
+			it( 'should set the initial editor#config', async () => {
 				const { wrapper, vm } = createComponent( {
 					config: { foo: 'bar' }
 				} );
 
-				Vue.nextTick( () => {
-					expect( vm.instance.config ).to.deep.equal( { foo: 'bar' } );
-					wrapper.destroy();
-					done();
-				} );
+				await Vue.nextTick();
+
+				expect( vm.instance.config ).to.deep.equal( { foo: 'bar' } );
+				wrapper.destroy();
 			} );
 
 			// https://github.com/ckeditor/ckeditor5-vue/issues/101
-			it( 'should not be mutated', done => {
+			it( 'should not be mutated', async () => {
 				const createStub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 
 				const ParentComponent = {
@@ -210,230 +187,189 @@ describe( 'CKEditor Component', () => {
 					}
 				} );
 
-				Vue.nextTick( () => {
-					const fooEditorConfig = createStub.firstCall.args[ 1 ];
-					const barEditorConfig = createStub.secondCall.args[ 1 ];
-					const bazEditorConfig = createStub.thirdCall.args[ 1 ];
+				await Vue.nextTick();
 
-					expect( fooEditorConfig ).to.not.equal( barEditorConfig );
-					expect( fooEditorConfig ).to.not.equal( bazEditorConfig );
-					expect( barEditorConfig ).to.not.equal( bazEditorConfig );
+				const fooEditorConfig = createStub.firstCall.args[ 1 ];
+				const barEditorConfig = createStub.secondCall.args[ 1 ];
+				const bazEditorConfig = createStub.thirdCall.args[ 1 ];
 
-					expect( vm.editorConfig.initialData ).to.be.undefined;
+				expect( fooEditorConfig ).to.not.equal( barEditorConfig );
+				expect( fooEditorConfig ).to.not.equal( bazEditorConfig );
+				expect( barEditorConfig ).to.not.equal( bazEditorConfig );
 
-					wrapper.destroy();
-					done();
-				} );
+				expect( vm.editorConfig.initialData ).to.be.undefined;
+
+				wrapper.destroy();
 			} );
 		} );
 
-		it( '#instance should be defined', done => {
-			Vue.config.errorHandler = done;
+		it( '#instance should be defined', async () => {
+			await Vue.nextTick();
 
-			Vue.nextTick( () => {
-				expect( vm.instance ).to.be.instanceOf( MockEditor );
-
-				done();
-			} );
+			expect( vm.instance ).to.be.instanceOf( MockEditor );
 		} );
 	} );
 
 	describe( 'bindings', () => {
-		it( '#disabled should control editor#isReadOnly', done => {
-			Vue.config.errorHandler = done;
-
+		it( '#disabled should control editor#isReadOnly', async () => {
 			const { wrapper, vm } = createComponent( {
 				disabled: true
 			} );
 
-			Vue.nextTick( () => {
-				expect( vm.instance.isReadOnly ).to.be.true;
+			await Vue.nextTick();
 
-				wrapper.setProps( { disabled: false } );
+			expect( vm.instance.isReadOnly ).to.be.true;
 
-				Vue.nextTick( () => {
-					expect( vm.instance.isReadOnly ).to.be.false;
+			wrapper.setProps( { disabled: false } );
 
-					wrapper.destroy();
-					done();
-				} );
-			} );
+			await Vue.nextTick();
+
+			expect( vm.instance.isReadOnly ).to.be.false;
+
+			wrapper.destroy();
 		} );
 
-		it( '#value should trigger editor#setData', done => {
-			Vue.config.errorHandler = done;
+		it( '#value should trigger editor#setData', async () => {
+			await Vue.nextTick();
 
-			Vue.nextTick( () => {
-				const spy = sandbox.spy( vm.instance, 'setData' );
+			const spy = sandbox.spy( vm.instance, 'setData' );
+			wrapper.setProps( { value: 'foo' } );
 
-				wrapper.setProps( { value: 'foo' } );
+			await Vue.nextTick();
 
-				Vue.nextTick( () => {
-					wrapper.setProps( { value: 'bar' } );
+			wrapper.setProps( { value: 'bar' } );
 
-					Vue.nextTick( () => {
-						wrapper.setProps( { value: 'bar' } );
+			await Vue.nextTick();
 
-						Vue.nextTick( () => {
-							sinon.assert.calledTwice( spy );
+			sinon.assert.calledTwice( spy );
 
-							// Simulate typing: The #value changes but at the same time, the instance update
-							// its own data so instance.getData() and #value are immediately the same.
-							// Make sure instance.setData() is not called in this situation because it would destroy
-							// the selection.
-							wrapper.vm.$_lastEditorData = 'barq';
-							wrapper.setProps( { value: 'barq' } );
+			// Simulate typing: The #value changes but at the same time, the instance update
+			// its own data so instance.getData() and #value are immediately the same.
+			// Make sure instance.setData() is not called in this situation because it would destroy
+			// the selection.
+			wrapper.vm.$_lastEditorData = 'barq';
+			wrapper.setProps( { value: 'barq' } );
 
-							Vue.nextTick( () => {
-								sinon.assert.calledTwice( spy );
-								sinon.assert.calledWithExactly( spy.firstCall, 'foo' );
-								sinon.assert.calledWithExactly( spy.secondCall, 'bar' );
+			await Vue.nextTick();
 
-								done();
-							} );
-						} );
-					} );
-				} );
-			} );
+			sinon.assert.calledTwice( spy );
+			sinon.assert.calledWithExactly( spy.firstCall, 'foo' );
+			sinon.assert.calledWithExactly( spy.secondCall, 'bar' );
 		} );
 	} );
 
 	describe( 'events', () => {
-		it( 'emits #ready when editor is created', done => {
-			Vue.config.errorHandler = done;
+		it( 'emits #ready when editor is created', async () => {
+			await Vue.nextTick();
 
-			Vue.nextTick( () => {
-				expect( wrapper.emitted().ready.length ).to.equal( 1 );
-				expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
-
-				done();
-			} );
+			expect( wrapper.emitted().ready.length ).to.equal( 1 );
+			expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
 		} );
 
-		it( 'emits #destroy when editor is destroyed', done => {
-			Vue.config.errorHandler = done;
-
+		it( 'emits #destroy when editor is destroyed', async () => {
 			const { wrapper, vm } = createComponent();
 
-			Vue.nextTick( () => {
-				wrapper.destroy();
+			await Vue.nextTick();
 
-				expect( wrapper.emitted().destroy.length ).to.equal( 1 );
-				expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.instance ] );
+			wrapper.destroy();
 
-				done();
-			} );
+			expect( wrapper.emitted().destroy.length ).to.equal( 1 );
+			expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.instance ] );
 		} );
 
 		describe( '#input event', () => {
-			it( 'should be emitted but debounced when editor data changes', done => {
-				Vue.config.errorHandler = done;
-
+			it( 'should be emitted but debounced when editor data changes', async () => {
 				sandbox.stub( ModelDocument.prototype, 'on' );
 				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
-				Vue.nextTick( () => {
-					const on = vm.instance.model.document.on;
-					const evtStub = {};
+				await Vue.nextTick();
 
-					expect( on.calledOnce ).to.be.true;
-					expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
-					expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
-
-					expect( wrapper.emitted().input ).to.be.undefined;
-
-					on.firstCall.args[ 1 ]( evtStub );
-
-					setTimeout( () => {
-						expect( wrapper.emitted().input.length ).to.equal( 1 );
-						expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-							'foo', evtStub, vm.instance
-						] );
-
-						done();
-					}, 350 );
-				} );
-			} );
-
-			// https://github.com/ckeditor/ckeditor5-vue/issues/149
-			it( 'should be emitted immediatelly despite being debounced', done => {
-				Vue.config.errorHandler = done;
-
-				sandbox.stub( ModelDocument.prototype, 'on' );
-				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
-
-				Vue.nextTick( () => {
-					const on = vm.instance.model.document.on;
-					const evtStub = {};
-
-					expect( on.calledOnce ).to.be.true;
-					expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
-					expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
-
-					expect( wrapper.emitted().input ).to.be.undefined;
-
-					on.firstCall.args[ 1 ]( evtStub );
-
-					expect( wrapper.emitted().input.length ).to.equal( 1 );
-					expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-						'foo', evtStub, vm.instance
-					] );
-
-					done();
-				} );
-			} );
-		} );
-
-		it( 'emits #focus when editor editable is focused', done => {
-			Vue.config.errorHandler = done;
-
-			sandbox.stub( ViewDocument.prototype, 'on' );
-
-			Vue.nextTick( () => {
-				const on = vm.instance.editing.view.document.on;
+				const on = vm.instance.model.document.on;
 				const evtStub = {};
 
-				expect( on.calledTwice ).to.be.true;
-				expect( on.firstCall.args[ 0 ] ).to.equal( 'focus' );
+				expect( on.calledOnce ).to.be.true;
+				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
 				expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
 
-				expect( wrapper.emitted().focus ).to.be.undefined;
+				expect( wrapper.emitted().input ).to.be.undefined;
 
 				on.firstCall.args[ 1 ]( evtStub );
 
-				expect( wrapper.emitted().focus.length ).to.equal( 1 );
-				expect( wrapper.emitted().focus[ 0 ] ).to.deep.equal( [
-					evtStub, vm.instance
-				] );
+				await timeout( 350 );
 
-				done();
+				expect( wrapper.emitted().input.length ).to.equal( 1 );
+				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
+					'foo', evtStub, vm.instance
+				] );
+			} );
+
+			// https://github.com/ckeditor/ckeditor5-vue/issues/149
+			it( 'should be emitted immediatelly despite being debounced', async () => {
+				sandbox.stub( ModelDocument.prototype, 'on' );
+				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
+
+				await Vue.nextTick();
+
+				const on = vm.instance.model.document.on;
+				const evtStub = {};
+
+				expect( on.calledOnce ).to.be.true;
+				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
+				expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
+
+				expect( wrapper.emitted().input ).to.be.undefined;
+
+				on.firstCall.args[ 1 ]( evtStub );
+
+				expect( wrapper.emitted().input.length ).to.equal( 1 );
+				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
+					'foo', evtStub, vm.instance
+				] );
 			} );
 		} );
 
-		it( 'emits #blur when editor editable is focused', done => {
-			Vue.config.errorHandler = done;
-
+		it( 'emits #focus when editor editable is focused', async () => {
 			sandbox.stub( ViewDocument.prototype, 'on' );
 
-			Vue.nextTick( () => {
-				const on = vm.instance.editing.view.document.on;
-				const evtStub = {};
+			await Vue.nextTick();
 
-				expect( on.calledTwice ).to.be.true;
-				expect( on.secondCall.args[ 0 ] ).to.equal( 'blur' );
-				expect( on.secondCall.args[ 1 ] ).to.be.a( 'function' );
+			const on = vm.instance.editing.view.document.on;
+			const evtStub = {};
 
-				expect( wrapper.emitted().blur ).to.be.undefined;
+			expect( on.calledTwice ).to.be.true;
+			expect( on.firstCall.args[ 0 ] ).to.equal( 'focus' );
+			expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
 
-				on.secondCall.args[ 1 ]( evtStub );
+			expect( wrapper.emitted().focus ).to.be.undefined;
 
-				expect( wrapper.emitted().blur.length ).to.equal( 1 );
-				expect( wrapper.emitted().blur[ 0 ] ).to.deep.equal( [
-					evtStub, vm.instance
-				] );
+			on.firstCall.args[ 1 ]( evtStub );
 
-				done();
-			} );
+			expect( wrapper.emitted().focus.length ).to.equal( 1 );
+			expect( wrapper.emitted().focus[ 0 ] ).to.deep.equal( [
+				evtStub, vm.instance
+			] );
+		} );
+
+		it( 'emits #blur when editor editable is focused', async () => {
+			sandbox.stub( ViewDocument.prototype, 'on' );
+
+			await Vue.nextTick();
+
+			const on = vm.instance.editing.view.document.on;
+			const evtStub = {};
+
+			expect( on.calledTwice ).to.be.true;
+			expect( on.secondCall.args[ 0 ] ).to.equal( 'blur' );
+			expect( on.secondCall.args[ 1 ] ).to.be.a( 'function' );
+
+			expect( wrapper.emitted().blur ).to.be.undefined;
+
+			on.secondCall.args[ 1 ]( evtStub );
+
+			expect( wrapper.emitted().blur.length ).to.equal( 1 );
+			expect( wrapper.emitted().blur[ 0 ] ).to.deep.equal( [
+				evtStub, vm.instance
+			] );
 		} );
 	} );
 
@@ -445,5 +381,9 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		return { wrapper, vm: wrapper.vm };
+	}
+
+	function timeout( delay ) {
+		return new Promise( resolve => setTimeout( resolve, delay ) );
 	}
 } );

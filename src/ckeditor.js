@@ -128,7 +128,7 @@ export default {
 	methods: {
 		$_setUpEditorEvents() {
 			const editor = this.instance;
-			// Use the leading edge so the first event in the series is emitter immediatelly.
+			// Use the leading edge so the first event in the series is emitted immediately.
 			// Failing to do so leads to race conditions, for instance, when the component value
 			// is set twice in a time span shorter than the debounce time.
 			// See https://github.com/ckeditor/ckeditor5-vue/issues/149.

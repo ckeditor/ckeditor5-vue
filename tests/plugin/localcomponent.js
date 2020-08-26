@@ -12,12 +12,12 @@ class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
 
 describe( 'CKEditor plugin', () => {
-	it( 'works when the component is used locally', done => {
+	it( 'works when the component is used locally', async () => {
 		const wrapperFoo = mount( {
 			template: '<ckeditor :editor="editorType"></ckeditor>',
 			components: {
 				ckeditor: CKEditor.component
-			},
+			}
 		}, {
 			data: () => {
 				return {
@@ -30,7 +30,7 @@ describe( 'CKEditor plugin', () => {
 			template: '<ckeditor :editor="editorType"></ckeditor>',
 			components: {
 				ckeditor: CKEditor.component
-			},
+			}
 		}, {
 			data: () => {
 				return {
@@ -39,11 +39,9 @@ describe( 'CKEditor plugin', () => {
 			}
 		} );
 
-		Vue.nextTick( () => {
-			expect( wrapperFoo.vm.$children[ 0 ].instance ).to.be.instanceOf( FooEditor );
-			expect( wrapperBar.vm.$children[ 0 ].instance ).to.be.instanceOf( BarEditor );
+		await Vue.nextTick();
 
-			done();
-		} );
+		expect( wrapperFoo.vm.$children[ 0 ].instance ).to.be.instanceOf( FooEditor );
+		expect( wrapperBar.vm.$children[ 0 ].instance ).to.be.instanceOf( BarEditor );
 	} );
 } );

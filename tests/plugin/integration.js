@@ -3,6 +3,8 @@
  * For licensing, see LICENSE.md.
  */
 
+/* global document */
+
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
@@ -13,7 +15,8 @@ Vue.use( CKEditor );
 describe( 'CKEditor plugin', () => {
 	describe( 'Vue.use()', () => {
 		it( 'works with an actual editor build', done => {
-			Vue.config.errorHandler = done;
+			const domElement = document.createElement( 'div' );
+			document.body.appendChild( domElement );
 
 			const wrapper = mount( {
 				template: '<ckeditor :editor="editor" @ready="onReady()" v-model="editorData"></ckeditor>',
@@ -29,7 +32,7 @@ describe( 'CKEditor plugin', () => {
 					}
 				}
 			}, {
-				attachToDocument: true,
+				attachTo: domElement,
 				data: () => {
 					return {
 						editor: ClassicEditor,
