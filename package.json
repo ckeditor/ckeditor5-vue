@@ -1,6 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-vue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/ckeditor.js",
   "description": "Official Vue.js component for CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
