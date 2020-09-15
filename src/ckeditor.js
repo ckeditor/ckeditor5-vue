@@ -9,6 +9,10 @@ import { debounce } from 'lodash-es';
 
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
+// For better performance, we use a variable instead of a Vue reactive property.
+// https://github.com/ckeditor/ckeditor5-vue/issues/153
+let editorInstance;
+
 export default {
 	name: 'ckeditor',
 
@@ -41,10 +45,6 @@ export default {
 
 	data() {
 		return {
-			// Don't define it in #props because it produces a warning.
-			// https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
-			instance: null,
-
 			$_lastEditorData: {
 				type: String,
 				default: ''
@@ -64,7 +64,7 @@ export default {
 		this.editor.create( this.$el, editorConfig )
 			.then( editor => {
 				// Save the reference to the instance for further use.
-				this.instance = editor;
+				editorInstance = editor;
 
 				// Set initial disabled state.
 				editor.isReadOnly = this.disabled;
@@ -80,14 +80,14 @@ export default {
 	},
 
 	beforeDestroy() {
-		if ( this.instance ) {
-			this.instance.destroy();
-			this.instance = null;
+		if ( editorInstance ) {
+			editorInstance.destroy();
+			editorInstance = null;
 		}
 
 		// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
 		// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
-		this.$emit( 'destroy', this.instance );
+		this.$emit( 'destroy', editorInstance );
 	},
 
 	watch: {
@@ -115,19 +115,19 @@ export default {
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
 			if ( newValue !== oldValue && newValue !== this.$_lastEditorData ) {
-				this.instance.setData( newValue );
+				editorInstance.setData( newValue );
 			}
 		},
 
 		// Synchronize changes of #disabled.
 		disabled( val ) {
-			this.instance.isReadOnly = val;
+			editorInstance.isReadOnly = val;
 		}
 	},
 
 	methods: {
 		$_setUpEditorEvents() {
-			const editor = this.instance;
+			const editor = editorInstance;
 			// Use the leading edge so the first event in the series is emitted immediately.
 			// Failing to do so leads to race conditions, for instance, when the component value
 			// is set twice in a time span shorter than the debounce time.

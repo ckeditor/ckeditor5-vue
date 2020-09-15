@@ -13,10 +13,19 @@ class BarEditor extends MockEditor {}
 
 describe( 'CKEditor plugin', () => {
 	it( 'should work when the component is used locally', async () => {
-		const wrapperFoo = mount( {
-			template: '<ckeditor :editor="editorType"></ckeditor>',
+		let fooInstance = null;
+		let barInstance = null;
+
+		// Wrapper Foo
+		mount( {
+			template: '<ckeditor :editor="editorType" @ready="storeInstance"></ckeditor>',
 			components: {
 				ckeditor: CKEditor.component
+			},
+			methods: {
+				storeInstance( instance ) {
+					fooInstance = instance;
+				}
 			}
 		}, {
 			data: () => {
@@ -26,10 +35,16 @@ describe( 'CKEditor plugin', () => {
 			}
 		} );
 
-		const wrapperBar = mount( {
-			template: '<ckeditor :editor="editorType"></ckeditor>',
+		// Wrapper Bar
+		mount( {
+			template: '<ckeditor :editor="editorType" @ready="storeInstance"></ckeditor>',
 			components: {
 				ckeditor: CKEditor.component
+			},
+			methods: {
+				storeInstance( instance ) {
+					barInstance = instance;
+				}
 			}
 		}, {
 			data: () => {
@@ -41,7 +56,7 @@ describe( 'CKEditor plugin', () => {
 
 		await Vue.nextTick();
 
-		expect( wrapperFoo.vm.$children[ 0 ].instance ).to.be.instanceOf( FooEditor );
-		expect( wrapperBar.vm.$children[ 0 ].instance ).to.be.instanceOf( BarEditor );
+		expect( fooInstance ).to.be.instanceOf( FooEditor );
+		expect( barInstance ).to.be.instanceOf( BarEditor );
 	} );
 } );
