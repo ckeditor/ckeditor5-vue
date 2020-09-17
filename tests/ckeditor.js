@@ -50,7 +50,7 @@ describe( 'CKEditor Component', () => {
 
 		wrapper.destroy();
 		sinon.assert.calledOnce( stub );
-		expect( vm.instance ).to.be.null;
+		expect( vm.$_instance ).to.be.null;
 	} );
 
 	it( 'should pass the editor promise rejection error to console#error()', async () => {
@@ -81,7 +81,7 @@ describe( 'CKEditor Component', () => {
 				await Vue.nextTick();
 
 				expect( vm.editor ).to.equal( MockEditor );
-				expect( vm.instance ).to.be.instanceOf( MockEditor );
+				expect( vm.$_instance ).to.be.instanceOf( MockEditor );
 
 				wrapper.destroy();
 			} );
@@ -100,8 +100,8 @@ describe( 'CKEditor Component', () => {
 
 				await Vue.nextTick();
 
-				expect( vm.instance.config.initialData ).to.equal( 'foo' );
-				expect( vm.instance.setDataCounter ).to.equal( 0 );
+				expect( vm.$_instance.config.initialData ).to.equal( 'foo' );
+				expect( vm.$_instance.setDataCounter ).to.equal( 0 );
 
 				wrapper.destroy();
 			} );
@@ -135,7 +135,7 @@ describe( 'CKEditor Component', () => {
 
 				await Vue.nextTick();
 
-				expect( vm.instance.isReadOnly ).to.be.true;
+				expect( vm.$_instance.isReadOnly ).to.be.true;
 				wrapper.destroy();
 			} );
 		} );
@@ -152,7 +152,7 @@ describe( 'CKEditor Component', () => {
 
 				await Vue.nextTick();
 
-				expect( vm.instance.config ).to.deep.equal( { foo: 'bar' } );
+				expect( vm.$_instance.config ).to.deep.equal( { foo: 'bar' } );
 				wrapper.destroy();
 			} );
 
@@ -206,7 +206,7 @@ describe( 'CKEditor Component', () => {
 		it( '#instance should be defined', async () => {
 			await Vue.nextTick();
 
-			expect( vm.instance ).to.be.instanceOf( MockEditor );
+			expect( vm.$_instance ).to.be.instanceOf( MockEditor );
 		} );
 	} );
 
@@ -218,13 +218,13 @@ describe( 'CKEditor Component', () => {
 
 			await Vue.nextTick();
 
-			expect( vm.instance.isReadOnly ).to.be.true;
+			expect( vm.$_instance.isReadOnly ).to.be.true;
 
 			wrapper.setProps( { disabled: false } );
 
 			await Vue.nextTick();
 
-			expect( vm.instance.isReadOnly ).to.be.false;
+			expect( vm.$_instance.isReadOnly ).to.be.false;
 
 			wrapper.destroy();
 		} );
@@ -232,7 +232,7 @@ describe( 'CKEditor Component', () => {
 		it( '#value should trigger editor#setData', async () => {
 			await Vue.nextTick();
 
-			const spy = sandbox.spy( vm.instance, 'setData' );
+			const spy = sandbox.spy( vm.$_instance, 'setData' );
 			wrapper.setProps( { value: 'foo' } );
 
 			await Vue.nextTick();
@@ -263,7 +263,7 @@ describe( 'CKEditor Component', () => {
 			await Vue.nextTick();
 
 			expect( wrapper.emitted().ready.length ).to.equal( 1 );
-			expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
+			expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.$_instance ] );
 		} );
 
 		it( 'should emit #destroy when the editor is destroyed', async () => {
@@ -274,7 +274,7 @@ describe( 'CKEditor Component', () => {
 			wrapper.destroy();
 
 			expect( wrapper.emitted().destroy.length ).to.equal( 1 );
-			expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.instance ] );
+			expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.$_instance ] );
 		} );
 
 		describe( '#input event', () => {
@@ -284,7 +284,7 @@ describe( 'CKEditor Component', () => {
 
 				await Vue.nextTick();
 
-				const on = vm.instance.model.document.on;
+				const on = vm.$_instance.model.document.on;
 				const evtStub = {};
 
 				expect( on.calledOnce ).to.be.true;
@@ -299,7 +299,7 @@ describe( 'CKEditor Component', () => {
 
 				expect( wrapper.emitted().input.length ).to.equal( 1 );
 				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-					'foo', evtStub, vm.instance
+					'foo', evtStub, vm.$_instance
 				] );
 			} );
 
@@ -310,7 +310,7 @@ describe( 'CKEditor Component', () => {
 
 				await Vue.nextTick();
 
-				const on = vm.instance.model.document.on;
+				const on = vm.$_instance.model.document.on;
 				const evtStub = {};
 
 				expect( on.calledOnce ).to.be.true;
@@ -323,7 +323,7 @@ describe( 'CKEditor Component', () => {
 
 				expect( wrapper.emitted().input.length ).to.equal( 1 );
 				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-					'foo', evtStub, vm.instance
+					'foo', evtStub, vm.$_instance
 				] );
 			} );
 		} );
@@ -333,7 +333,7 @@ describe( 'CKEditor Component', () => {
 
 			await Vue.nextTick();
 
-			const on = vm.instance.editing.view.document.on;
+			const on = vm.$_instance.editing.view.document.on;
 			const evtStub = {};
 
 			expect( on.calledTwice ).to.be.true;
@@ -346,7 +346,7 @@ describe( 'CKEditor Component', () => {
 
 			expect( wrapper.emitted().focus.length ).to.equal( 1 );
 			expect( wrapper.emitted().focus[ 0 ] ).to.deep.equal( [
-				evtStub, vm.instance
+				evtStub, vm.$_instance
 			] );
 		} );
 
@@ -355,7 +355,7 @@ describe( 'CKEditor Component', () => {
 
 			await Vue.nextTick();
 
-			const on = vm.instance.editing.view.document.on;
+			const on = vm.$_instance.editing.view.document.on;
 			const evtStub = {};
 
 			expect( on.calledTwice ).to.be.true;
@@ -368,7 +368,7 @@ describe( 'CKEditor Component', () => {
 
 			expect( wrapper.emitted().blur.length ).to.equal( 1 );
 			expect( wrapper.emitted().blur[ 0 ] ).to.deep.equal( [
-				evtStub, vm.instance
+				evtStub, vm.$_instance
 			] );
 		} );
 	} );

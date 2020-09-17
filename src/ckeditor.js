@@ -43,7 +43,7 @@ export default {
 		return {
 			// Don't define it in #props because it produces a warning.
 			// https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
-			instance: null,
+			$_instance: null,
 
 			$_lastEditorData: {
 				type: String,
@@ -63,8 +63,8 @@ export default {
 
 		this.editor.create( this.$el, editorConfig )
 			.then( editor => {
-				// Save the reference to the instance for further use.
-				this.instance = editor;
+				// Save the reference to the $_instance for further use.
+				this.$_instance = editor;
 
 				// Set initial disabled state.
 				editor.isReadOnly = this.disabled;
@@ -80,19 +80,19 @@ export default {
 	},
 
 	beforeDestroy() {
-		if ( this.instance ) {
-			this.instance.destroy();
-			this.instance = null;
+		if ( this.$_instance ) {
+			this.$_instance.destroy();
+			this.$_instance = null;
 		}
 
 		// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
 		// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
-		this.$emit( 'destroy', this.instance );
+		this.$emit( 'destroy', this.$_instance );
 	},
 
 	watch: {
 		value( newValue, oldValue ) {
-			// Synchronize changes of instance#value. There are two sources of changes:
+			// Synchronize changes of #value. There are two sources of changes:
 			//
 			//                     External value change      ------\
 			//                                                       -----> +-----------+
@@ -102,32 +102,33 @@ export default {
 			//              (typing, commands, collaboration)
 			//
 			// Case 1: If the change was external (via props), the editor data must be synced with
-			// the component using instance#setData() and it is OK to destroy the selection.
+			// the component using $_instance#setData() and it is OK to destroy the selection.
 			//
 			// Case 2: If the change is the result of internal data change, the #value is the same as
-			// instance#$_lastEditorData, which has been cached on instance#change:data. If we called
-			// instance#setData() at this point, that would demolish the selection.
+			// this.$_lastEditorData, which has been cached on #change:data. If we called
+			// $_instance#setData() at this point, that would demolish the selection.
 			//
-			// To limit the number of instance#setData() which is time-consuming when there is a
+			// To limit the number of $_instance#setData() which is time-consuming when there is a
 			// lot of data we make sure:
 			//    * the new value is at least different than the old value (Case 1.)
 			//    * the new value is different than the last internal instance state (Case 2.)
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
 			if ( newValue !== oldValue && newValue !== this.$_lastEditorData ) {
-				this.instance.setData( newValue );
+				this.$_instance.setData( newValue );
 			}
 		},
 
 		// Synchronize changes of #disabled.
 		disabled( val ) {
-			this.instance.isReadOnly = val;
+			this.$_instance.isReadOnly = val;
 		}
 	},
 
 	methods: {
 		$_setUpEditorEvents() {
-			const editor = this.instance;
+			const editor = this.$_instance;
+
 			// Use the leading edge so the first event in the series is emitted immediately.
 			// Failing to do so leads to race conditions, for instance, when the component value
 			// is set twice in a time span shorter than the debounce time.
@@ -142,7 +143,7 @@ export default {
 				this.$emit( 'input', data, evt, editor );
 			}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
 
-			// Debounce emitting the #input event. When data is huge, instance#getData()
+			// Debounce emitting the #input event. When data is huge, $_instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
