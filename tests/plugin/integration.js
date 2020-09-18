@@ -22,7 +22,7 @@ describe( 'CKEditor plugin', () => {
 				template: '<ckeditor :editor="editor" @ready="onReady()" v-model="editorData"></ckeditor>',
 				methods: {
 					onReady: () => {
-						const instance = wrapper.vm.$children[ 0 ].instance;
+						const instance = wrapper.vm.$children[ 0 ].$_instance;
 
 						expect( instance ).to.be.instanceOf( ClassicEditor );
 						expect( instance.getData() ).to.equal( '<p>foo</p>' );

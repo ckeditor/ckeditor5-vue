@@ -41,7 +41,7 @@ describe( 'CKEditor plugin', () => {
 
 		await Vue.nextTick();
 
-		expect( wrapperFoo.vm.$children[ 0 ].instance ).to.be.instanceOf( FooEditor );
-		expect( wrapperBar.vm.$children[ 0 ].instance ).to.be.instanceOf( BarEditor );
+		expect( wrapperFoo.vm.$children[ 0 ].$_instance ).to.be.instanceOf( FooEditor );
+		expect( wrapperBar.vm.$children[ 0 ].$_instance ).to.be.instanceOf( BarEditor );
 	} );
 } );
