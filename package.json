@@ -20,9 +20,9 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.0.0",
-    "@ckeditor/ckeditor5-build-classic": "^21.0.0",
-    "@ckeditor/ckeditor5-dev-env": "^23.1.0",
-    "@ckeditor/ckeditor5-dev-utils": "^23.1.0",
+    "@ckeditor/ckeditor5-build-classic": "^22.0.0",
+    "@ckeditor/ckeditor5-dev-env": "^23.5.1",
+    "@ckeditor/ckeditor5-dev-utils": "^23.5.1",
     "@vue/test-utils": "^1.0.4",
     "babel-loader": "^8.0.5",
     "chai": "^4.1.2",
