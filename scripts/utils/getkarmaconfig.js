@@ -29,6 +29,13 @@ module.exports = function getKarmaConfig() {
 					}
 				}
 			]
+		},
+
+		resolve: {
+			alias: {
+				'vue': 'vue/dist/vue.esm-bundler.js',
+				'@vue/test-utils': '@vue/test-utils/dist/vue-test-utils.esm-bundler.js'
+			}
 		}
 	};
 

@@ -9,10 +9,10 @@ const CKEditor = {
 	/**
 	 * Installs the plugin, registering the `<ckeditor>` component.
 	 *
-	 * @param {Vue} Vue The Vue object.
+	 * @param {Vue} app The application instance.
 	 */
-	install( Vue ) {
-		Vue.component( 'ckeditor', CKEditorComponent );
+	install( app ) {
+		app.component( 'ckeditor', CKEditorComponent );
 	},
 	component: CKEditorComponent
 };

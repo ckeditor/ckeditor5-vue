@@ -5,7 +5,7 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
+/* eslint-env node */
 
 require( '@ckeditor/ckeditor5-dev-env' )
 	.bumpVersions( {

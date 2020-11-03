@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
-'use strict';
-
 /* eslint-env node */
 
 const path = require( 'path' );
@@ -56,5 +54,14 @@ module.exports = {
 				exclude: /node_modules/
 			}
 		]
+	},
+
+	externals: {
+		vue: {
+			commonjs: 'vue',
+			commonjs2: 'vue',
+			amd: 'vue',
+			root: 'Vue'
+		}
 	}
 };
