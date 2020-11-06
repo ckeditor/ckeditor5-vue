@@ -46,7 +46,7 @@
 	</div>
 
 	<script>
-		Vue.createApp(
+		window.app = Vue.createApp(
 			{
 				data() {
 					return {
@@ -61,6 +61,8 @@
 						this.editorDisabled = !this.editorDisabled;
 					},
 					onEditorReady( editor ) {
+						window.editor = editor;
+
 						console.log( 'Editor is ready.', { editor } );
 					},
 					onEditorFocus( event, editor ) {
@@ -77,7 +79,9 @@
 					}
 				}
 			}
-		).use( CKEditor ).mount( '#app' );
+		);
+
+		app.use( CKEditor ).mount( '#app' );
 	</script>
 </body>
 
