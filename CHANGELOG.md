@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## [2.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v1.0.3...v2.0.0) (2020-11-20)
+
+The CKEditor 5 WYSIWYG editor component is compatible with Vue.js 3+. For Vue.js 2.x, check the dedicated [`@ckeditor/ckeditor5-vue2`](https://www.npmjs.com/package/@ckeditor/ckeditor5-vue2) component.
+
+
 ## [1.0.3](https://github.com/ckeditor/ckeditor5-vue/compare/v1.0.2...v1.0.3) (2020-09-22)
 
 ### Bug fixes
