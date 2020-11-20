@@ -1,4 +1,4 @@
-# CKEditor 5 rich text editor component for Vue.js
+# CKEditor 5 rich text editor component for Vue.js 3+
 
 [![npm version](https://badge.fury.io/js/%40ckeditor%2Fckeditor5-vue.svg)](https://www.npmjs.com/package/@ckeditor/ckeditor5-vue)
 [![Build Status](https://travis-ci.org/ckeditor/ckeditor5-vue.svg?branch=master)](https://travis-ci.org/ckeditor/ckeditor5-vue)
@@ -7,18 +7,20 @@
 [![Dependency Status](https://david-dm.org/ckeditor/ckeditor5-vue/status.svg)](https://david-dm.org/ckeditor/ckeditor5-vue)
 [![devDependency Status](https://david-dm.org/ckeditor/ckeditor5-vue/dev-status.svg)](https://david-dm.org/ckeditor/ckeditor5-vue?type=dev)
 
+⚠️ This repository contains the CKEditor 5 component for Vue.js `3+`. The component for lower Vue.js versions is located in another repository - [@ckeditor/ckeditor5-vue2](https://github.com/ckeditor/ckeditor5-vue2).
+
 Official [CKEditor 5](https://ckeditor.com/ckeditor-5/) rich text editor component for Vue.js.
 
 ## [Developer Documentation](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html) 📖
 
 See the ["Rich text editor component for Vue.js"](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html) guide in the [CKEditor 5 documentation](https://ckeditor.com/docs/ckeditor5/latest) to learn more:
 
-* [Quick start](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html#quick-start)
-* [Using component locally](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html#using-component-locally)
-* [Using CKEditor from source](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html#using-ckeditor-from-source)
-* [Using the Document editor build](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html#using-the-document-editor-build)
-* [Component directives](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html#component-directives)
-* [Component events](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html#component-events)
+* [Quick start](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs-v3.html#quick-start)
+* [Using component locally](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs-v3.html#using-component-locally)
+* [Using CKEditor from source](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs-v3.html#using-ckeditor-from-source)
+* [Using the Document editor build](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs-v3.html#using-the-document-editor-build)
+* [Component directives](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs-v3.html#component-directives)
+* [Component events](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs-v3.html#component-events)
 
 ## Contributing
 
@@ -42,14 +44,7 @@ The command accepts the following options:
 * `--source-map` (`-s`) &ndash; Whether to attach the source maps.
 * `--watch` (`-w`) &ndash; Whether to watch test files.
 * `--reporter` (`-r`) &ndash; Reporter for Karma (default: `mocha`, can be changed to `dots`).
-* `--browsers` (`-b`) &ndash; Browsers that will be used to run tests (default: `Chrome`, available: `Firefox`, `BrowserStack_Edge` and `BrowserStack_Safari`).
-
-**Note:** If you would like to use the `BrowserStack_*` browser, you need to specify the `BROWSER_STACK_USERNAME` and `BROWSER_STACK_ACCESS_KEY` as
-an environment variable, e.g.:
-
-```bash
-BROWSER_STACK_USERNAME=[...] BROWSER_STACK_ACCESS_KEY=[...] npm t -- -b BrowserStack_Edge,BrowserStack_Safari -c
-```
+* `--browsers` (`-b`) &ndash; Browsers that will be used to run tests (default: `Chrome`, available: `Firefox`).
 
 If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `npm run develop` in order to do it automatically.
 

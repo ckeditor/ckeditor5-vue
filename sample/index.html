@@ -17,15 +17,14 @@
 	</style>
 </head>
 <body>
-	<script src="../node_modules/vue/dist/vue.js"></script>
+	<script src="../node_modules/vue/dist/vue.global.js"></script>
 	<script src="../node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 	<script src="../dist/ckeditor.js"></script>
 
 	<div id="app">
-		<h1>CKEditor 5 – Vue.js Component – development sample</h1>
+		<h1>CKEditor 5 – Vue.js 3.x Component – development sample</h1>
 
 		<ckeditor
-			editor="classic"
 			tag-name="textarea"
 			v-model="editorData"
 			:editor="editor"
@@ -36,52 +35,54 @@
 			@blur="onEditorBlur"
 			@input="onEditorInput"
 			@destroy="onEditorDestroy"
-		></ckeditor>
-		<button v-on:click="toggleEditorDisabled()">
+		>
+		</ckeditor>
+		<button @click="toggleEditorDisabled">
 			{{ editorDisabled ? 'Enable' : 'Disable' }} editor
 		</button>
-		<button v-on:click="destroyApp()">Destroy the app</button>
 
 		<h2>Live editor data</h2>
 		<textarea v-model="editorData"></textarea>
 	</div>
 
 	<script>
-		Vue.use( CKEditor );
+		window.app = Vue.createApp(
+			{
+				data() {
+					return {
+						editor: ClassicEditor,
+						editorData: '<p>Hello world!</p>',
+						editorConfig: { toolbar: [ 'heading', '|', 'bold', 'italic' ] },
+						editorDisabled: false
+					};
+				},
+				methods: {
+					toggleEditorDisabled() {
+						this.editorDisabled = !this.editorDisabled;
+					},
+					onEditorReady( editor ) {
+						window.editor = editor;
 
-		const app = new Vue( {
-			el: '#app',
-			data: {
-				editor: ClassicEditor,
-				editorData: '<p>Hello world!</p>',
-				editorConfig: { toolbar: [ 'heading', '|', 'bold', 'italic' ] },
-				editorDisabled: false
-			},
-			methods: {
-				toggleEditorDisabled() {
-					this.editorDisabled = !this.editorDisabled;
-				},
-				destroyApp() {
-					app.$destroy();
-				},
-
-				onEditorReady( editor ) {
-					console.log( 'Editor is ready.', { editor } );
-				},
-				onEditorFocus( event, editor ) {
-					console.log( 'Editor focused.', { event, editor } );
-				},
-				onEditorBlur( event, editor ) {
-					console.log( 'Editor blurred.', { event, editor } );
-				},
-				onEditorInput( data, event, editor ) {
-					console.log( 'Editor data input.', { event, editor, data } );
-				},
-				onEditorDestroy( editor ) {
-					console.log( 'Editor destroyed.', { editor } );
+						console.log( 'Editor is ready.', { editor } );
+					},
+					onEditorFocus( event, editor ) {
+						console.log( 'Editor focused.', { event, editor } );
+					},
+					onEditorBlur( event, editor ) {
+						console.log( 'Editor blurred.', { event, editor } );
+					},
+					onEditorInput( data, event, editor ) {
+						console.log( 'Editor data input.', { event, editor, data } );
+					},
+					onEditorDestroy( editor ) {
+						console.log( 'Editor destroyed.', { editor } );
+					}
 				}
 			}
-		} );
+		);
+
+		app.use( CKEditor ).mount( '#app' );
 	</script>
 </body>
+
 </html>

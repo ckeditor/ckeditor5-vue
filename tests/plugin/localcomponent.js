@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md.
  */
 
-import Vue from 'vue';
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import { MockEditor } from '../_utils/mockeditor';
@@ -14,7 +14,7 @@ class BarEditor extends MockEditor {}
 describe( 'CKEditor plugin', () => {
 	it( 'should work when the component is used locally', async () => {
 		const wrapperFoo = mount( {
-			template: '<ckeditor :editor="editorType"></ckeditor>',
+			template: '<ckeditor ref="ckeditor-foo" :editor="editorType"></ckeditor>',
 			components: {
 				ckeditor: CKEditor.component
 			}
@@ -27,7 +27,7 @@ describe( 'CKEditor plugin', () => {
 		} );
 
 		const wrapperBar = mount( {
-			template: '<ckeditor :editor="editorType"></ckeditor>',
+			template: '<ckeditor ref="ckeditor-bar" :editor="editorType"></ckeditor>',
 			components: {
 				ckeditor: CKEditor.component
 			}
@@ -39,9 +39,15 @@ describe( 'CKEditor plugin', () => {
 			}
 		} );
 
-		await Vue.nextTick();
+		await nextTick();
 
-		expect( wrapperFoo.vm.$children[ 0 ].$_instance ).to.be.instanceOf( FooEditor );
-		expect( wrapperBar.vm.$children[ 0 ].$_instance ).to.be.instanceOf( BarEditor );
+		const instanceFoo = wrapperFoo.findComponent( { ref: 'ckeditor-foo' } ).vm.$_instance;
+		const instanceBar = wrapperBar.findComponent( { ref: 'ckeditor-bar' } ).vm.$_instance;
+
+		expect( instanceFoo ).to.be.instanceOf( FooEditor );
+		expect( instanceBar ).to.be.instanceOf( BarEditor );
+
+		wrapperFoo.unmount();
+		wrapperBar.unmount();
 	} );
 } );
