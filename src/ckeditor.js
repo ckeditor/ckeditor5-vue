@@ -45,6 +45,8 @@ export default {
 		}
 	},
 
+	emits: ['blur', 'destroy', 'focus', 'input', 'ready', 'update:modelValue'],
+
 	data() {
 		return {
 			// Don't define it in #props because it produces a warning.
