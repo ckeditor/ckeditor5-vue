@@ -27,7 +27,7 @@
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "eslint": "^7.0.0",
-    "eslint-config-ckeditor5": "^3.0.0",
+    "eslint-config-ckeditor5": "^4.0.0",
     "istanbul-instrumenter-loader": "^3.0.0",
     "karma": "^5.0.9",
     "karma-chai": "^0.1.0",
@@ -62,7 +62,8 @@
     "prerelease": "npm run build; if [ -n \"$(git status dist/ --porcelain)\" ]; then git add -u dist/ && git commit -m 'Internal: Build.'; fi",
     "release": "node ./scripts/release.js",
     "test": "node ./scripts/test.js",
-    "coverage": "node ./scripts/test.js --coverage"
+    "coverage": "node ./scripts/test.js --coverage",
+    "lint": "eslint --quiet \"**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -76,5 +77,8 @@
   "bugs": {
     "url": "https://github.com/ckeditor/ckeditor5-vue/issues"
   },
-  "homepage": "https://github.com/ckeditor/ckeditor5-vue"
+  "homepage": "https://github.com/ckeditor/ckeditor5-vue",
+  "eslintIgnore": [
+    "dist/**"
+  ]
 }
