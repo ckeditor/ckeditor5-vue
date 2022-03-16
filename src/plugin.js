@@ -3,12 +3,11 @@
  * For licensing, see LICENSE.md.
  */
 
-import Vue, { version as vueVersion } from 'vue';
+import * as Vue from 'vue';
 import CKEditorComponent from './ckeditor.js';
 
 /* istanbul ignore next */
-const version = Vue ? Vue.version : vueVersion;
-const [ major ] = version.split( '.' ).map( i => parseInt( i, 10 ) );
+const [ major ] = Vue.version.split( '.' ).map( i => parseInt( i, 10 ) );
 
 /* istanbul ignore if */
 if ( major < 3 ) {

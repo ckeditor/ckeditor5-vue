@@ -41,8 +41,8 @@ describe( 'CKEditor plugin', () => {
 
 		await nextTick();
 
-		const instanceFoo = wrapperFoo.findComponent( { ref: 'ckeditor-foo' } ).vm.$_instance;
-		const instanceBar = wrapperBar.findComponent( { ref: 'ckeditor-bar' } ).vm.$_instance;
+		const instanceFoo = wrapperFoo.findComponent( { ref: 'ckeditor-foo' } ).vm.instance;
+		const instanceBar = wrapperBar.findComponent( { ref: 'ckeditor-bar' } ).vm.instance;
 
 		expect( instanceFoo ).to.be.instanceOf( FooEditor );
 		expect( instanceBar ).to.be.instanceOf( BarEditor );
