@@ -1,6 +1,21 @@
 Changelog
 =========
 
+## [3.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v2.0.1...v3.0.0) (2022-03-17)
+
+### BREAKING CHANGES
+
+* Upgraded the minimal versions of Node.js to `14.0.0` due to the end of LTS.
+
+### Bug fixes
+
+* Marked the editor instance `this.instance` as a raw object so that it will never be converted to a proxy. Closes [#203](https://github.com/ckeditor/ckeditor5-vue/issues/203). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/05e2897e4274bfd584d60f02480634bff987ab8a))
+
+### Other changes
+
+* Updated the required version of Node.js to 14. See [ckeditor/ckeditor5#10972](https://github.com/ckeditor/ckeditor5/issues/10972). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/fd410eccc93d130fd6e50a1019915a3e0a2f2e67))
+
+
 ## [2.0.1](https://github.com/ckeditor/ckeditor5-vue/compare/v2.0.0...v2.0.1) (2020-11-23)
 
 ### Bug fixes
