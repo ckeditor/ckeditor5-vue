@@ -47,7 +47,7 @@ describe( 'CKEditor Component', () => {
 
 		wrapper.unmount();
 		sinon.assert.calledOnce( stub );
-		expect( vm.$_instance ).to.be.null;
+		expect( vm.instance ).to.be.null;
 	} );
 
 	it( 'should pass the editor promise rejection error to console#error()', async () => {
@@ -78,7 +78,7 @@ describe( 'CKEditor Component', () => {
 				await nextTick();
 
 				expect( vm.editor ).to.equal( MockEditor );
-				expect( vm.$_instance ).to.be.instanceOf( MockEditor );
+				expect( vm.instance ).to.be.instanceOf( MockEditor );
 
 				wrapper.unmount();
 			} );
@@ -103,8 +103,8 @@ describe( 'CKEditor Component', () => {
 
 				await nextTick();
 
-				expect( vm.$_instance.config.initialData ).to.equal( 'foo' );
-				expect( vm.$_instance.setDataCounter ).to.equal( 0 );
+				expect( vm.instance.config.initialData ).to.equal( 'foo' );
+				expect( vm.instance.setDataCounter ).to.equal( 0 );
 
 				wrapper.unmount();
 			} );
@@ -150,7 +150,7 @@ describe( 'CKEditor Component', () => {
 
 				await nextTick();
 
-				expect( vm.$_instance.isReadOnly ).to.be.true;
+				expect( vm.instance.isReadOnly ).to.be.true;
 				wrapper.unmount();
 			} );
 		} );
@@ -173,7 +173,7 @@ describe( 'CKEditor Component', () => {
 
 				await nextTick();
 
-				expect( vm.$_instance.config ).to.deep.equal( { foo: 'bar' } );
+				expect( vm.instance.config ).to.deep.equal( { foo: 'bar' } );
 				wrapper.unmount();
 			} );
 
@@ -228,7 +228,7 @@ describe( 'CKEditor Component', () => {
 
 			await nextTick();
 
-			expect( vm.$_instance ).to.be.instanceOf( MockEditor );
+			expect( vm.instance ).to.be.instanceOf( MockEditor );
 
 			wrapper.unmount();
 		} );
@@ -242,13 +242,13 @@ describe( 'CKEditor Component', () => {
 
 			await nextTick();
 
-			expect( vm.$_instance.isReadOnly ).to.be.true;
+			expect( vm.instance.isReadOnly ).to.be.true;
 
 			wrapper.setProps( { disabled: false } );
 
 			await nextTick();
 
-			expect( vm.$_instance.isReadOnly ).to.be.false;
+			expect( vm.instance.isReadOnly ).to.be.false;
 
 			wrapper.unmount();
 		} );
@@ -258,7 +258,7 @@ describe( 'CKEditor Component', () => {
 
 			await nextTick();
 
-			const spy = sandbox.spy( vm.$_instance, 'setData' );
+			const spy = sandbox.spy( vm.instance, 'setData' );
 			wrapper.setProps( { modelValue: 'foo' } );
 
 			await nextTick();
@@ -273,7 +273,7 @@ describe( 'CKEditor Component', () => {
 			// its own data so instance.getData() and #modelValue are immediately the same.
 			// Make sure instance.setData() is not called in this situation because it would destroy
 			// the selection.
-			wrapper.vm.$_lastEditorData = 'barq';
+			wrapper.vm.lastEditorData = 'barq';
 			wrapper.setProps( { modelValue: 'barq' } );
 
 			await nextTick();
@@ -293,7 +293,7 @@ describe( 'CKEditor Component', () => {
 			await nextTick();
 
 			expect( wrapper.emitted().ready.length ).to.equal( 1 );
-			expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.$_instance ] );
+			expect( wrapper.emitted().ready[ 0 ] ).to.deep.equal( [ vm.instance ] );
 
 			wrapper.unmount();
 		} );
@@ -306,7 +306,7 @@ describe( 'CKEditor Component', () => {
 			wrapper.unmount();
 
 			expect( wrapper.emitted().destroy.length ).to.equal( 1 );
-			expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.$_instance ] );
+			expect( wrapper.emitted().destroy[ 0 ] ).to.deep.equal( [ vm.instance ] );
 		} );
 
 		describe( '#input event', () => {
@@ -318,7 +318,7 @@ describe( 'CKEditor Component', () => {
 
 				await nextTick();
 
-				const on = vm.$_instance.model.document.on;
+				const on = vm.instance.model.document.on;
 				const evtStub = {};
 
 				expect( on.calledOnce ).to.be.true;
@@ -333,7 +333,7 @@ describe( 'CKEditor Component', () => {
 
 				expect( wrapper.emitted().input.length ).to.equal( 1 );
 				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-					'foo', evtStub, vm.$_instance
+					'foo', evtStub, vm.instance
 				] );
 
 				wrapper.unmount();
@@ -348,7 +348,7 @@ describe( 'CKEditor Component', () => {
 
 				await nextTick();
 
-				const on = vm.$_instance.model.document.on;
+				const on = vm.instance.model.document.on;
 				const evtStub = {};
 
 				expect( on.calledOnce ).to.be.true;
@@ -361,7 +361,7 @@ describe( 'CKEditor Component', () => {
 
 				expect( wrapper.emitted().input.length ).to.equal( 1 );
 				expect( wrapper.emitted().input[ 0 ] ).to.deep.equal( [
-					'foo', evtStub, vm.$_instance
+					'foo', evtStub, vm.instance
 				] );
 
 				wrapper.unmount();
@@ -375,7 +375,7 @@ describe( 'CKEditor Component', () => {
 
 			await nextTick();
 
-			const on = vm.$_instance.editing.view.document.on;
+			const on = vm.instance.editing.view.document.on;
 			const evtStub = {};
 
 			expect( on.calledTwice ).to.be.true;
@@ -388,7 +388,7 @@ describe( 'CKEditor Component', () => {
 
 			expect( wrapper.emitted().focus.length ).to.equal( 1 );
 			expect( wrapper.emitted().focus[ 0 ] ).to.deep.equal( [
-				evtStub, vm.$_instance
+				evtStub, vm.instance
 			] );
 
 			wrapper.unmount();
@@ -401,7 +401,7 @@ describe( 'CKEditor Component', () => {
 
 			await nextTick();
 
-			const on = vm.$_instance.editing.view.document.on;
+			const on = vm.instance.editing.view.document.on;
 			const evtStub = {};
 
 			expect( on.calledTwice ).to.be.true;
@@ -414,7 +414,7 @@ describe( 'CKEditor Component', () => {
 
 			expect( wrapper.emitted().blur.length ).to.equal( 1 );
 			expect( wrapper.emitted().blur[ 0 ] ).to.deep.equal( [
-				evtStub, vm.$_instance
+				evtStub, vm.instance
 			] );
 
 			wrapper.unmount();
