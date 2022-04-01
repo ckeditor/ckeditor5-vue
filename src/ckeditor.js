@@ -127,7 +127,9 @@ export default {
 
 		// Synchronize changes of #disabled.
 		disabled( val ) {
-			this.instance.isReadOnly = val;
+			if (this.instance) {	
+				this.instance.isReadOnly = val;
+			}
 		}
 	},
 
