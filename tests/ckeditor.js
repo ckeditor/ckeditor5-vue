@@ -132,25 +132,36 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-		describe( '#disabled', () => {
-			it( 'should be defined', async () => {
+		describe( '_readOnlyLocks', () => {
+			it( 'should be an instance of set', async () => {
 				const { wrapper, vm } = mountComponent();
 
 				await nextTick();
 
-				expect( vm.disabled ).to.be.false;
+				expect( vm.instance._readOnlyLocks ).to.be.instanceOf( Set );
 
 				wrapper.unmount();
 			} );
 
-			it( 'should set the initial editor#isReadOnly', async () => {
+			it( 'should be empty when editor is not set to read only mode', async () => {
+				const { wrapper, vm } = mountComponent();
+
+				await nextTick();
+
+				expect( vm.instance._readOnlyLocks.size ).to.equal( 0 );
+
+				wrapper.unmount();
+			} );
+
+			it( 'should contain one lock when editor is set to read only mode', async () => {
 				const { wrapper, vm } = mountComponent( {
 					disabled: true
 				} );
 
 				await nextTick();
 
-				expect( vm.instance.isReadOnly ).to.be.true;
+				expect( vm.instance._readOnlyLocks.size ).to.equal( 1 );
+
 				wrapper.unmount();
 			} );
 		} );
@@ -235,20 +246,20 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	describe( 'bindings', () => {
-		it( '#disabled should control editor#isReadOnly', async () => {
+		it( '#disabled should control read only mode of the editor', async () => {
 			const { wrapper, vm } = mountComponent( {
 				disabled: true
 			} );
 
 			await nextTick();
 
-			expect( vm.instance.isReadOnly ).to.be.true;
+			expect( vm.instance._readOnlyLocks.size ).to.equal( 1 );
 
 			wrapper.setProps( { disabled: false } );
 
 			await nextTick();
 
-			expect( vm.instance.isReadOnly ).to.be.false;
+			expect( vm.instance._readOnlyLocks.size ).to.equal( 0 );
 
 			wrapper.unmount();
 		} );
