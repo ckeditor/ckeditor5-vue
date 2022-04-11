@@ -8,6 +8,7 @@
 /* eslint-env node */
 
 const path = require( 'path' );
+const webpack = require( 'webpack' );
 
 const options = parseArguments( process.argv.slice( 2 ) );
 
@@ -17,6 +18,13 @@ module.exports = function getKarmaConfig() {
 
 	const webpackConfig = {
 		mode: 'development',
+
+		plugins: [
+			new webpack.DefinePlugin( {
+				__VUE_OPTIONS_API__: true,
+				__VUE_PROD_DEVTOOLS__: false
+			} )
+		],
 
 		module: {
 			rules: [
