@@ -1,6 +1,18 @@
 Changelog
 =========
 
+## [4.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v3.0.0...v4.0.0) (2022-04-12)
+
+### BREAKING CHANGES
+
+* Due to introducing the lock mechanism for the `Editor#isReadOnly` property, the `<CKEditor>` component uses the new way of enabling the read-only mode in the editor. The component requires an instance of CKEditor 5 in version 34 or higher. See [ckeditor/ckeditor5#10496](https://github.com/ckeditor/ckeditor5/issues/10496).
+
+### Other changes
+
+* Aligned the `<CKEditor>` component API to use the new lock mechanism when enabling/disabling the read-only mode. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/5b45af9bc81dbf65fdc4b76eafbb6ca6916ff406))
+* Bumped Karma test runner to v6.x. Closes [#210](https://github.com/ckeditor/ckeditor5-vue/issues/210). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/38c25bf57b3e3dd5bf503366f9901076b9353602))
+
+
 ## [3.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v2.0.1...v3.0.0) (2022-03-17)
 
 ### BREAKING CHANGES
