@@ -27,6 +27,8 @@ export class MockEditor {
 				document: new ViewDocument()
 			}
 		};
+
+		this._readOnlyLocks = new Set();
 	}
 
 	static create( el, config ) {
@@ -46,6 +48,14 @@ export class MockEditor {
 
 	getData() {
 		return this.data;
+	}
+
+	enableReadOnlyMode( key ) {
+		this._readOnlyLocks.add( key );
+	}
+
+	disableReadOnlyMode( key ) {
+		this._readOnlyLocks.delete( key );
 	}
 }
 

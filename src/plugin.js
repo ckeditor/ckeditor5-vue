@@ -3,6 +3,8 @@
  * For licensing, see LICENSE.md.
  */
 
+/* eslint-env browser */
+
 import Vue, { version as vueVersion } from 'vue';
 import CKEditorComponent from './ckeditor.js';
 

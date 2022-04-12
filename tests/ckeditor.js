@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md.
  */
 
-/* global console, setTimeout */
+/* global window, console, setTimeout */
 
 import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
@@ -15,18 +15,66 @@ import {
 } from './_utils/mockeditor';
 
 describe( 'CKEditor Component', () => {
-	let sandbox;
+	let sandbox, CKEDITOR_VERSION;
 
 	beforeEach( () => {
+		CKEDITOR_VERSION = window.CKEDITOR_VERSION;
+
+		window.CKEDITOR_VERSION = '34.0.0';
 		sandbox = sinon.createSandbox();
 	} );
 
 	afterEach( () => {
+		window.CKEDITOR_VERSION = CKEDITOR_VERSION;
 		sandbox.restore();
 	} );
 
 	it( 'should have a name', () => {
 		expect( CKEditorComponent.name ).to.equal( 'ckeditor' );
+	} );
+
+	it( 'should print a warning if the "window.CKEDITOR_VERSION" variable is not available', async () => {
+		const warnStub = sandbox.stub( console, 'warn' );
+
+		delete window.CKEDITOR_VERSION;
+
+		sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
+		const { wrapper } = mountComponent();
+
+		await nextTick();
+		wrapper.unmount();
+
+		expect( warnStub.callCount ).to.equal( 1 );
+		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
+	} );
+
+	it( 'should print a warning if using CKEditor 5 in version lower than 34', async () => {
+		const warnStub = sandbox.stub( console, 'warn' );
+
+		window.CKEDITOR_VERSION = '30.0.0';
+
+		sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
+		const { wrapper } = mountComponent();
+
+		await nextTick();
+		wrapper.unmount();
+
+		expect( warnStub.callCount ).to.equal( 1 );
+		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'The <CKEditor> component requires using CKEditor 5 in version 34 or higher.' );
+	} );
+
+	it( 'should not print any warninig if using CKEditor 5 in version 34 or higher', async () => {
+		const warnStub = sandbox.stub( console, 'warn' );
+
+		window.CKEDITOR_VERSION = '34.0.0';
+
+		sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
+		const { wrapper } = mountComponent();
+
+		await nextTick();
+		wrapper.unmount();
+
+		expect( warnStub.callCount ).to.equal( 0 );
 	} );
 
 	it( 'should call editor#create when initializing', async () => {
@@ -132,25 +180,36 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-		describe( '#disabled', () => {
-			it( 'should be defined', async () => {
+		describe( '_readOnlyLocks', () => {
+			it( 'should be an instance of set', async () => {
 				const { wrapper, vm } = mountComponent();
 
 				await nextTick();
 
-				expect( vm.disabled ).to.be.false;
+				expect( vm.instance._readOnlyLocks ).to.be.instanceOf( Set );
 
 				wrapper.unmount();
 			} );
 
-			it( 'should set the initial editor#isReadOnly', async () => {
+			it( 'should be empty when editor is not set to read only mode', async () => {
+				const { wrapper, vm } = mountComponent();
+
+				await nextTick();
+
+				expect( vm.instance._readOnlyLocks.size ).to.equal( 0 );
+
+				wrapper.unmount();
+			} );
+
+			it( 'should contain one lock when editor is set to read only mode', async () => {
 				const { wrapper, vm } = mountComponent( {
 					disabled: true
 				} );
 
 				await nextTick();
 
-				expect( vm.instance.isReadOnly ).to.be.true;
+				expect( vm.instance._readOnlyLocks.size ).to.equal( 1 );
+
 				wrapper.unmount();
 			} );
 		} );
@@ -235,20 +294,26 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	describe( 'bindings', () => {
-		it( '#disabled should control editor#isReadOnly', async () => {
+		it( '#disabled should control read only mode of the editor', async () => {
 			const { wrapper, vm } = mountComponent( {
 				disabled: true
 			} );
 
 			await nextTick();
 
-			expect( vm.instance.isReadOnly ).to.be.true;
+			expect( vm.instance._readOnlyLocks.size ).to.equal( 1 );
 
 			wrapper.setProps( { disabled: false } );
 
 			await nextTick();
 
-			expect( vm.instance.isReadOnly ).to.be.false;
+			expect( vm.instance._readOnlyLocks.size ).to.equal( 0 );
+
+			wrapper.setProps( { disabled: true } );
+
+			await nextTick();
+
+			expect( vm.instance._readOnlyLocks.size ).to.equal( 1 );
 
 			wrapper.unmount();
 		} );
