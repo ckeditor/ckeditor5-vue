@@ -5,7 +5,6 @@
 
 /* global window, console, setTimeout */
 
-import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditorComponent from '../src/ckeditor';
 import {
@@ -15,11 +14,7 @@ import {
 } from './_utils/mockeditor';
 import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror';
 import turnOffDefaultErrorCatching from './_utils/turnoffdefaulterrorcatching';
-
-const waitForEditorToBeReady = async () => {
-	await nextTick();
-	await new Promise( res => setTimeout( res, 1 ) );
-};
+import waitForEditorToBeReady from './_utils/waitforeditortobeready'
 
 describe( 'CKEditor Component', () => {
 	let sandbox, CKEDITOR_VERSION;

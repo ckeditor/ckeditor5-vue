@@ -3,15 +3,15 @@
  * For licensing, see LICENSE.md.
  */
 
-import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import { MockEditor } from '../_utils/mockeditor';
+import waitForEditorToBeReady from '../_utils/waitforeditortobeready'
 
 class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
 
-describe( 'CKEditor plugin', () => {
+describe( 'CKEditor plugin', async () => {
 	it( 'should work when the component is used locally', async () => {
 		const wrapperFoo = mount( {
 			template: '<ckeditor ref="ckeditor-foo" :editor="editorType"></ckeditor>',
@@ -39,10 +39,10 @@ describe( 'CKEditor plugin', () => {
 			}
 		} );
 
-		await nextTick();
+		await waitForEditorToBeReady();
 
-		const instanceFoo = wrapperFoo.findComponent( { ref: 'ckeditor-foo' } ).vm.instance;
-		const instanceBar = wrapperBar.findComponent( { ref: 'ckeditor-bar' } ).vm.instance;
+		const instanceFoo = wrapperFoo.findComponent( { ref: 'ckeditor-foo' } ).vm.getEditor();
+		const instanceBar = wrapperBar.findComponent( { ref: 'ckeditor-bar' } ).vm.getEditor();
 
 		expect( instanceFoo ).to.be.instanceOf( FooEditor );
 		expect( instanceBar ).to.be.instanceOf( BarEditor );
