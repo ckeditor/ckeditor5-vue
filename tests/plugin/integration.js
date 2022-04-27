@@ -8,7 +8,7 @@
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import waitForEditorToBeReady from '../_utils/waitforeditortobeready'
+import waitForEditorToBeReady from '../_utils/waitforeditortobeready';
 
 describe( 'CKEditor plugin', () => {
 	describe( 'Plugin installed globally', () => {

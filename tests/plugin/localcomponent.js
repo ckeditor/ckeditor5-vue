@@ -6,12 +6,12 @@
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import { MockEditor } from '../_utils/mockeditor';
-import waitForEditorToBeReady from '../_utils/waitforeditortobeready'
+import waitForEditorToBeReady from '../_utils/waitforeditortobeready';
 
 class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
 
-describe( 'CKEditor plugin', async () => {
+describe( 'CKEditor plugin', () => {
 	it( 'should work when the component is used locally', async () => {
 		const wrapperFoo = mount( {
 			template: '<ckeditor ref="ckeditor-foo" :editor="editorType"></ckeditor>',

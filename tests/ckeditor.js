@@ -14,7 +14,7 @@ import {
 } from './_utils/mockeditor';
 import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror';
 import turnOffDefaultErrorCatching from './_utils/turnoffdefaulterrorcatching';
-import waitForEditorToBeReady from './_utils/waitforeditortobeready'
+import waitForEditorToBeReady from './_utils/waitforeditortobeready';
 
 describe( 'CKEditor Component', () => {
 	let sandbox, CKEDITOR_VERSION;
