@@ -18,9 +18,7 @@ describe( 'CKEditor plugin', () => {
 			const wrapper = mount( {
 				template: '<ckeditor :editor="editor" @ready="onReady" v-model="editorData"></ckeditor>',
 				methods: {
-					onReady: () => {
-						const instance = wrapper.findComponent( { name: 'ckeditor' } ).vm.instance;
-
+					onReady: instance => {
 						expect( instance ).to.be.instanceOf( ClassicEditor );
 						expect( instance.getData() ).to.equal( '<p>foo</p>' );
 
