@@ -14,7 +14,7 @@ import {
 } from './_utils/mockeditor';
 import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror';
 import turnOffDefaultErrorCatching from './_utils/turnoffdefaulterrorcatching';
-import waitForEditorToBeReady from './_utils/waitforeditortobeready'
+import waitForEditorToBeReady from './_utils/waitforeditortobeready';
 
 describe( 'CKEditor Component', () => {
 	let sandbox, CKEDITOR_VERSION;
@@ -153,7 +153,7 @@ describe( 'CKEditor Component', () => {
 
 	describe( 'in case of error handling', () => {
 		it( 'should restart the editor if a runtime error occurs', async () => {
-			const { vm } = await new Promise( ( res, rej ) => {
+			const { vm } = await new Promise( res => {
 				const response = mountComponent( {
 					editor: MockEditor
 				} );
@@ -162,6 +162,7 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			await waitForEditorToBeReady();
+			/* eslint-disable ckeditor5-rules/ckeditor-error-message */
 			const error = new CKEditorError( 'foo', vm.getEditor() );
 
 			const firstEditor = vm.getEditor();
@@ -217,7 +218,6 @@ describe( 'CKEditor Component', () => {
 
 				await waitForEditorToBeReady();
 
-
 				expect( vm.getEditor().config.initialData ).to.equal( 'foo' );
 				expect( vm.getEditor().setDataCounter ).to.equal( 0 );
 
@@ -253,7 +253,6 @@ describe( 'CKEditor Component', () => {
 
 				await waitForEditorToBeReady();
 
-
 				expect( vm.getEditor()._readOnlyLocks ).to.be.instanceOf( Set );
 
 				wrapper.unmount();
@@ -263,7 +262,6 @@ describe( 'CKEditor Component', () => {
 				const { wrapper, vm } = mountComponent();
 
 				await waitForEditorToBeReady();
-
 
 				expect( vm.getEditor()._readOnlyLocks.size ).to.equal( 0 );
 
@@ -276,7 +274,6 @@ describe( 'CKEditor Component', () => {
 				} );
 
 				await waitForEditorToBeReady();
-
 
 				expect( vm.getEditor()._readOnlyLocks.size ).to.equal( 1 );
 
@@ -326,7 +323,6 @@ describe( 'CKEditor Component', () => {
 				const wrapper = mount( ParentComponent );
 
 				await waitForEditorToBeReady();
-
 
 				const fooEditorConfig = createStub.firstCall.args[ 1 ];
 				const barEditorConfig = createStub.secondCall.args[ 1 ];
@@ -432,7 +428,7 @@ describe( 'CKEditor Component', () => {
 			wrapper.unmount();
 
 			expect( wrapper.emitted().destroy.length ).to.equal( 1 );
-			expect( wrapper.emitted().destroy[ 0 ][ 0 ] ).to.be.instanceOf( MockEditor )
+			expect( wrapper.emitted().destroy[ 0 ][ 0 ] ).to.be.instanceOf( MockEditor );
 		} );
 
 		xdescribe( '#input event', () => {
@@ -447,7 +443,7 @@ describe( 'CKEditor Component', () => {
 				const on = vm.getEditor().model.document.on;
 				const evtStub = {};
 
-				console.log(on)
+				console.log( on );
 
 				expect( on.calledOnce ).to.be.true;
 				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );

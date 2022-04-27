@@ -8,7 +8,7 @@
 import { mount } from '@vue/test-utils';
 import CKEditor from '../../src/plugin';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import waitForEditorToBeReady from '../_utils/waitforeditortobeready'
+import waitForEditorToBeReady from '../_utils/waitforeditortobeready';
 
 describe( 'CKEditor plugin', () => {
 	describe( 'Plugin installed globally', () => {
@@ -20,9 +20,9 @@ describe( 'CKEditor plugin', () => {
 				template: '<ckeditor :editor="editor" @ready="onReady" v-model="editorData"></ckeditor>',
 				methods: {
 					onReady: async () => {
-						await waitForEditorToBeReady()
+						await waitForEditorToBeReady();
 
-						const instance = wrapper.findComponent( { name: 'ckeditor' } ).vm.getEditor()
+						const instance = wrapper.findComponent( { name: 'ckeditor' } ).vm.getEditor();
 
 						expect( instance ).to.be.instanceOf( ClassicEditor );
 						expect( instance.getData() ).to.equal( '<p>foo</p>' );

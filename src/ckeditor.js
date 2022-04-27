@@ -25,7 +25,7 @@ export default {
 		 */
 		this.watchdog = null;
 
-		this.lastEditorData = ''
+		this.lastEditorData = '';
 
 		const { CKEDITOR_VERSION } = window;
 
@@ -239,7 +239,7 @@ export default {
 					this.$emit( 'ready', editor );
 
 					return editor;
-				} )
+				} );
 		},
 
 		/**
