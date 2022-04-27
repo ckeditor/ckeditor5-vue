@@ -5,6 +5,10 @@
 
 export class ModelDocument {
 	on() {}
+	off() {}
+	getRootNames() {
+		return [ 'main' ];
+	}
 }
 
 export class ViewDocument {
@@ -15,7 +19,14 @@ export class MockEditor {
 	constructor( el, config ) {
 		this.element = el;
 		this.config = config;
-		this.data = '';
+		this.data = {
+			get() {
+				return '';
+			},
+			set() {
+
+			}
+		};
 		this.setDataCounter = 0;
 
 		this.model = {
