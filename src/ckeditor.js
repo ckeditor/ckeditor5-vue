@@ -8,11 +8,7 @@
 import { h, markRaw } from 'vue';
 import { debounce } from 'lodash-es';
 import EditorWatchdog from '@ckeditor/ckeditor5-watchdog/src/editorwatchdog';
-// import uid from '@ckeditor/ckeditor5-utils/src/uid';
-// import { ContextWatchdogContext } from './ckeditorcontext.jsx';
-// import ContextWatchdog from '@ckeditor/ckeditor5-watchdog/src/contextwatchdog';
-
-const SAMPLE_READ_ONLY_LOCK_ID = 'Integration Sample';
+const VUE_READ_ONLY_LOCK_ID = 'ckeditor-vue';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
 export default {
@@ -134,9 +130,9 @@ export default {
 			}
 
 			if ( readOnlyMode ) {
-				editor.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+				editor.enableReadOnlyMode( VUE_READ_ONLY_LOCK_ID );
 			} else {
-				editor.disableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+				editor.disableReadOnlyMode( VUE_READ_ONLY_LOCK_ID );
 			}
 		}
 	},
@@ -191,17 +187,23 @@ export default {
 		 * @private
 		 */
 		_initializeEditor() {
-			// if ( this.context instanceof ContextWatchdog ) {
-			// 	this.watchdog = new EditorWatchdogAdapter( this.context );
-			// } else {
 			const Watchdog = this.getWatchdog();
+
 			this.watchdog = markRaw( new Watchdog( this.editor ) );
-			// }
+
 			this.watchdog.setCreator( ( el, config ) => this._createEditor( el, config ) );
 
 			this.watchdog.on( 'error', ( _, { error, causesRestart } ) => {
 				console.error( error );
 				this.$emit( 'error', { phase: 'runtime', willEditorRestart: causesRestart, error } );
+			} );
+
+			this.watchdog.on( 'stateChange', () => {
+				const currentState = this.watchdog.state;
+
+				if ( currentState === 'crashedPermanently' ) {
+					this.getEditor().enableReadOnlyMode( 'crashed-editor' );
+				}
 			} );
 
 			this.watchdog.create( this.$el, this._getConfig() )
@@ -239,7 +241,7 @@ export default {
 
 					// Set initial disabled state.
 					if ( this.disabled ) {
-						editor.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+						editor.enableReadOnlyMode( VUE_READ_ONLY_LOCK_ID );
 					}
 
 					// Let the world know the editor is ready.
