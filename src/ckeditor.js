@@ -197,6 +197,10 @@ export default {
 			} );
 
 			this.watchdog.on( 'stateChange', () => {
+				if ( !this.getEditor() ) {
+					return;
+				}
+
 				const currentState = this.watchdog.state;
 
 				if ( currentState === 'crashedPermanently' ) {
