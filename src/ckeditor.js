@@ -194,7 +194,7 @@ export default {
 			this.watchdog.setCreator( ( el, config ) => this._createEditor( el, config ) );
 
 			this.watchdog.on( 'error', ( _, { error, causesRestart } ) => {
-				console.error( error );
+				console.error('watchdog', error );
 				this.$emit( 'error', { phase: 'runtime', willEditorRestart: causesRestart, error } );
 			} );
 
