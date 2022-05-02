@@ -199,11 +199,13 @@ export default {
 			} );
 
 			this.watchdog.on( 'stateChange', () => {
-				if ( !this.getEditor() ) {
+				if ( !this.getEditor() || !this.watchdog ) {
 					return;
 				}
 
 				const currentState = this.watchdog.state;
+
+				console.log( 'watchdog', currentState );
 
 				if ( currentState === 'crashedPermanently' ) {
 					this.getEditor().enableReadOnlyMode( 'crashed-editor' );
