@@ -67,8 +67,6 @@ export default {
 		return {
 			// Don't define it in #props because it produces a warning.
 			// https://v3.vuejs.org/guide/component-props.html#one-way-data-flow
-			instance: null,
-
 			lastEditorData: {
 				type: String,
 				default: ''
