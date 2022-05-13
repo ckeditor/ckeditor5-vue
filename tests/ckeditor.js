@@ -496,7 +496,7 @@ describe( 'CKEditor Component', () => {
 			expect( wrapper.emitted().destroy[ 0 ][ 0 ] ).to.be.instanceOf( MockEditor );
 		} );
 
-		xdescribe( '#input event', () => {
+		describe( '#input event', () => {
 			it( 'should be emitted but debounced when editor data changes', async () => {
 				const { wrapper, vm } = mountComponent();
 
@@ -508,7 +508,6 @@ describe( 'CKEditor Component', () => {
 				const on = vm.getEditor().model.document.on;
 				const evtStub = {};
 
-				expect( on.calledOnce ).to.be.true;
 				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
 				expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
 
@@ -538,7 +537,6 @@ describe( 'CKEditor Component', () => {
 				const on = vm.getEditor().model.document.on;
 				const evtStub = {};
 
-				expect( on.calledOnce ).to.be.true;
 				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
 				expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
 

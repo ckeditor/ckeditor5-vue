@@ -174,11 +174,7 @@ export default {
 		},
 
 		getEditor() {
-			if ( !this.watchdog ) {
-				return null;
-			}
-
-			return this.watchdog.editor;
+			return this.watchdog && this.watchdog.editor;
 		},
 
 		/**
