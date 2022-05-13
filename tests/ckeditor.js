@@ -12,9 +12,8 @@ import {
 	ModelDocument,
 	ViewDocument
 } from './_utils/mockeditor';
-import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror';
-import turnOffDefaultErrorCatching from './_utils/turnoffdefaulterrorcatching';
 import waitForEditorToBeReady from './_utils/waitforeditortobeready';
+import throwError from './_utils/throwerror';
 
 describe( 'CKEditor Component', () => {
 	let sandbox, CKEDITOR_VERSION;
@@ -151,6 +150,20 @@ describe( 'CKEditor Component', () => {
 		CKEditorComponent.methods.getWatchdog = originalFunction;
 	} );
 
+	it( 'getEditor returns null if not initialized', async () => {
+		const { vm } = await new Promise( res => {
+			const response = mountComponent( {
+				editor: MockEditor
+			} );
+
+			return res( response );
+		} );
+
+		const editor = vm.getEditor();
+
+		expect( editor ).to.equal( null );
+	} );
+
 	describe( 'in case of error handling', () => {
 		it( 'should restart the editor if a runtime error occurs', async () => {
 			const { vm } = await new Promise( res => {
@@ -162,17 +175,10 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			await waitForEditorToBeReady();
-			/* eslint-disable ckeditor5-rules/ckeditor-error-message */
-			const error = new CKEditorError( 'foo', vm.getEditor() );
 
 			const firstEditor = vm.getEditor();
 
-			await turnOffDefaultErrorCatching( () => {
-				setTimeout( () => {
-					throw error;
-				} );
-				return waitForEditorToBeReady();
-			} );
+			await throwError( vm );
 
 			const secondEditor = vm.getEditor();
 
@@ -180,6 +186,26 @@ describe( 'CKEditor Component', () => {
 			expect( secondEditor ).to.be.instanceOf( MockEditor );
 
 			expect( firstEditor ).to.not.equal( secondEditor );
+		} );
+
+		it( 'should disable the editor if too many runtime error occurs', async () => {
+			const { vm } = await new Promise( res => {
+				const response = mountComponent( {
+					editor: MockEditor
+				} );
+
+				return res( response );
+			} );
+
+			await waitForEditorToBeReady();
+
+			await throwError( vm );
+			await throwError( vm );
+			await throwError( vm );
+			await throwError( vm );
+			await throwError( vm );
+
+			expect( vm.getEditor()._readOnlyLocks.size ).to.equal( 1 );
 		} );
 	} );
 
