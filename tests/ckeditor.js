@@ -14,6 +14,7 @@ import {
 } from './_utils/mockeditor';
 import waitForEditorToBeReady from './_utils/waitforeditortobeready';
 import throwError from './_utils/throwerror';
+import { nextTick } from 'vue';
 
 describe( 'CKEditor Component', () => {
 	let sandbox, CKEDITOR_VERSION;
@@ -406,6 +407,22 @@ describe( 'CKEditor Component', () => {
 			await waitForEditorToBeReady();
 
 			expect( vm.getEditor()._readOnlyLocks.size ).to.equal( 0 );
+
+			wrapper.setProps( { disabled: true } );
+
+			await waitForEditorToBeReady();
+
+			expect( vm.getEditor()._readOnlyLocks.size ).to.equal( 1 );
+
+			wrapper.unmount();
+		} );
+
+		it( '#disabled watch should handle unregistered editor', async () => {
+			const { wrapper, vm } = mountComponent( {
+				disabled: false
+			} );
+
+			nextTick();
 
 			wrapper.setProps( { disabled: true } );
 
