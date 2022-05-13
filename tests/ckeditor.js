@@ -469,8 +469,6 @@ describe( 'CKEditor Component', () => {
 				const on = vm.getEditor().model.document.on;
 				const evtStub = {};
 
-				console.log( on );
-
 				expect( on.calledOnce ).to.be.true;
 				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
 				expect( on.firstCall.args[ 1 ] ).to.be.a( 'function' );
