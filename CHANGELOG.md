@@ -1,6 +1,19 @@
 Changelog
 =========
 
+## [5.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.0...v5.0.0) (2022-05-13)
+
+### Features
+
+Feature: The <CKEditor> component contains the built-in watchdog feature.
+
+Feature: The `onError()` callback will be called with two arguments. The first one will be an error object (as it was before the release 3+). A second argument is an object that contains two properties:
+
+  * `{String} phase`: `'initialization'|'runtime'` - Informs when the error has occurred (during the editor/context initialization or after the initialization).
+  * `{Boolean} willEditorRestart` - When `true`, it means that the editor component will restart itself.
+
+    The `willEditorRestart` property will not appear when the error has occurred in the context feature.
+
 ## [4.0.1](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.0...v4.0.1) (2022-05-18)
 
 ### Bug fixes
