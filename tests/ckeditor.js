@@ -156,6 +156,21 @@ describe( 'CKEditor Component', () => {
 
 				wrapper.unmount();
 			} );
+
+			it( 'should sync the editor data after editor is ready', async () => {
+				const { wrapper, vm } = mountComponent( {
+					modelValue: 'foo'
+				} );
+
+				wrapper.setProps( { modelValue: 'bar' } );
+
+				await nextTick();
+
+				expect( vm.instance.getData() ).to.equal( 'bar' );
+				expect( vm.instance.setDataCounter ).to.equal( 1 );
+
+				wrapper.unmount();
+			} );
 		} );
 
 		describe( '#tagName', () => {
@@ -346,6 +361,30 @@ describe( 'CKEditor Component', () => {
 			sinon.assert.calledTwice( spy );
 			sinon.assert.calledWithExactly( spy.firstCall, 'foo' );
 			sinon.assert.calledWithExactly( spy.secondCall, 'bar' );
+
+			wrapper.unmount();
+		} );
+
+		it( '#modelValue should trigger editor#setData only if data is changed', async () => {
+			const { wrapper, vm } = mountComponent();
+
+			await nextTick();
+
+			const spy = sandbox.spy( vm.instance, 'setData' );
+
+			wrapper.setProps( { modelValue: 'foo' } );
+
+			await nextTick();
+
+			wrapper.setProps( { modelValue: 'foo' } );
+
+			await nextTick();
+
+			wrapper.setProps( { modelValue: 'foo' } );
+
+			await nextTick();
+
+			sinon.assert.calledOnce( spy );
 
 			wrapper.unmount();
 		} );
