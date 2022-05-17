@@ -90,6 +90,8 @@ export default {
 				// Save the reference to the instance for further use.
 				this.instance = markRaw( editor );
 
+				this.setUpEditorEvents();
+
 				// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
 				// to be synchronized with these potential changes as soon as it is ready.
 				if ( this.modelValue !== editorConfig.initialData ) {
@@ -100,8 +102,6 @@ export default {
 				if ( this.disabled ) {
 					editor.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
 				}
-
-				this.setUpEditorEvents();
 
 				// Let the world know the editor is ready.
 				this.$emit( 'ready', editor );
