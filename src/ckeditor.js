@@ -90,12 +90,18 @@ export default {
 				// Save the reference to the instance for further use.
 				this.instance = markRaw( editor );
 
+				this.setUpEditorEvents();
+
+				// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
+				// to be synchronized with these potential changes as soon as it is ready.
+				if ( this.modelValue !== editorConfig.initialData ) {
+					editor.setData( this.modelValue );
+				}
+
 				// Set initial disabled state.
 				if ( this.disabled ) {
 					editor.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
 				}
-
-				this.setUpEditorEvents();
 
 				// Let the world know the editor is ready.
 				this.$emit( 'ready', editor );
@@ -117,7 +123,7 @@ export default {
 	},
 
 	watch: {
-		modelValue( newValue, oldValue ) {
+		modelValue( value ) {
 			// Synchronize changes of #modelValue. There are two sources of changes:
 			//
 			//                External modelValue change      ──────╮
@@ -140,8 +146,8 @@ export default {
 			//    * the new modelValue is different than the last internal instance state (Case 2.)
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
-			if ( newValue !== oldValue && newValue !== this.lastEditorData ) {
-				this.instance.setData( newValue );
+			if ( this.instance && value !== this.lastEditorData ) {
+				this.instance.setData( value );
 			}
 		},
 
