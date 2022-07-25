@@ -4,12 +4,13 @@
  */
 
 /* eslint-env browser */
+import * as Vue from 'vue';
+// import Vue, { version as vueVersion } from 'vue';
 
-import Vue, { version as vueVersion } from 'vue';
 import CKEditorComponent from './ckeditor.js';
 
 /* istanbul ignore next */
-const version = Vue ? Vue.version : vueVersion;
+const version = Vue.version;
 const [ major ] = version.split( '.' ).map( i => parseInt( i, 10 ) );
 
 /* istanbul ignore if */
