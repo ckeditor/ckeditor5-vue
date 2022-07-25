@@ -32,6 +32,7 @@ const CKEditor = {
 
 export default CKEditor;
 
+/* istanbul ignore next */
 function getVueVersion() {
 	// Vue 3+.
 	if ( Vue.version ) {
@@ -41,6 +42,7 @@ function getVueVersion() {
 	// Webpack complains if the `Vue.default` does not exist. It is exported by Vue 2.
 	// export 'default' (imported as 'Vue') was not found in 'vue'
 	const DEFAULT_KEY = 'default';
+
 	if ( Vue[ DEFAULT_KEY ] ) {
 		return Vue[ DEFAULT_KEY ].version;
 	}
