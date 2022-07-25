@@ -7,8 +7,7 @@
 import * as Vue from 'vue';
 import CKEditorComponent from './ckeditor.js';
 
-const version = Vue.version;
-const [ major ] = version.split( '.' ).map( i => parseInt( i, 10 ) );
+const [ major ] = getVueVersion().split( '.' ).map( i => parseInt( i, 10 ) );
 
 /* istanbul ignore if */
 if ( major < 3 ) {
@@ -32,3 +31,17 @@ const CKEditor = {
 };
 
 export default CKEditor;
+
+function getVueVersion() {
+	// Vue 3+.
+	if ( Vue.version ) {
+		return Vue.version;
+	}
+
+	// Webpack complains if the `Vue.default` does not exist. It is exported by Vue 2.
+	// export 'default' (imported as 'Vue') was not found in 'vue'
+	const DEFAULT_KEY = 'default';
+	if ( Vue[ DEFAULT_KEY ] ) {
+		return Vue[ DEFAULT_KEY ].version;
+	}
+}
