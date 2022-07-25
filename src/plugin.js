@@ -7,7 +7,6 @@
 import * as Vue from 'vue';
 import CKEditorComponent from './ckeditor.js';
 
-/* istanbul ignore next */
 const version = Vue.version;
 const [ major ] = version.split( '.' ).map( i => parseInt( i, 10 ) );
 
