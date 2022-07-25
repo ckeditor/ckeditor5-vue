@@ -5,8 +5,6 @@
 
 /* eslint-env browser */
 import * as Vue from 'vue';
-// import Vue, { version as vueVersion } from 'vue';
-
 import CKEditorComponent from './ckeditor.js';
 
 /* istanbul ignore next */
