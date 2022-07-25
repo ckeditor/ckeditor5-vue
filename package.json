@@ -21,8 +21,8 @@
   "devDependencies": {
     "@babel/core": "^7.17.7",
     "@ckeditor/ckeditor5-build-classic": "^34.0.0",
-    "@ckeditor/ckeditor5-dev-env": "^28.1.1",
-    "@ckeditor/ckeditor5-dev-utils": "^28.1.1",
+    "@ckeditor/ckeditor5-dev-env": "^30.3.5",
+    "@ckeditor/ckeditor5-dev-utils": "^30.3.5",
     "@vue/test-utils": "^2.0.0-rc.17",
     "babel-loader": "^8.2.3",
     "babel-plugin-istanbul": "^6.1.0",
