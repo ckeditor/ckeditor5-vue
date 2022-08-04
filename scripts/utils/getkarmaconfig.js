@@ -116,11 +116,13 @@ module.exports = function getKarmaConfig() {
 				// Generates HTML tables with the results.
 				{
 					dir: coverageDir,
+					subdir: '.',
 					type: 'html'
 				},
 				// Generates "lcov.info" file. It's used by external code coverage services.
 				{
 					type: 'lcovonly',
+					subdir: '.',
 					dir: coverageDir
 				}
 			]
