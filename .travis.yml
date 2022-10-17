@@ -1,5 +1,5 @@
 sudo: required
-dist: xenial
+dist: jammy
 addons:
   chrome: stable
   firefox: latest
@@ -7,7 +7,7 @@ language: node_js
 services:
 - xvfb
 node_js:
-- '14'
+- node
 cache:
 - node_modules
 install:
