@@ -10,7 +10,7 @@ import CKEditorComponent from '../src/ckeditor';
 import {
 	MockEditor,
 	ModelDocument,
-	ViewDocument,
+	ViewDocument
 } from './_utils/mockeditor';
 import waitForEditorToBeReady from './_utils/waitforeditortobeready';
 import throwError from './_utils/throwerror';
