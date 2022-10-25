@@ -157,7 +157,7 @@ export default {
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
 			//
-			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+			// See: https://github.com/ckeditor/ckeditor5-vu©e/issues/42
 			editor.model.document.on( 'change:data', emitDebouncedInputEvent );
 
 			editor.editing.view.document.on( 'focus', evt => {
