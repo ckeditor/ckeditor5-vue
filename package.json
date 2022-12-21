@@ -18,13 +18,11 @@
     "ckeditor5",
     "ckeditor 5"
   ],
-  "dependencies": {
-    "@ckeditor/ckeditor5-dev-ci": "^32.0.1"
-  },
   "devDependencies": {
     "@babel/core": "^7.17.7",
     "@ckeditor/ckeditor5-build-classic": "^34.0.0",
     "@ckeditor/ckeditor5-dev-bump-year": "^32.0.1",
+    "@ckeditor/ckeditor5-dev-ci": "^32.0.1",
     "@ckeditor/ckeditor5-dev-release-tools": "^32.0.1",
     "@ckeditor/ckeditor5-dev-utils": "^30.3.5",
     "@vue/test-utils": "^2.0.0-rc.17",
