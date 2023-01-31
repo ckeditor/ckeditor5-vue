@@ -3,8 +3,15 @@
  * For licensing, see LICENSE.md.
  */
 
+/* global  setTimeout */
+import { nextTick } from 'vue';
+
 export class ModelDocument {
 	on() {}
+	off() {}
+	getRootNames() {
+		return [ 'main' ];
+	}
 }
 
 export class ViewDocument {
@@ -15,7 +22,15 @@ export class MockEditor {
 	constructor( el, config ) {
 		this.element = el;
 		this.config = config;
-		this.data = '';
+		this._value = '';
+		this.data = {
+			get() {
+				return this._value;
+			},
+			set( value ) {
+				this._value = value;
+			}
+		};
 		this.setDataCounter = 0;
 
 		this.model = {
@@ -43,11 +58,11 @@ export class MockEditor {
 
 	setData( data ) {
 		this.setDataCounter++;
-		this.data = data;
+		this._value = data;
 	}
 
 	getData() {
-		return this.data;
+		return this._value;
 	}
 
 	enableReadOnlyMode( key ) {
@@ -58,4 +73,9 @@ export class MockEditor {
 		this._readOnlyLocks.delete( key );
 	}
 }
+
+export const waitForEditorToBeReady = async () => {
+	await nextTick();
+	await new Promise( res => setTimeout( res, 1 ) );
+};
 

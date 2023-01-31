@@ -7,14 +7,22 @@
 
 import { h, markRaw } from 'vue';
 import { debounce } from 'lodash-es';
-
-const SAMPLE_READ_ONLY_LOCK_ID = 'Integration Sample';
+import EditorWatchdog from '@ckeditor/ckeditor5-watchdog/src/editorwatchdog';
+const VUE_READ_ONLY_LOCK_ID = 'ckeditor-vue';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
 export default {
 	name: 'ckeditor',
-
 	created() {
+		/**
+		 * An instance of EditorWatchdog or an instance of EditorWatchdog-like adapter for ContextWatchdog.
+		 *
+		 * @type {module:watchdog/watchdog~Watchdog|EditorWatchdogAdapter}
+		 */
+		this.watchdog = null;
+
+		this.lastEditorData = '';
+
 		const { CKEDITOR_VERSION } = window;
 
 		// Starting from v34.0.0, CKEditor 5 introduces a lock mechanism enabling/disabling the read-only mode.
@@ -40,6 +48,14 @@ export default {
 		event: 'update:modelValue'
 	},
 
+	emits: [ 'update:modelValue',
+		'input',
+		'focus',
+		'blur',
+		'error',
+		'ready',
+		'destroy' ],
+
 	props: {
 		editor: {
 			type: Function,
@@ -63,63 +79,17 @@ export default {
 		}
 	},
 
-	data() {
-		return {
-			// Don't define it in #props because it produces a warning.
-			// https://v3.vuejs.org/guide/component-props.html#one-way-data-flow
-			instance: null,
-
-			lastEditorData: {
-				type: String,
-				default: ''
-			}
-		};
-	},
-
 	mounted() {
-		// Clone the config first so it never gets mutated (across multiple editor instances).
-		// https://github.com/ckeditor/ckeditor5-vue/issues/101
-		const editorConfig = Object.assign( {}, this.config );
-
-		if ( this.modelValue ) {
-			editorConfig.initialData = this.modelValue;
-		}
-
-		this.editor.create( this.$el, editorConfig )
-			.then( editor => {
-				// Save the reference to the instance for further use.
-				this.instance = markRaw( editor );
-
-				this.setUpEditorEvents();
-
-				// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
-				// to be synchronized with these potential changes as soon as it is ready.
-				if ( this.modelValue !== editorConfig.initialData ) {
-					editor.setData( this.modelValue );
-				}
-
-				// Set initial disabled state.
-				if ( this.disabled ) {
-					editor.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
-				}
-
-				// Let the world know the editor is ready.
-				this.$emit( 'ready', editor );
-			} )
-			.catch( error => {
-				console.error( error );
-			} );
+		this._initializeEditor();
 	},
 
 	beforeUnmount() {
-		if ( this.instance ) {
-			this.instance.destroy();
-			this.instance = null;
-		}
+		const editor = this.getEditor();
+		this._destroyEditor();
 
 		// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
 		// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
-		this.$emit( 'destroy', this.instance );
+		this.$emit( 'destroy', editor );
 	},
 
 	watch: {
@@ -146,25 +116,29 @@ export default {
 			//    * the new modelValue is different than the last internal instance state (Case 2.)
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
-			if ( this.instance && value !== this.lastEditorData ) {
-				this.instance.setData( value );
+			const editor = this.getEditor();
+			if ( editor && value !== this.lastEditorData ) {
+				editor.setData( value );
 			}
 		},
 
 		// Synchronize changes of #disabled.
 		disabled( readOnlyMode ) {
+			const editor = this.getEditor();
+			if ( !editor ) {
+				return;
+			}
+
 			if ( readOnlyMode ) {
-				this.instance.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+				editor.enableReadOnlyMode( VUE_READ_ONLY_LOCK_ID );
 			} else {
-				this.instance.disableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+				editor.disableReadOnlyMode( VUE_READ_ONLY_LOCK_ID );
 			}
 		}
 	},
 
 	methods: {
-		setUpEditorEvents() {
-			const editor = this.instance;
-
+		setUpEditorEvents( editor ) {
 			// Use the leading edge so the first event in the series is emitted immediately.
 			// Failing to do so leads to race conditions, for instance, when the component modelValue
 			// is set twice in a time span shorter than the debounce time.
@@ -183,7 +157,7 @@ export default {
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
 			//
-			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+			// See: https://github.com/ckeditor/ckeditor5-vu©e/issues/42
 			editor.model.document.on( 'change:data', emitDebouncedInputEvent );
 
 			editor.editing.view.document.on( 'focus', evt => {
@@ -193,6 +167,113 @@ export default {
 			editor.editing.view.document.on( 'blur', evt => {
 				this.$emit( 'blur', evt, editor );
 			} );
+		},
+
+		getWatchdog() {
+			return EditorWatchdog;
+		},
+
+		getEditor() {
+			return this.watchdog && this.watchdog.editor;
+		},
+
+		/**
+		 * Initializes the editor by creating a proper watchdog and initializing it with the editor's configuration.
+		 *
+		 * @private
+		 */
+		_initializeEditor() {
+			const Watchdog = this.getWatchdog();
+
+			this.watchdog = markRaw( new Watchdog( this.editor ) );
+
+			this.watchdog.setCreator( ( el, config ) => this._createEditor( el, config ) );
+
+			this.watchdog.on( 'error', ( _, { error, causesRestart } ) => {
+				console.error( 'watchdog', error );
+				this.$emit( 'error', { phase: 'runtime', willEditorRestart: causesRestart, error } );
+			} );
+
+			this.watchdog.on( 'restart', () => {
+				console.log( 'Editor was restarted.' );
+			} );
+
+			this.watchdog.on( 'stateChange', () => {
+				if ( !this.watchdog ) {
+					return;
+				}
+
+				const currentState = this.watchdog.state;
+
+				console.log( 'watchdog', currentState );
+
+				if ( currentState === 'crashedPermanently' && this.getEditor() ) {
+					console.log( 'Editor has crashed permanently.' );
+					this.getEditor().enableReadOnlyMode( 'crashed-editor' );
+				}
+			} );
+
+			this.watchdog.create( this.$el, this._getConfig() )
+				.catch( error => {
+					console.error( error );
+					this.$emit( 'error', { phase: 'initialization', willEditorRestart: false, error } );
+				} );
+		},
+
+		/**
+		 * Destroys the editor by destroying the watchdog.
+		 *
+		 * @private
+		 */
+		_destroyEditor() {
+			// It may happen during the tests that the watchdog instance is not assigned before destroying itself. See: #197.
+			/* istanbul ignore next */
+			if ( !this.watchdog ) {
+				return;
+			}
+
+			this.watchdog.destroy();
+			this.watchdog = null;
+		},
+		_createEditor( element, config ) {
+			return this.editor.create( element, config )
+				.then( editor => {
+					this.setUpEditorEvents( editor );
+
+					// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor
+					// content has to be synchronized with these potential changes as soon as it is ready.
+					if ( this.modelValue !== config.initialData ) {
+						editor.setData( this.modelValue );
+					}
+
+					// Set initial disabled state.
+					if ( this.disabled ) {
+						editor.enableReadOnlyMode( VUE_READ_ONLY_LOCK_ID );
+					}
+
+					// Let the world know the editor is ready.
+					this.$emit( 'ready', editor );
+
+					return editor;
+				} );
+		},
+
+		/**
+		 * Returns the editor configuration.
+		 *
+		 * @private
+		 * @return {Object}
+		 */
+		_getConfig() {
+			// Clone the config first so it never gets mutated (across multiple editor instances).
+			// https://github.com/ckeditor/ckeditor5-vue/issues/101
+			const editorConfig = Object.assign( {}, this.config );
+
+			if ( this.modelValue ) {
+				editorConfig.initialData = this.modelValue;
+			}
+
+			return editorConfig;
 		}
 	}
 };
