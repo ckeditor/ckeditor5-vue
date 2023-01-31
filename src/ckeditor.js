@@ -194,6 +194,10 @@ export default {
 				this.$emit( 'error', { phase: 'runtime', willEditorRestart: causesRestart, error } );
 			} );
 
+			this.watchdog.on( 'restart', () => {
+				console.log( 'Editor was restarted.' );
+			} );
+
 			this.watchdog.on( 'stateChange', () => {
 				if ( !this.watchdog ) {
 					return;
@@ -204,6 +208,7 @@ export default {
 				console.log( 'watchdog', currentState );
 
 				if ( currentState === 'crashedPermanently' && this.getEditor() ) {
+					console.log( 'Editor has crashed permanently.' );
 					this.getEditor().enableReadOnlyMode( 'crashed-editor' );
 				}
 			} );
