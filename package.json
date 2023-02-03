@@ -46,7 +46,7 @@
     "lint-staged": "^10.2.11",
     "lodash-es": "^4.17.21",
     "minimist": "^1.2.5",
-    "mocha": "^7.2.0",
+    "mocha": "^8.0.1",
     "sinon": "^13.0.1",
     "terser-webpack-plugin": "^3.0.2",
     "vue": "^3.2.31",
