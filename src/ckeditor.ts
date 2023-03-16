@@ -7,14 +7,15 @@
 
 import { defineComponent, h, markRaw, type PropType } from 'vue';
 import { debounce } from 'lodash-es';
-import type { EditorConfig } from '@ckeditor/ckeditor5-core';
-import type ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import type { Editor, DataApi, EditorConfig } from '@ckeditor/ckeditor5-core';
 
 const SAMPLE_READ_ONLY_LOCK_ID = 'Integration Sample';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
+type EditorInstance = Editor & DataApi;
+
 export interface CKEditorComponentData {
-	instance: ClassicEditor | null;
+	instance: EditorInstance | null;
 	lastEditorData: string | null;
 }
 
@@ -49,7 +50,7 @@ export default defineComponent( {
 
 	props: {
 		editor: {
-			type: Function as unknown as PropType<typeof ClassicEditor>,
+			type: Function as unknown as PropType<{ create( ...args: any ): Promise<EditorInstance> }>,
 			required: true
 		},
 		config: {
