@@ -13,7 +13,9 @@ declare const _default: {
     install(app: Vue.App): void;
     component: Vue.DefineComponent<{
         editor: {
-            type: Vue.PropType<typeof import("@ckeditor/ckeditor5-build-classic").default>;
+            type: Vue.PropType<{
+                create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor & import("@ckeditor/ckeditor5-core").DataApi>;
+            }>;
             required: true;
         };
         config: {
@@ -36,7 +38,9 @@ declare const _default: {
         setUpEditorEvents(): void;
     }, Vue.ComponentOptionsMixin, Vue.ComponentOptionsMixin, {}, string, Vue.VNodeProps & Vue.AllowedComponentProps & Vue.ComponentCustomProps, Readonly<Vue.ExtractPropTypes<{
         editor: {
-            type: Vue.PropType<typeof import("@ckeditor/ckeditor5-build-classic").default>;
+            type: Vue.PropType<{
+                create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor & import("@ckeditor/ckeditor5-core").DataApi>;
+            }>;
             required: true;
         };
         config: {
