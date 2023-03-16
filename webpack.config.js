@@ -13,7 +13,7 @@ const TerserPlugin = require( 'terser-webpack-plugin' );
 module.exports = {
 	mode: 'production',
 	devtool: 'source-map',
-	entry: path.join( __dirname, 'src', 'plugin.js' ),
+	entry: path.join( __dirname, 'src', 'plugin.ts' ),
 
 	output: {
 		library: 'CKEditor',
@@ -52,8 +52,21 @@ module.exports = {
 				test: /\.js$/,
 				loader: 'babel-loader',
 				exclude: /node_modules/
+			},
+			{
+				test: /\.([cm]?ts|tsx)$/,
+				loader: 'ts-loader'
 			}
 		]
+	},
+
+	resolve: {
+		extensions: [ '.ts', '.tsx', '.js' ],
+		extensionAlias: {
+			'.ts': [ '.js', '.ts' ],
+			'.cts': [ '.cjs', '.cts' ],
+			'.mts': [ '.mjs', '.mts' ]
+		}
 	},
 
 	externals: {

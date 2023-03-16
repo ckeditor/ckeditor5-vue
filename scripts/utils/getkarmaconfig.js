@@ -29,18 +29,28 @@ module.exports = function getKarmaConfig() {
 		module: {
 			rules: [
 				{
-					test: /\.js$/,
+					test: /\.[jt]s$/,
 					loader: 'babel-loader',
 					exclude: /node_modules/,
 					options: {
 						compact: false,
 						plugins: []
 					}
+				},
+				{
+					test: /\.([cm]?ts|tsx)$/,
+					loader: 'ts-loader'
 				}
 			]
 		},
 
 		resolve: {
+			extensions: [ '.ts', '.tsx', '.js' ],
+			extensionAlias: {
+				'.ts': [ '.js', '.ts' ],
+				'.cts': [ '.cjs', '.cts' ],
+				'.mts': [ '.mjs', '.mts' ]
+			},
 			alias: {
 				'vue': 'vue/dist/vue.esm-bundler.js'
 			}

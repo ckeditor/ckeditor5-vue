@@ -5,13 +5,20 @@
 
 /* global window, console */
 
-import { h, markRaw } from 'vue';
+import { defineComponent, h, markRaw, type PropType } from 'vue';
 import { debounce } from 'lodash-es';
+import type { EditorConfig } from '@ckeditor/ckeditor5-core';
+import type ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const SAMPLE_READ_ONLY_LOCK_ID = 'Integration Sample';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
-export default {
+export interface CKEditorComponentData {
+	instance: ClassicEditor | null;
+	lastEditorData: string | null;
+}
+
+export default defineComponent( {
 	name: 'ckeditor',
 
 	created() {
@@ -42,16 +49,16 @@ export default {
 
 	props: {
 		editor: {
-			type: Function,
-			default: null
+			type: Function as unknown as PropType<typeof ClassicEditor>,
+			required: true
+		},
+		config: {
+			type: Object as PropType<EditorConfig>,
+			default: () => ( {} )
 		},
 		modelValue: {
 			type: String,
 			default: ''
-		},
-		config: {
-			type: Object,
-			default: () => ( {} )
 		},
 		tagName: {
 			type: String,
@@ -63,23 +70,19 @@ export default {
 		}
 	},
 
-	data() {
+	data(): CKEditorComponentData {
 		return {
 			// Don't define it in #props because it produces a warning.
 			// https://v3.vuejs.org/guide/component-props.html#one-way-data-flow
 			instance: null,
-
-			lastEditorData: {
-				type: String,
-				default: ''
-			}
+			lastEditorData: null
 		};
 	},
 
 	mounted() {
 		// Clone the config first so it never gets mutated (across multiple editor instances).
 		// https://github.com/ckeditor/ckeditor5-vue/issues/101
-		const editorConfig = Object.assign( {}, this.config );
+		const editorConfig: EditorConfig = Object.assign( {}, this.config );
 
 		if ( this.modelValue ) {
 			editorConfig.initialData = this.modelValue;
@@ -154,16 +157,16 @@ export default {
 		// Synchronize changes of #disabled.
 		disabled( readOnlyMode ) {
 			if ( readOnlyMode ) {
-				this.instance.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+				this.instance!.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
 			} else {
-				this.instance.disableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+				this.instance!.disableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
 			}
 		}
 	},
 
 	methods: {
 		setUpEditorEvents() {
-			const editor = this.instance;
+			const editor = this.instance!;
 
 			// Use the leading edge so the first event in the series is emitted immediately.
 			// Failing to do so leads to race conditions, for instance, when the component modelValue
@@ -195,4 +198,4 @@ export default {
 			} );
 		}
 	}
-};
+} );
