@@ -14,7 +14,7 @@ declare const _default: {
     component: Vue.DefineComponent<{
         editor: {
             type: Vue.PropType<{
-                create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor & import("@ckeditor/ckeditor5-core").DataApi>;
+                create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor>;
             }>;
             required: true;
         };
@@ -39,7 +39,7 @@ declare const _default: {
     }, Vue.ComponentOptionsMixin, Vue.ComponentOptionsMixin, {}, string, Vue.VNodeProps & Vue.AllowedComponentProps & Vue.ComponentCustomProps, Readonly<Vue.ExtractPropTypes<{
         editor: {
             type: Vue.PropType<{
-                create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor & import("@ckeditor/ckeditor5-core").DataApi>;
+                create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor>;
             }>;
             required: true;
         };

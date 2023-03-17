@@ -3,16 +3,15 @@
  * For licensing, see LICENSE.md.
  */
 import { type PropType } from 'vue';
-import type { Editor, DataApi, EditorConfig } from '@ckeditor/ckeditor5-core';
-type EditorInstance = Editor & DataApi;
+import type { Editor, EditorConfig } from '@ckeditor/ckeditor5-core';
 export interface CKEditorComponentData {
-    instance: EditorInstance | null;
+    instance: Editor | null;
     lastEditorData: string | null;
 }
 declare const _default: import("vue").DefineComponent<{
     editor: {
         type: PropType<{
-            create(...args: any): Promise<EditorInstance>;
+            create(...args: any): Promise<Editor>;
         }>;
         required: true;
     };
@@ -37,7 +36,7 @@ declare const _default: import("vue").DefineComponent<{
 }, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     editor: {
         type: PropType<{
-            create(...args: any): Promise<EditorInstance>;
+            create(...args: any): Promise<Editor>;
         }>;
         required: true;
     };
