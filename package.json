@@ -81,7 +81,8 @@
     "url": "https://github.com/ckeditor/ckeditor5-vue.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "scripts/postinstall.js"
   ],
   "author": "CKSource (http://cksource.com/)",
   "license": "GPL-2.0-or-later",
