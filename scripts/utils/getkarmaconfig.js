@@ -26,6 +26,10 @@ module.exports = function getKarmaConfig() {
 			} )
 		],
 
+		output: {
+			path: path.join( __dirname, '..', '..', '.tmp' )
+		},
+
 		module: {
 			rules: [
 				{
