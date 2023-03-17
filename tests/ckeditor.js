@@ -166,7 +166,7 @@ describe( 'CKEditor Component', () => {
 
 				await nextTick();
 
-				expect( vm.instance.getData() ).to.equal( 'bar' );
+				expect( vm.instance.data.get() ).to.equal( 'bar' );
 				expect( vm.instance.setDataCounter ).to.equal( 1 );
 
 				wrapper.unmount();
@@ -333,12 +333,12 @@ describe( 'CKEditor Component', () => {
 			wrapper.unmount();
 		} );
 
-		it( '#modelValue should trigger editor#setData', async () => {
+		it( '#modelValue should trigger editor#data.set', async () => {
 			const { wrapper, vm } = mountComponent();
 
 			await nextTick();
 
-			const spy = sandbox.spy( vm.instance, 'setData' );
+			const spy = sandbox.spy( vm.instance.data, 'set' );
 			wrapper.setProps( { modelValue: 'foo' } );
 
 			await nextTick();
@@ -350,8 +350,8 @@ describe( 'CKEditor Component', () => {
 			sinon.assert.calledTwice( spy );
 
 			// Simulate typing: The #modelValue changes but at the same time, the instance update
-			// its own data so instance.getData() and #modelValue are immediately the same.
-			// Make sure instance.setData() is not called in this situation because it would destroy
+			// its own data so instance.data.get() and #modelValue are immediately the same.
+			// Make sure instance.data.set() is not called in this situation because it would destroy
 			// the selection.
 			wrapper.vm.lastEditorData = 'barq';
 			wrapper.setProps( { modelValue: 'barq' } );
@@ -365,12 +365,12 @@ describe( 'CKEditor Component', () => {
 			wrapper.unmount();
 		} );
 
-		it( '#modelValue should trigger editor#setData only if data is changed', async () => {
+		it( '#modelValue should trigger editor#data.set only if data is changed', async () => {
 			const { wrapper, vm } = mountComponent();
 
 			await nextTick();
 
-			const spy = sandbox.spy( vm.instance, 'setData' );
+			const spy = sandbox.spy( vm.instance.data, 'set' );
 
 			wrapper.setProps( { modelValue: 'foo' } );
 
@@ -418,9 +418,10 @@ describe( 'CKEditor Component', () => {
 				const { wrapper, vm } = mountComponent();
 
 				sandbox.stub( ModelDocument.prototype, 'on' );
-				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
 				await nextTick();
+
+				sandbox.stub( vm.instance.data, 'get' ).returns( 'foo' );
 
 				const on = vm.instance.model.document.on;
 				const evtStub = {};
@@ -448,9 +449,10 @@ describe( 'CKEditor Component', () => {
 				const { wrapper, vm } = mountComponent();
 
 				sandbox.stub( ModelDocument.prototype, 'on' );
-				sandbox.stub( MockEditor.prototype, 'getData' ).returns( 'foo' );
 
 				await nextTick();
+
+				sandbox.stub( vm.instance.data, 'get' ).returns( 'foo' );
 
 				const on = vm.instance.model.document.on;
 				const evtStub = {};
