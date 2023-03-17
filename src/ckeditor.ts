@@ -5,16 +5,15 @@
 
 /* global window, console */
 
-import { defineComponent, h, markRaw, type PropType } from 'vue';
 import { debounce } from 'lodash-es';
-import type { EditorConfig } from '@ckeditor/ckeditor5-core';
-import type ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { defineComponent, h, markRaw, type PropType } from 'vue';
+import type { Editor, EditorConfig } from '@ckeditor/ckeditor5-core';
 
 const SAMPLE_READ_ONLY_LOCK_ID = 'Integration Sample';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
 export interface CKEditorComponentData {
-	instance: ClassicEditor | null;
+	instance: Editor | null;
 	lastEditorData: string | null;
 }
 
@@ -49,7 +48,7 @@ export default defineComponent( {
 
 	props: {
 		editor: {
-			type: Function as unknown as PropType<typeof ClassicEditor>,
+			type: Function as unknown as PropType<{ create( ...args: any ): Promise<Editor> }>,
 			required: true
 		},
 		config: {
@@ -98,7 +97,7 @@ export default defineComponent( {
 				// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
 				// to be synchronized with these potential changes as soon as it is ready.
 				if ( this.modelValue !== editorConfig.initialData ) {
-					editor.setData( this.modelValue );
+					editor.data.set( this.modelValue );
 				}
 
 				// Set initial disabled state.
@@ -150,7 +149,7 @@ export default defineComponent( {
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
 			if ( this.instance && value !== this.lastEditorData ) {
-				this.instance.setData( value );
+				this.instance.data.set( value );
 			}
 		},
 
@@ -176,7 +175,7 @@ export default defineComponent( {
 				// Cache the last editor data. This kind of data is a result of typing,
 				// editor command execution, collaborative changes to the document, etc.
 				// This data is compared when the component modelValue changes in a 2-way binding.
-				const data = this.lastEditorData = editor.getData();
+				const data = this.lastEditorData = editor.data.get();
 
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
 				this.$emit( 'update:modelValue', data, evt, editor );

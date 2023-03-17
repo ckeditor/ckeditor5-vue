@@ -15,7 +15,7 @@ export class MockEditor {
 	constructor( el, config ) {
 		this.element = el;
 		this.config = config;
-		this.data = '';
+		this._data = '';
 		this.setDataCounter = 0;
 
 		this.model = {
@@ -25,6 +25,17 @@ export class MockEditor {
 		this.editing = {
 			view: {
 				document: new ViewDocument()
+			}
+		};
+
+		this.data = {
+			get: () => {
+				return this._data;
+			},
+
+			set: data => {
+				this.setDataCounter += 1;
+				this._data = data;
 			}
 		};
 
@@ -39,15 +50,6 @@ export class MockEditor {
 
 	destroy() {
 		return Promise.resolve();
-	}
-
-	setData( data ) {
-		this.setDataCounter++;
-		this.data = data;
-	}
-
-	getData() {
-		return this.data;
 	}
 
 	enableReadOnlyMode( key ) {
