@@ -1,6 +1,21 @@
 Changelog
 =========
 
+## [5.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.1...v5.0.0-alpha.0) (2023-03-17)
+
+### Release highlights
+
+This release introduces improved TypeScript support for better code suggestion and completion.
+
+Please keep in mind that the release is marked as alpha, which means it is an experimental version, and some unexpected results may occur when using these typings.
+
+We appreciate your feedback, as it helps us significantly improve the project's final shape. Please share it [here](https://github.com/ckeditor/ckeditor5/issues/11704).
+
+### Features
+
+* Migrate the package to Typescript. Closes [ckeditor/ckeditor5#13543](https://github.com/ckeditor/ckeditor5/issues/13543). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/8ee793f09b002851759d0e1dfdb947b06624e4ef))
+
+
 ## [4.0.1](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.0...v4.0.1) (2022-05-18)
 
 ### Bug fixes
