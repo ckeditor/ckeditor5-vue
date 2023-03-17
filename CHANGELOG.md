@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [5.0.0-alpha.1](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.0...v5.0.0-alpha.1) (2023-03-17)
+
+### Other changes
+
+* Added a missing postinstall script to published files. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/0949df7dc41cbe7062f5e6b42615da395ffd4a55))
+
+
 ## [5.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.1...v5.0.0-alpha.0) (2023-03-17)
 
 ### Release highlights
