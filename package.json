@@ -2,7 +2,7 @@
   "name": "@ckeditor/ckeditor5-vue",
   "version": "4.0.1",
   "main": "dist/ckeditor.js",
-	"types": "dist/plugin.d.ts",
+  "types": "dist/plugin.d.ts",
   "description": "Official Vue.js 3+ component for CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
     "wysiwyg",
