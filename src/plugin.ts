@@ -23,7 +23,7 @@ export default {
 	 * @param app The application instance.
 	 */
 	install( app: Vue.App ): void {
-		app.component( 'ckeditor', CKEditorComponent );
+		app.component( 'Ckeditor', CKEditorComponent );
 	},
 
 	component: CKEditorComponent
@@ -31,6 +31,6 @@ export default {
 
 declare module 'vue' {
   interface GlobalComponents {
-    ckeditor: typeof CKEditorComponent;
+    Ckeditor: typeof CKEditorComponent;
   }
 }

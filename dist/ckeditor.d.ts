@@ -33,7 +33,7 @@ declare const _default: import("vue").DefineComponent<{
     };
 }, unknown, CKEditorComponentData, {}, {
     setUpEditorEvents(): void;
-}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
+}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, ("update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input")[], "update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input", import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     editor: {
         type: PropType<{
             create(...args: any): Promise<Editor>;
@@ -56,7 +56,14 @@ declare const _default: import("vue").DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
-}>>, {
+}>> & {
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+    onReady?: ((...args: any[]) => any) | undefined;
+    onDestroy?: ((...args: any[]) => any) | undefined;
+    onBlur?: ((...args: any[]) => any) | undefined;
+    onFocus?: ((...args: any[]) => any) | undefined;
+    onInput?: ((...args: any[]) => any) | undefined;
+}, {
     modelValue: string;
     disabled: boolean;
     config: EditorConfig;

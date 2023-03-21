@@ -36,7 +36,7 @@ declare const _default: {
         };
     }, unknown, import("./ckeditor").CKEditorComponentData, {}, {
         setUpEditorEvents(): void;
-    }, Vue.ComponentOptionsMixin, Vue.ComponentOptionsMixin, {}, string, Vue.VNodeProps & Vue.AllowedComponentProps & Vue.ComponentCustomProps, Readonly<Vue.ExtractPropTypes<{
+    }, Vue.ComponentOptionsMixin, Vue.ComponentOptionsMixin, ("update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input")[], "update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input", Vue.VNodeProps & Vue.AllowedComponentProps & Vue.ComponentCustomProps, Readonly<Vue.ExtractPropTypes<{
         editor: {
             type: Vue.PropType<{
                 create(...args: any): Promise<import("@ckeditor/ckeditor5-core").Editor>;
@@ -59,7 +59,14 @@ declare const _default: {
             type: BooleanConstructor;
             default: boolean;
         };
-    }>>, {
+    }>> & {
+        "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+        onReady?: ((...args: any[]) => any) | undefined;
+        onDestroy?: ((...args: any[]) => any) | undefined;
+        onBlur?: ((...args: any[]) => any) | undefined;
+        onFocus?: ((...args: any[]) => any) | undefined;
+        onInput?: ((...args: any[]) => any) | undefined;
+    }, {
         modelValue: string;
         disabled: boolean;
         config: import("@ckeditor/ckeditor5-core").EditorConfig;
@@ -69,6 +76,6 @@ declare const _default: {
 export default _default;
 declare module 'vue' {
     interface GlobalComponents {
-        ckeditor: typeof CKEditorComponent;
+        Ckeditor: typeof CKEditorComponent;
     }
 }
