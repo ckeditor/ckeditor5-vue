@@ -108,9 +108,6 @@ export default defineComponent( {
 	created() {
 		const { CKEDITOR_VERSION } = window;
 
-		// Starting from v34.0.0, CKEditor 5 introduces a lock mechanism enabling/disabling the read-only mode.
-		// As it is a breaking change between major releases of the integration, the component requires using
-		// CKEditor 5 in version 34 or higher.
 		if ( CKEDITOR_VERSION ) {
 			const [ major ] = CKEDITOR_VERSION.split( '.' ).map( Number );
 
