@@ -48,6 +48,15 @@ export default defineComponent( {
 		}
 	},
 
+	emits: [
+		'ready',
+		'destroy',
+		'blur',
+		'focus',
+		'input',
+		'update:modelValue'
+	],
+
 	data(): CKEditorComponentData {
 		return {
 			// Don't define it in #props because it produces a warning.
