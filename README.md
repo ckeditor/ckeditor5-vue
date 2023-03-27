@@ -25,15 +25,15 @@ See the ["Rich text editor component for Vue.js"](https://ckeditor.com/docs/cked
 After cloning this repository, install necessary dependencies:
 
 ```bash
-npm install
+yarn install
 ```
 
 ### Executing tests
 
 ```bash
-npm run test -- [additional options]
+yarn run test -- [additional options]
 # or
-npm t -- [additional options]
+yarn t -- [additional options]
 ```
 
 The command accepts the following options:
@@ -44,20 +44,20 @@ The command accepts the following options:
 * `--reporter` (`-r`) &ndash; Reporter for Karma (default: `mocha`, can be changed to `dots`).
 * `--browsers` (`-b`) &ndash; Browsers that will be used to run tests (default: `Chrome`, available: `Firefox`).
 
-If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `npm run develop` in order to do it automatically.
+If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `yarn run develop` in order to do it automatically.
 
 ### Building the package
 
 Build a minified version of the package that is ready to publish:
 
 ```bash
-npm run build
+yarn run build
 ```
 
 ### Changelog generator
 
 ```bash
-npm run changelog
+yarn run changelog
 ```
 
 ### Testing component with Vue CLI
@@ -83,7 +83,7 @@ Otherwise, the application will fail to load the component correctly and, as a r
 Before starting the release process, you need to generate the changelog:
 
 ```bash
-npm run changelog
+yarn run changelog
 ```
 
 ### Publishing
@@ -93,7 +93,7 @@ After generating the changelog, you are able to release the package.
 First, you need to bump the version:
 
 ```bash
-npm run release:bump-version
+yarn run release:bump-version
 ```
 
 You can also use the `--dry-run` option in order to see what this task does.
@@ -101,7 +101,7 @@ You can also use the `--dry-run` option in order to see what this task does.
 After bumping the version, you can publish the changes:
 
 ```bash
-npm run release:publish
+yarn run release:publish
 ```
 
 Note: Only the `dist/` directory will be published.
