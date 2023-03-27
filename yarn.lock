@@ -231,7 +231,7 @@
   dependencies:
     ckeditor5 "^37.0.0-alpha.3"
 
-"@ckeditor/ckeditor5-build-classic@^37.0.0-alpha.2":
+"@ckeditor/ckeditor5-build-classic@^37.0.0-alpha.3":
   version "37.0.0-alpha.3"
   resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-37.0.0-alpha.3.tgz#466bd047ca3dcc3422070b89b15ef61cf3880a58"
   integrity sha512-+qdSsZNXuNUFPe3kNXwMCoAaVzQnN8qXu919fDP/qnutKbqe3jD1V2gk1VzM1F/QGmd7XmZdAnowlaQnPealQQ==
@@ -289,7 +289,7 @@
   dependencies:
     ckeditor5 "^37.0.0-alpha.3"
 
-"@ckeditor/ckeditor5-core@^37.0.0-alpha.2", "@ckeditor/ckeditor5-core@^37.0.0-alpha.3":
+"@ckeditor/ckeditor5-core@^37.0.0-alpha.3":
   version "37.0.0-alpha.3"
   resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-core/-/ckeditor5-core-37.0.0-alpha.3.tgz#9367f7dc1be86e07e4016d5a49fef261b12f0e83"
   integrity sha512-UaXjyO5BdFisPz/0cghh2e3+1a3oGMm4F4lpFyoHNbGU4fHzVEEaRrvdqeDwSzVDJA17ysLv7WKAJc0UEmZVGg==

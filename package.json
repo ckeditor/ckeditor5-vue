@@ -21,8 +21,8 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.17.7",
-    "@ckeditor/ckeditor5-build-classic": "^37.0.0-alpha.2",
-    "@ckeditor/ckeditor5-core": "^37.0.0-alpha.2",
+    "@ckeditor/ckeditor5-build-classic": "^37.0.0-alpha.3",
+    "@ckeditor/ckeditor5-core": "^37.0.0-alpha.3",
     "@ckeditor/ckeditor5-dev-bump-year": "^35.0.0",
     "@ckeditor/ckeditor5-dev-ci": "^35.0.0",
     "@ckeditor/ckeditor5-dev-release-tools": "^35.0.0",

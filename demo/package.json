@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^37.0.0-alpha.2",
+    "@ckeditor/ckeditor5-build-classic": "^37.0.0-alpha.3",
     "@ckeditor/ckeditor5-vue": "file:..",
     "vue": "^3.2.47"
   },
