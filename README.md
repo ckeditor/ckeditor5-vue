@@ -78,6 +78,19 @@ Otherwise, the application will fail to load the component correctly and, as a r
 
 ## Releasing package
 
+### Prerequisites
+
+Before releasing a new version, run a demo project to confirm that the integration works in a real-world scenario.
+
+1. Navigate to the `demo` folder.
+2. Reinstall the dependencies.
+3. Run `yarn dev` to see if the integration works as expected.
+4. Run `yarn build` to see if the project with the integration builds without errors.
+
+```Text
+Dependencies in the `demo` project need to be reinstalled after any changes to the integration, because in `package.json` we use `file:` instead of `link:` due to Vite limitations. Unlike `link:`, which creates a symlink to the integration, `file:` copies its contents when `yarn install` is run and never updates after that.
+```
+
 ### Changelog
 
 Before starting the release process, you need to generate the changelog:
