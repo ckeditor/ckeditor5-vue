@@ -72,8 +72,7 @@
     "changelog": "node ./scripts/changelog.js",
     "release:bump-version": "node ./scripts/bump-version.js",
     "release:publish": "node ./scripts/publish.js",
-    "prerelease": "npm run build; if [ -n \"$(git status dist/ --porcelain)\" ]; then git add -u dist/ && git commit -m 'Internal: Build.'; fi",
-    "release": "node ./scripts/release.js",
+    "prerelease:bump-version": "npm run build; if [ -n \"$(git status dist/ --porcelain)\" ]; then git add -u dist/ && git commit -m 'Internal: Build.'; fi",
     "test": "node ./scripts/test.js",
     "coverage": "node ./scripts/test.js --coverage",
     "lint": "eslint --quiet \"src/**/*.{js,ts}\""
