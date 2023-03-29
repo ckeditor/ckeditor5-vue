@@ -13,10 +13,12 @@ cache:
 before_install:
 - export START_TIME=$( date +%s )
 install:
-- npm install
+- yarn install
 script:
-- npm run coverage
-- npm run test -- --browsers=Firefox
+- yarn run lint
+- yarn run coverage
+- ./scripts/test-demo.js
+- yarn run test -- --browsers=Firefox
 - if [[ $TRAVIS_TEST_RESULT -eq 0 ]]; then cat coverage/lcov.info | ./node_modules/.bin/coveralls; fi
 after_script:
 - export END_TIME=$( date +%s )

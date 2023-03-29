@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-/* global window, console, setTimeout */
-
 import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import CKEditorComponent from '../src/ckeditor';
@@ -20,7 +18,7 @@ describe( 'CKEditor Component', () => {
 	beforeEach( () => {
 		CKEDITOR_VERSION = window.CKEDITOR_VERSION;
 
-		window.CKEDITOR_VERSION = '34.0.0';
+		window.CKEDITOR_VERSION = '37.0.0';
 		sandbox = sinon.createSandbox();
 	} );
 
@@ -30,7 +28,7 @@ describe( 'CKEditor Component', () => {
 	} );
 
 	it( 'should have a name', () => {
-		expect( CKEditorComponent.name ).to.equal( 'ckeditor' );
+		expect( CKEditorComponent.name ).to.equal( 'Ckeditor' );
 	} );
 
 	it( 'should print a warning if the "window.CKEDITOR_VERSION" variable is not available', async () => {
@@ -48,7 +46,7 @@ describe( 'CKEditor Component', () => {
 		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
 	} );
 
-	it( 'should print a warning if using CKEditor 5 in version lower than 34', async () => {
+	it( 'should print a warning if using CKEditor 5 in version lower than 37', async () => {
 		const warnStub = sandbox.stub( console, 'warn' );
 
 		window.CKEDITOR_VERSION = '30.0.0';
@@ -60,13 +58,13 @@ describe( 'CKEditor Component', () => {
 		wrapper.unmount();
 
 		expect( warnStub.callCount ).to.equal( 1 );
-		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'The <CKEditor> component requires using CKEditor 5 in version 34 or higher.' );
+		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'The <CKEditor> component requires using CKEditor 5 in version 37 or higher.' );
 	} );
 
-	it( 'should not print any warninig if using CKEditor 5 in version 34 or higher', async () => {
+	it( 'should not print any warninig if using CKEditor 5 in version 37 or higher', async () => {
 		const warnStub = sandbox.stub( console, 'warn' );
 
-		window.CKEDITOR_VERSION = '34.0.0';
+		window.CKEDITOR_VERSION = '37.0.0';
 
 		sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 		const { wrapper } = mountComponent();

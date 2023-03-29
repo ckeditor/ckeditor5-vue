@@ -18,28 +18,7 @@ export interface CKEditorComponentData {
 }
 
 export default defineComponent( {
-	name: 'ckeditor',
-
-	created() {
-		const { CKEDITOR_VERSION } = window;
-
-		// Starting from v34.0.0, CKEditor 5 introduces a lock mechanism enabling/disabling the read-only mode.
-		// As it is a breaking change between major releases of the integration, the component requires using
-		// CKEditor 5 in version 34 or higher.
-		if ( CKEDITOR_VERSION ) {
-			const [ major ] = CKEDITOR_VERSION.split( '.' ).map( Number );
-
-			if ( major < 34 ) {
-				console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 34 or higher.' );
-			}
-		} else {
-			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
-		}
-	},
-
-	render() {
-		return h( this.tagName );
-	},
+	name: 'Ckeditor',
 
 	model: {
 		prop: 'modelValue',
@@ -69,6 +48,15 @@ export default defineComponent( {
 		}
 	},
 
+	emits: [
+		'ready',
+		'destroy',
+		'blur',
+		'focus',
+		'input',
+		'update:modelValue'
+	],
+
 	data(): CKEditorComponentData {
 		return {
 			// Don't define it in #props because it produces a warning.
@@ -76,6 +64,59 @@ export default defineComponent( {
 			instance: null,
 			lastEditorData: null
 		};
+	},
+
+	watch: {
+		modelValue( value ) {
+			// Synchronize changes of #modelValue. There are two sources of changes:
+			//
+			//                External modelValue change      ──────╮
+			//                                                      ╰─────> ┏━━━━━━━━━━━┓
+			//                                                              ┃ Component ┃
+			//                                                      ╭─────> ┗━━━━━━━━━━━┛
+			//                   Internal data change         ──────╯
+			//             (typing, commands, collaboration)
+			//
+			// Case 1: If the change was external (via props), the editor data must be synced with
+			// the component using instance#setData() and it is OK to destroy the selection.
+			//
+			// Case 2: If the change is the result of internal data change, the #modelValue is the
+			// same as this.lastEditorData, which has been cached on #change:data. If we called
+			// instance#setData() at this point, that would demolish the selection.
+			//
+			// To limit the number of instance#setData() which is time-consuming when there is a
+			// lot of data we make sure:
+			//    * the new modelValue is at least different than the old modelValue (Case 1.)
+			//    * the new modelValue is different than the last internal instance state (Case 2.)
+			//
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
+			if ( this.instance && value !== this.lastEditorData ) {
+				this.instance.data.set( value );
+			}
+		},
+
+		// Synchronize changes of #disabled.
+		disabled( readOnlyMode ) {
+			if ( readOnlyMode ) {
+				this.instance!.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+			} else {
+				this.instance!.disableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
+			}
+		}
+	},
+
+	created() {
+		const { CKEDITOR_VERSION } = window;
+
+		if ( CKEDITOR_VERSION ) {
+			const [ major ] = CKEDITOR_VERSION.split( '.' ).map( Number );
+
+			if ( major < 37 ) {
+				console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 37 or higher.' );
+			}
+		} else {
+			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
+		}
 	},
 
 	mounted() {
@@ -124,45 +165,6 @@ export default defineComponent( {
 		this.$emit( 'destroy', this.instance );
 	},
 
-	watch: {
-		modelValue( value ) {
-			// Synchronize changes of #modelValue. There are two sources of changes:
-			//
-			//                External modelValue change      ──────╮
-			//                                                      ╰─────> ┏━━━━━━━━━━━┓
-			//                                                              ┃ Component ┃
-			//                                                      ╭─────> ┗━━━━━━━━━━━┛
-			//                   Internal data change         ──────╯
-			//             (typing, commands, collaboration)
-			//
-			// Case 1: If the change was external (via props), the editor data must be synced with
-			// the component using instance#setData() and it is OK to destroy the selection.
-			//
-			// Case 2: If the change is the result of internal data change, the #modelValue is the
-			// same as this.lastEditorData, which has been cached on #change:data. If we called
-			// instance#setData() at this point, that would demolish the selection.
-			//
-			// To limit the number of instance#setData() which is time-consuming when there is a
-			// lot of data we make sure:
-			//    * the new modelValue is at least different than the old modelValue (Case 1.)
-			//    * the new modelValue is different than the last internal instance state (Case 2.)
-			//
-			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
-			if ( this.instance && value !== this.lastEditorData ) {
-				this.instance.data.set( value );
-			}
-		},
-
-		// Synchronize changes of #disabled.
-		disabled( readOnlyMode ) {
-			if ( readOnlyMode ) {
-				this.instance!.enableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
-			} else {
-				this.instance!.disableReadOnlyMode( SAMPLE_READ_ONLY_LOCK_ID );
-			}
-		}
-	},
-
 	methods: {
 		setUpEditorEvents() {
 			const editor = this.instance!;
@@ -196,5 +198,9 @@ export default defineComponent( {
 				this.$emit( 'blur', evt, editor );
 			} );
 		}
+	},
+
+	render() {
+		return h( this.tagName );
 	}
 } );
