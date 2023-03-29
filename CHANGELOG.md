@@ -1,6 +1,22 @@
 Changelog
 =========
 
+## [5.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.1...v5.0.0-alpha.2) (2023-03-29)
+
+### BREAKING CHANGES
+
+* Integration now requires Editor version 37 or later.
+* Upgraded the minimal versions of Node.js to `16.0.0` due to the end of LTS.
+
+### Features
+
+* Improve typings for events emitted by the Vue component. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/3395eb055f7c3d78beef4ae12fba5b492c364aea))
+
+### Other changes
+
+* Updated the required version of Node.js to 16. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/89a04fc8768d0f54ad577caceff23bb67f2cf972))
+
+
 ## [5.0.0-alpha.1](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.0...v5.0.0-alpha.1) (2023-03-17)
 
 ### Other changes
