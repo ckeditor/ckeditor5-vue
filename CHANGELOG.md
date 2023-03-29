@@ -5,7 +5,7 @@ Changelog
 
 ### BREAKING CHANGES
 
-* Integration now requires Editor version 37 or later.
+* Due to rewriting to TypeScript, the component requires CKEditor 5 typings that are available in version 37 or higher. See ckeditor/ckeditor5#11704.  
 * Upgraded the minimal versions of Node.js to `16.0.0` due to the end of LTS.
 
 ### Features
