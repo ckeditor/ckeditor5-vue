@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## [5.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.2...v5.0.0) (2023-04-07)
+
+Internal changes only (updated dependencies, documentation, etc.).
+
+
 ## [5.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.1...v5.0.0-alpha.2) (2023-03-29)
 
 ### BREAKING CHANGES
