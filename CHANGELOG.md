@@ -1,10 +1,25 @@
 Changelog
 =========
 
-## [5.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.2...v5.0.0) (2023-04-07)
+## [5.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.1...v5.0.0) (2023-04-07)
 
-Internal changes only (updated dependencies, documentation, etc.).
+### Release highlights
 
+This release introduces improved TypeScript support for better code suggestion and completion.
+
+### BREAKING CHANGES
+
+* Due to rewriting to TypeScript, the component requires CKEditor 5 typings that are available in version 37 or higher. See ckeditor/ckeditor5#11704.
+* Upgraded the minimal versions of Node.js to `16.0.0` due to the end of LTS.
+
+### Features
+
+* Migrate the package to Typescript. Closes [ckeditor/ckeditor5#13543](https://github.com/ckeditor/ckeditor5/issues/13543). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/8ee793f09b002851759d0e1dfdb947b06624e4ef), ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/3395eb055f7c3d78beef4ae12fba5b492c364aea)))
+
+### Other changes
+
+* Updated the required version of Node.js to 16. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/89a04fc8768d0f54ad577caceff23bb67f2cf972))
+* Added a missing postinstall script to the published files. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/0949df7dc41cbe7062f5e6b42615da395ffd4a55))
 
 ## [5.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0-alpha.1...v5.0.0-alpha.2) (2023-03-29)
 
