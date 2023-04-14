@@ -4,6 +4,7 @@
   <ckeditor
     v-model="data"
     tag-name="textarea"
+    :disable-two-way-data-binding="isTwoWayDataBindingDisabled"
     :editor="ClassicEditor"
     :config="config"
     :disabled="disabled"
@@ -16,6 +17,17 @@
 
   <button @click="toggleEditorDisabled">
     {{ disabled ? 'Enable' : 'Disable' }} editor
+  </button>
+
+  <button @click="toggleTwoWayBinding">
+    {{ isTwoWayDataBindingDisabled ? 'Enable' : 'Disable' }} two way binding
+  </button>
+
+  <button
+    v-if="isTwoWayDataBindingDisabled"
+    @click="setEditorData"
+  >
+    Set editor data
   </button>
 
   <h2>Live editor data</h2>
@@ -33,11 +45,21 @@ const data = ref( '<p>Hello world!</p>' );
 
 const disabled = ref( false );
 
+const isTwoWayDataBindingDisabled = ref( false );
+
 const config = reactive( {
 	toolbar: [ 'heading', '|', 'bold', 'italic' ]
 } );
 
 // Methods
+function setEditorData() {
+	data.value = window.editor.getData();
+}
+
+function toggleTwoWayBinding() {
+	isTwoWayDataBindingDisabled.value = !isTwoWayDataBindingDisabled.value;
+}
+
 function toggleEditorDisabled() {
 	disabled.value = !disabled.value;
 }

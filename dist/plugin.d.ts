@@ -34,6 +34,10 @@ declare const _default: {
             type: BooleanConstructor;
             default: boolean;
         };
+        disableTwoWayDataBinding: {
+            type: BooleanConstructor;
+            default: boolean;
+        };
     }, unknown, import("./ckeditor").CKEditorComponentData, {}, {
         setUpEditorEvents(): void;
     }, Vue.ComponentOptionsMixin, Vue.ComponentOptionsMixin, ("update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input")[], "update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input", Vue.VNodeProps & Vue.AllowedComponentProps & Vue.ComponentCustomProps, Readonly<Vue.ExtractPropTypes<{
@@ -59,6 +63,10 @@ declare const _default: {
             type: BooleanConstructor;
             default: boolean;
         };
+        disableTwoWayDataBinding: {
+            type: BooleanConstructor;
+            default: boolean;
+        };
     }>> & {
         "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
         onReady?: ((...args: any[]) => any) | undefined;
@@ -71,6 +79,7 @@ declare const _default: {
         disabled: boolean;
         config: import("@ckeditor/ckeditor5-core").EditorConfig;
         tagName: string;
+        disableTwoWayDataBinding: boolean;
     }>;
 };
 export default _default;
