@@ -295,6 +295,44 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
+		describe( '#disableTwoWayDataBinding', () => {
+			it( 'should set disableTwoWayDataBinding to false by default', async () => {
+				const { wrapper, vm } = mountComponent();
+
+				await nextTick();
+
+				expect( vm.disableTwoWayDataBinding ).to.equal( false );
+
+				wrapper.unmount();
+			} );
+
+			it( 'should not update #modelValue when disableTwoWayDataBinding is true', async () => {
+				const { wrapper, vm } = mountComponent( { disableTwoWayDataBinding: true } );
+
+				sandbox.stub( ModelDocument.prototype, 'on' );
+
+				await nextTick();
+
+				sandbox.stub( vm.instance.data, 'get' ).returns( 'foo' );
+
+				const on = vm.instance.model.document.on;
+				const evtStub = {};
+
+				expect( on.calledOnce ).to.be.true;
+				expect( on.firstCall.args[ 0 ] ).to.equal( 'change:data' );
+
+				expect( wrapper.emitted().input ).to.be.undefined;
+
+				on.firstCall.args[ 1 ]( evtStub );
+
+				await timeout( 350 );
+
+				expect( wrapper.emitted().input ).to.be.undefined;
+
+				wrapper.unmount();
+			} );
+		} );
+
 		it( '#instance should be defined', async () => {
 			const { wrapper, vm } = mountComponent();
 

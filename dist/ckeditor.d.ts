@@ -31,6 +31,10 @@ declare const _default: import("vue").DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    disableTwoWayDataBinding: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 }, unknown, CKEditorComponentData, {}, {
     setUpEditorEvents(): void;
 }, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, ("update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input")[], "update:modelValue" | "ready" | "destroy" | "blur" | "focus" | "input", import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
@@ -56,6 +60,10 @@ declare const _default: import("vue").DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    disableTwoWayDataBinding: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 }>> & {
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onReady?: ((...args: any[]) => any) | undefined;
@@ -68,5 +76,6 @@ declare const _default: import("vue").DefineComponent<{
     disabled: boolean;
     config: EditorConfig;
     tagName: string;
+    disableTwoWayDataBinding: boolean;
 }>;
 export default _default;

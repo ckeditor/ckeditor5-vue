@@ -45,6 +45,10 @@ export default defineComponent( {
 		disabled: {
 			type: Boolean,
 			default: false
+		},
+		disableTwoWayDataBinding: {
+			type: Boolean,
+			default: false
 		}
 	},
 
@@ -174,6 +178,10 @@ export default defineComponent( {
 			// is set twice in a time span shorter than the debounce time.
 			// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
 			const emitDebouncedInputEvent = debounce( evt => {
+				if ( this.disableTwoWayDataBinding ) {
+					return;
+				}
+
 				// Cache the last editor data. This kind of data is a result of typing,
 				// editor command execution, collaborative changes to the document, etc.
 				// This data is compared when the component modelValue changes in a 2-way binding.
