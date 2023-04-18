@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [5.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0...v5.1.0) (2023-04-18)
+
+### Features
+
+* Added `disableTwoWayDataBinding` property that allows disabling the two-way data binding. It increases performance when working with large documents. Closes [ckeditor/ckeditor5-vue#246](https://github.com/ckeditor/ckeditor5-vue/issues/246). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/928e2d2171b74b9e2fd8aff72320e0745a767c18))
+
+
 ## [5.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v4.0.1...v5.0.0) (2023-04-07)
 
 ### Release highlights
