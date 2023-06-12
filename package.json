@@ -85,7 +85,6 @@
     "url": "https://github.com/ckeditor/ckeditor5-vue.git"
   },
   "files": [
-    "scripts/postinstall.js",
     "dist",
     "README.md",
     "CHANGELOG.md",
