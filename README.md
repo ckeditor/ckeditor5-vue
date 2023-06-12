@@ -115,7 +115,7 @@ After bumping the version, you can publish the changes:
 yarn run release:publish-packages
 ```
 
-Note: Only the `dist/` directory will be published.
+Note: The `release/` directory will be published.
 
 ## License
 
