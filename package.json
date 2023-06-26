@@ -23,10 +23,10 @@
     "@babel/core": "^7.17.7",
     "@ckeditor/ckeditor5-build-classic": "^37.0.0",
     "@ckeditor/ckeditor5-core": "^37.0.0",
-    "@ckeditor/ckeditor5-dev-bump-year": "^36.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^36.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^36.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^36.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^38.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^38.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^38.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^38.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vue/test-utils": "^2.3.1",
     "babel-loader": "^8.2.3",
@@ -48,6 +48,7 @@
     "karma-sourcemap-loader": "^0.3.8",
     "karma-webpack": "^5.0.0",
     "lint-staged": "^10.2.11",
+    "listr2": "^6.5.0",
     "lodash-es": "^4.17.21",
     "minimist": "^1.2.5",
     "mocha": "^9.2.2",
@@ -60,6 +61,9 @@
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0"
   },
+  "resolutions": {
+    "strip-ansi-cjs": "1.0.0"
+  },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=5.7.1"
@@ -70,9 +74,8 @@
     "postbuild": "tsc -p ./tsconfig.json --emitDeclarationOnly",
     "develop": "webpack --mode development --watch",
     "changelog": "node ./scripts/changelog.js",
-    "release:bump-version": "node ./scripts/bump-version.js",
-    "release:publish": "node ./scripts/publish.js",
-    "prerelease:bump-version": "npm run build; if [ -n \"$(git status dist/ --porcelain)\" ]; then git add -u dist/ && git commit -m 'Internal: Build.'; fi",
+    "release:prepare-packages": "node ./scripts/preparepackages.js",
+    "release:publish-packages": "node ./scripts/publishpackages.js",
     "test": "node ./scripts/test.js",
     "coverage": "node ./scripts/test.js --coverage",
     "lint": "eslint --quiet \"src/**/*.{js,ts}\""
@@ -83,7 +86,9 @@
   },
   "files": [
     "dist",
-    "scripts/postinstall.js"
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.md"
   ],
   "author": "CKSource (http://cksource.com/)",
   "license": "GPL-2.0-or-later",

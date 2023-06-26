@@ -106,18 +106,16 @@ After generating the changelog, you are able to release the package.
 First, you need to bump the version:
 
 ```bash
-yarn run release:bump-version
+yarn run release:prepare-packages
 ```
-
-You can also use the `--dry-run` option in order to see what this task does.
 
 After bumping the version, you can publish the changes:
 
 ```bash
-yarn run release:publish
+yarn run release:publish-packages
 ```
 
-Note: Only the `dist/` directory will be published.
+Note: The `release/` directory will be published.
 
 ## License
 
