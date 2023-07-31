@@ -62,7 +62,8 @@
     "webpack-cli": "^4.10.0"
   },
   "resolutions": {
-    "strip-ansi-cjs": "1.0.0"
+    "strip-ansi-cjs": "1.0.0",
+    "semver": "^7"
   },
   "engines": {
     "node": ">=16.0.0",
