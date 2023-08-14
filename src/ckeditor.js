@@ -9,7 +9,6 @@ import { h, markRaw } from 'vue';
 import { debounce } from 'lodash-es';
 import EditorWatchdog from '@ckeditor/ckeditor5-watchdog/src/editorwatchdog';
 const VUE_READ_ONLY_LOCK_ID = 'ckeditor-vue';
-const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
 export default {
 	name: 'ckeditor',
@@ -76,6 +75,14 @@ export default {
 		disabled: {
 			type: Boolean,
 			default: false
+		},
+		inputDebounce: {
+			type: Number,
+			default: 300
+		},
+		inputDebounceLeading: {
+			type: Boolean,
+			default: true
 		}
 	},
 
@@ -152,7 +159,7 @@ export default {
 				// The compatibility with the v-model and general Vue.js concept of input–like components.
 				this.$emit( 'update:modelValue', data, evt, editor );
 				this.$emit( 'input', data, evt, editor );
-			}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
+			}, this.inputDebounce, { leading: this.inputDebounceLeading } );
 
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
