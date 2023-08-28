@@ -73,7 +73,7 @@ jobs:
       - run:
           name: Build demo app
           command: node ./scripts/test-demo.js
-     - run:
+      - run:
          name: Verify the code coverage
          command: |
            #!/bin/bash
