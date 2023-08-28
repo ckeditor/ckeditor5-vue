@@ -66,8 +66,7 @@
     "semver": "^7"
   },
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=5.7.1"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "postinstall": "node ./scripts/postinstall.js",
