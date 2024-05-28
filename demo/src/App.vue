@@ -5,7 +5,7 @@
     v-model="data"
     tag-name="textarea"
     :disable-two-way-data-binding="isTwoWayDataBindingDisabled"
-    :editor="ClassicEditor"
+    :editor="TestEditor"
     :config="config"
     :disabled="disabled"
     @ready="onReady"
@@ -37,23 +37,40 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import type { EventInfo } from '@ckeditor/ckeditor5-utils';
+import {
+  ClassicEditor,
+  Essentials,
+  Paragraph,
+  Heading,
+  Bold,
+  Italic,
+  type EventInfo
+} from 'ckeditor5';
+
+import 'ckeditor5/index.css';
+
+class TestEditor extends ClassicEditor {
+  static builtinPlugins = [
+    Essentials,
+    Paragraph,
+    Heading,
+    Bold,
+    Italic,
+  ];
+}
 
 // State
+const editorInstance = ref<TestEditor | null>( null );
 const data = ref( '<p>Hello world!</p>' );
-
 const disabled = ref( false );
-
 const isTwoWayDataBindingDisabled = ref( false );
-
 const config = reactive( {
 	toolbar: [ 'heading', '|', 'bold', 'italic' ]
 } );
 
 // Methods
 function setEditorData() {
-	data.value = window.editor.getData();
+  data.value = editorInstance.value?.getData() ?? '';
 }
 
 function toggleTwoWayBinding() {
@@ -64,25 +81,25 @@ function toggleEditorDisabled() {
 	disabled.value = !disabled.value;
 }
 
-function onReady( editor: ClassicEditor ) {
-	window.editor = editor;
+function onReady( editor: TestEditor ) {
+  editorInstance.value = editor;
 
 	console.log( 'Editor is ready.', { editor } );
 }
 
-function onFocus( event: EventInfo, editor: ClassicEditor ) {
+function onFocus( event: EventInfo, editor: TestEditor ) {
 	console.log( 'Editor focused.', { event, editor } );
 }
 
-function onBlur( event: EventInfo, editor: ClassicEditor ) {
+function onBlur( event: EventInfo, editor: TestEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: EventInfo, editor: ClassicEditor ) {
+function onInput( data: string, event: EventInfo, editor: TestEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 
-function onDestroy( editor: ClassicEditor ) {
+function onDestroy( editor: TestEditor ) {
 	console.log( 'Editor destroyed.', { editor } );
 }
 </script>

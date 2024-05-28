@@ -18,7 +18,7 @@ describe( 'CKEditor Component', () => {
 	beforeEach( () => {
 		CKEDITOR_VERSION = window.CKEDITOR_VERSION;
 
-		window.CKEDITOR_VERSION = '37.0.0';
+		window.CKEDITOR_VERSION = '42.0.0';
 		sandbox = sinon.createSandbox();
 	} );
 
@@ -42,12 +42,11 @@ describe( 'CKEditor Component', () => {
 		await nextTick();
 		wrapper.unmount();
 
-		// TODO: fix in https://github.com/ckeditor/ckeditor5-vue/issues/274
-		expect( warnStub.callCount ).to.equal( 2 );
-		expect( warnStub.secondCall.args[ 0 ] ).to.equal( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
+		expect( warnStub.callCount ).to.equal( 1 );
+		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
 	} );
 
-	it( 'should print a warning if using CKEditor 5 in version lower than 37', async () => {
+	it( 'should print a warning if using CKEditor 5 in version lower than 42', async () => {
 		const warnStub = sandbox.stub( console, 'warn' );
 
 		window.CKEDITOR_VERSION = '30.0.0';
@@ -59,13 +58,29 @@ describe( 'CKEditor Component', () => {
 		wrapper.unmount();
 
 		expect( warnStub.callCount ).to.equal( 1 );
-		expect( warnStub.firstCall.args[ 0 ] ).to.equal( 'The <CKEditor> component requires using CKEditor 5 in version 37 or higher.' );
+		expect( warnStub.firstCall.args[ 0 ] ).to.equal(
+			'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.'
+		);
 	} );
 
-	it( 'should not print any warninig if using CKEditor 5 in version 37 or higher', async () => {
+	it( 'should not print any warning if using CKEditor 5 in version 42 or higher', async () => {
 		const warnStub = sandbox.stub( console, 'warn' );
 
-		window.CKEDITOR_VERSION = '37.0.0';
+		window.CKEDITOR_VERSION = '42.0.0';
+
+		sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
+		const { wrapper } = mountComponent();
+
+		await nextTick();
+		wrapper.unmount();
+
+		expect( warnStub.callCount ).to.equal( 0 );
+	} );
+
+	it( 'should not print any warning if using nightly build of CKEditor 5', async () => {
+		const warnStub = sandbox.stub( console, 'warn' );
+
+		window.CKEDITOR_VERSION = '0.0.0-nightly';
 
 		sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
 		const { wrapper } = mountComponent();
