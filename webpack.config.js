@@ -9,11 +9,19 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 const { bundler } = require( '@ckeditor/ckeditor5-dev-utils' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+const { dependencies, peerDependencies } = require( './package.json' );
+
+const externals = Object.keys( { ...dependencies, ...peerDependencies } ).reduce( ( acc, currentValue ) => {
+	acc[ currentValue ] = currentValue;
+
+	return acc;
+}, {} );
 
 module.exports = {
 	mode: 'production',
 	devtool: 'source-map',
 	entry: path.join( __dirname, 'src', 'plugin.ts' ),
+	externals,
 
 	output: {
 		library: 'CKEditor',
@@ -66,15 +74,6 @@ module.exports = {
 			'.ts': [ '.js', '.ts' ],
 			'.cts': [ '.cjs', '.cts' ],
 			'.mts': [ '.mjs', '.mts' ]
-		}
-	},
-
-	externals: {
-		vue: {
-			commonjs: 'vue',
-			commonjs2: 'vue',
-			amd: 'vue',
-			root: 'Vue'
 		}
 	}
 };

@@ -4,40 +4,58 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { ClassicEditor, Essentials, Paragraph } from 'ckeditor5';
 import CKEditor from '../../src/plugin';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 describe( 'CKEditor plugin', () => {
-	describe( 'Plugin installed globally', () => {
-		it( 'should work with an actual editor build', done => {
-			const domElement = document.createElement( 'div' );
-			document.body.appendChild( domElement );
+	it( 'should work with an actual editor build', done => {
+		class TestEditor extends ClassicEditor {
+			static builtinPlugins = [
+				Essentials,
+				Paragraph
+			];
 
-			const wrapper = mount( {
-				template: '<ckeditor :editor="editor" @ready="onReady" v-model="editorData"></ckeditor>',
+			static defaultConfig = {
+				toolbar: {
+					items: [ 'undo', 'redo' ]
+				}
+			};
+		}
+
+		const domElement = document.createElement( 'div' );
+		document.body.appendChild( domElement );
+
+		const wrapper = mount(
+			{
+				template: `
+					<ckeditor
+						v-model="data"
+						:editor="editor"
+						@ready="onReady"
+					/>
+				`,
 				methods: {
-					onReady: () => {
-						const instance = wrapper.findComponent( { name: 'ckeditor' } ).vm.instance;
-
-						expect( instance ).to.be.instanceOf( ClassicEditor );
-						expect( instance.getData() ).to.equal( '<p>foo</p>' );
+					onReady( editor ) {
+						expect( editor ).to.be.instanceOf( TestEditor );
+						expect( editor.getData() ).to.equal( '<p>foo</p>' );
 
 						wrapper.unmount();
 						done();
 					}
 				}
-			}, {
+			},
+			{
 				attachTo: domElement,
-				data: () => {
-					return {
-						editor: ClassicEditor,
-						editorData: '<p>foo</p>'
-					};
-				},
 				global: {
 					plugins: [ CKEditor ]
+				},
+				data() {
+					return {
+						editor: TestEditor,
+						data: '<p>foo</p>'
+					};
 				}
-			} );
-		} );
+			}
+		);
 	} );
 } );

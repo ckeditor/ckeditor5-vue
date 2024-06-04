@@ -19,14 +19,20 @@
     "ckeditor5",
     "ckeditor 5"
   ],
+  "dependencies": {
+    "lodash-es": "^4.17.21"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly"
+  },
   "devDependencies": {
     "@babel/core": "^7.17.7",
-    "@ckeditor/ckeditor5-build-classic": "^37.0.0",
-    "@ckeditor/ckeditor5-core": "^37.0.0",
-    "@ckeditor/ckeditor5-dev-bump-year": "^38.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^38.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^38.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^38.0.0",
+    "ckeditor5": "nightly",
+    "@ckeditor/ckeditor5-dev-bump-year": "^40.1.0",
+    "@ckeditor/ckeditor5-dev-ci": "^40.1.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^40.1.0",
+    "@ckeditor/ckeditor5-dev-utils": "^40.1.0",
     "@types/lodash-es": "^4.17.6",
     "@vue/test-utils": "^2.3.1",
     "babel-loader": "^8.2.3",
@@ -49,7 +55,6 @@
     "karma-webpack": "^5.0.0",
     "lint-staged": "^10.2.11",
     "listr2": "^6.5.0",
-    "lodash-es": "^4.17.21",
     "minimist": "^1.2.5",
     "mocha": "^9.2.2",
     "sinon": "^13.0.1",

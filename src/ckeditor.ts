@@ -7,7 +7,7 @@
 
 import { debounce } from 'lodash-es';
 import { defineComponent, h, markRaw, type PropType } from 'vue';
-import type { Editor, EditorConfig } from '@ckeditor/ckeditor5-core';
+import type { Editor, EditorConfig } from 'ckeditor5';
 
 const SAMPLE_READ_ONLY_LOCK_ID = 'Integration Sample';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
@@ -112,15 +112,17 @@ export default defineComponent( {
 	created() {
 		const { CKEDITOR_VERSION } = window;
 
-		if ( CKEDITOR_VERSION ) {
-			const [ major ] = CKEDITOR_VERSION.split( '.' ).map( Number );
-
-			if ( major < 37 ) {
-				console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 37 or higher.' );
-			}
-		} else {
-			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
+		if ( !CKEDITOR_VERSION ) {
+			return console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
 		}
+
+		const [ major ] = CKEDITOR_VERSION.split( '.' ).map( Number );
+
+		if ( major >= 42 || CKEDITOR_VERSION.startsWith( '0.0.0' ) ) {
+			return;
+		}
+
+		console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
 	},
 
 	mounted() {
