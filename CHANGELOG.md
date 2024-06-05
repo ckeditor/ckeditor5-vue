@@ -3,9 +3,15 @@ Changelog
 
 ## [6.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.1.0...v6.0.0-alpha.0) (2024-06-05)
 
+We are happy to announce the alpha release of the next major version of the React integration.
+
+This release is intended to allow the integration to work with existing and new installation methods [announced in this post](https://github.com/ckeditor/ckeditor5/issues/15502).
+
+Please refer to [our nightly documentation build](https://ckeditor5.github.io/docs/nightly/ckeditor5/latest/index.html) for the installation instructions.
+
 ### Features
 
-* Change the implementation to only depend on types from the CKEditor packages and not runtime code to make the integration work with existing and new installation methods. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/4048cecacf4cb7877a3d0d00496d809468a96d76))
+* Change the implementation to only depend on types from the `ckeditor5` packages and not runtime code to make the integration work with existing and new installation methods. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/4048cecacf4cb7877a3d0d00496d809468a96d76))
 
 ### Other changes
 
@@ -43,7 +49,7 @@ This release introduces improved TypeScript support for better code suggestion a
 
 ### BREAKING CHANGES
 
-* Due to rewriting to TypeScript, the component requires CKEditor 5 typings that are available in version 37 or higher. See ckeditor/ckeditor5#11704.  
+* Due to rewriting to TypeScript, the component requires CKEditor 5 typings that are available in version 37 or higher. See ckeditor/ckeditor5#11704.
 * Upgraded the minimal versions of Node.js to `16.0.0` due to the end of LTS.
 
 ### Features
