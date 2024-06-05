@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## [6.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.1.0...v6.0.0-alpha.0) (2024-06-05)
+
+### Features
+
+* Change the implementation to only depend on types from the CKEditor packages and not runtime code to make the integration work with existing and new installation methods. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/4048cecacf4cb7877a3d0d00496d809468a96d76))
+
+### Other changes
+
+* Updated the required version of Node.js to 18 when developing the repository. See [ckeditor/ckeditor5#14924](https://github.com/ckeditor/ckeditor5/issues/14924). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/7c2ed354ac4330063829d1be7358ef6f11027924))
+
+
 ## [5.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.0.0...v5.1.0) (2023-04-18)
 
 ### Features
