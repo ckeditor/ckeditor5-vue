@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ckeditor/ckeditor5-vue": "file:..",
-    "ckeditor5": "nightly",
+    "ckeditor5": "alpha",
     "vue": "^3.4.27"
   },
   "devDependencies": {
