@@ -68,11 +68,11 @@ jobs:
           name: Execute ESLint
           command: yarn run lint
       - run:
-          name: Run unit tests
-          command: yarn run coverage --browsers=Chrome,Firefox
+          name: Run unit tests with coverage
+          command: yarn run test
       - run:
           name: Build demo app
-          command: node ./scripts/test-demo.js
+          command: yarn run build
       - run:
          name: Verify the code coverage
          command: |

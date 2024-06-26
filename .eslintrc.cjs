@@ -24,14 +24,14 @@ module.exports = {
 			' * For licensing, see LICENSE.md.',
 			' */'
 		] } ],
-		'vue/multi-word-component-names': 'off'
+		'vue/multi-word-component-names': 'off',
+		'no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': [ 'error' ]
 	},
 	'overrides': [
 		{
 			'files': [
-				'demo/**/*.js',
-				'demo/**/*.ts',
-				'demo/**/*.vue'
+				'**/*.vue'
 			],
 			'rules': {
 				'ckeditor5-rules/license-header': 'off'
