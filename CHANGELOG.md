@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [6.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v6.0.0-alpha.0...v6.0.0) (2024-06-26)
+
+We are excited to announce the next major version of the Vue integration.
+
+This release is intended to allow the integration to work with the [latest version](https://github.com/ckeditor/ckeditor5/releases/tag/v42.0.0) of [new installation methods](https://github.com/ckeditor/ckeditor5/releases/tag/v42.0.0).
+
+
 ## [6.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v5.1.0...v6.0.0-alpha.0) (2024-06-05)
 
 We are happy to announce the alpha release of the next major version of the React integration.
