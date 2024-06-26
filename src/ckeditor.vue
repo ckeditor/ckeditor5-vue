@@ -39,12 +39,12 @@ const props = withDefaults( defineProps<{
 } );
 
 const emit = defineEmits<{
-	ready: 								[ editor: EditorType ],
-	destroy: 							[],
-	blur: 								[ event: EventInfo, editor: EditorType ],
-	focus: 								[ event: EventInfo, editor: EditorType ],
-	input: 								[ data: string, event: EventInfo, editor: EditorType ],
-	'update:modelValue': 	[ data: string, event: EventInfo, editor: EditorType ],
+	ready: [ editor: EditorType ],
+	destroy: [],
+	blur: [ event: EventInfo, editor: EditorType ],
+	focus: [ event: EventInfo, editor: EditorType ],
+	input: [ data: string, event: EventInfo, editor: EditorType ],
+	'update:modelValue': [ data: string, event: EventInfo, editor: EditorType ],
 }>();
 
 const VUE_INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
