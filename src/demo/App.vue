@@ -1,7 +1,7 @@
 <template>
   <h1>Example of using CKEditor 5 in Vue.js 3.x</h1>
 
-  <CKEditor
+  <ckeditor
     v-model="data"
     tag-name="textarea"
     :disable-two-way-data-binding="isTwoWayDataBindingDisabled"
