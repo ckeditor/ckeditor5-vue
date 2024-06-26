@@ -19,13 +19,12 @@
   ],
   "type": "module",
   "types": "./dist/plugin.d.ts",
-  "main": "./dist/ckeditor.umd.cjs",
+  "main": "./dist/ckeditor.js",
   "module": "./dist/ckeditor.js",
   "exports": {
     ".": {
       "types": "./dist/plugin.d.ts",
-      "import": "./dist/ckeditor.js",
-      "require": "./dist/ckeditor.umd.cjs"
+      "import": "./dist/ckeditor.js"
     },
     "./package.json": "./package.json"
   },

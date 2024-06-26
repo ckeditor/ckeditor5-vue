@@ -1,3 +1,8 @@
+/**
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md.
+ */
+
 import { resolve } from 'path';
 import { createRequire } from 'module';
 import { defineConfig } from 'vitest/config';
@@ -18,7 +23,8 @@ export default defineConfig( {
 		lib: {
 			entry: resolve( __dirname, 'src/plugin.ts' ),
 			name: 'CKEditor',
-			fileName: 'ckeditor'
+			fileName: 'ckeditor',
+			formats: [ 'es' ]
 		},
 
 		rollupOptions: {
