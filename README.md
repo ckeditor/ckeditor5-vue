@@ -31,20 +31,10 @@ yarn install
 ### Executing tests
 
 ```bash
-yarn run test -- [additional options]
+yarn run test
 # or
-yarn t -- [additional options]
+yarn run test:watch
 ```
-
-The command accepts the following options:
-
-* `--coverage` (`-c`) &ndash; Whether to generate the code coverage.
-* `--source-map` (`-s`) &ndash; Whether to attach the source maps.
-* `--watch` (`-w`) &ndash; Whether to watch test files.
-* `--reporter` (`-r`) &ndash; Reporter for Karma (default: `mocha`, can be changed to `dots`).
-* `--browsers` (`-b`) &ndash; Browsers that will be used to run tests (default: `Chrome`, available: `Firefox`).
-
-If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `yarn run develop` in order to do it automatically.
 
 ### Building the package
 
@@ -60,36 +50,15 @@ yarn run build
 yarn run changelog
 ```
 
-### Testing component with Vue CLI
-
-When symlinking the component in an application generated using [Vue CLI](https://cli.vuejs.org/), make sure your `vue.config.js` file configures webpack in the following way:
-
-```js
-module.exports = {
-	configureWebpack: {
-		resolve: {
-			symlinks: false
-		}
-	}
-};
-```
-
-Otherwise, the application will fail to load the component correctly and, as a result, it will throw a build error.
-
 ## Releasing package
 
 ### Prerequisites
 
 Before releasing a new version, run a demo project to confirm that the integration works in a real-world scenario.
 
-1. Navigate to the `demo` folder.
-2. Reinstall the dependencies.
-3. Run `yarn dev` to see if the integration works as expected.
-4. Run `yarn build` to see if the project with the integration builds without errors.
-
-```Text
-Dependencies in the `demo` project need to be reinstalled after any changes to the integration, because in `package.json` we use `file:` instead of `link:` due to Vite limitations. Unlike `link:`, which creates a symlink to the integration, `file:` copies its contents when `yarn install` is run and never updates after that.
-```
+1. Reinstall the dependencies.
+2. Run `yarn dev` to see if the integration works as expected.
+3. Run `yarn build` to see if the project with the integration builds without errors.
 
 ### Changelog
 
