@@ -5,9 +5,9 @@
 
 /* eslint-env browser */
 import * as Vue from 'vue';
-import CKEditorComponent from './ckeditor';
+import CKEditorComponent from './ckeditor.vue';
 
-/* istanbul ignore if */
+/* istanbul ignore if -- @preserve */
 if ( !Vue.version || !Vue.version.startsWith( '3.' ) ) {
 	throw new Error(
 		'The CKEditor plugin works only with Vue 3+. ' +
@@ -30,7 +30,7 @@ export default {
 };
 
 declare module 'vue' {
-  interface GlobalComponents {
-    Ckeditor: typeof CKEditorComponent;
-  }
+	interface GlobalComponents {
+		Ckeditor: typeof CKEditorComponent;
+	}
 }

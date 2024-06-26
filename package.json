@@ -1,8 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-vue",
   "version": "6.0.0-alpha.0",
-  "main": "dist/ckeditor.js",
-  "types": "dist/plugin.d.ts",
   "description": "Official Vue.js 3+ component for CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
     "wysiwyg",
@@ -19,71 +17,66 @@
     "ckeditor5",
     "ckeditor 5"
   ],
+  "type": "module",
+  "types": "./dist/plugin.d.ts",
+  "main": "./dist/ckeditor.umd.cjs",
+  "module": "./dist/ckeditor.js",
+  "exports": {
+    ".": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/ckeditor.js",
+      "require": "./dist/ckeditor.umd.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "lodash-es": "^4.17.21"
   },
   "peerDependencies": {
-    "vue": "^3.0.0",
-    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly"
+    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
+    "vue": "^3.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.7",
-    "ckeditor5": "alpha",
     "@ckeditor/ckeditor5-dev-bump-year": "^40.1.0",
     "@ckeditor/ckeditor5-dev-ci": "^40.1.0",
     "@ckeditor/ckeditor5-dev-release-tools": "^40.1.0",
     "@ckeditor/ckeditor5-dev-utils": "^40.1.0",
     "@types/lodash-es": "^4.17.6",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vitest/browser": "^1.6.0",
+    "@vitest/coverage-istanbul": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
     "@vue/test-utils": "^2.3.1",
-    "babel-loader": "^8.2.3",
-    "babel-plugin-istanbul": "^6.1.0",
-    "chai": "^4.3.6",
-    "coveralls": "^3.1.1",
+    "ckeditor5": "alpha",
     "eslint": "^7.32.0",
     "eslint-config-ckeditor5": "^5.3.2",
     "eslint-plugin-vue": "^9.9.0",
     "husky": "^8.0.2",
-    "karma": "^6.3.17",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^3.1.1",
-    "karma-coverage": "^2.2.0",
-    "karma-firefox-launcher": "^2.1.2",
-    "karma-mocha": "^2.0.1",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-sinon": "^1.0.5",
-    "karma-sourcemap-loader": "^0.3.8",
-    "karma-webpack": "^5.0.0",
     "lint-staged": "^10.2.11",
     "listr2": "^6.5.0",
     "minimist": "^1.2.5",
-    "mocha": "^9.2.2",
-    "sinon": "^13.0.1",
-    "terser-webpack-plugin": "^3.0.2",
-    "ts-loader": "^9.4.2",
-    "typescript": "^4.9.5",
-    "vue": "^3.2.31",
+    "typescript": "~5.4.5",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0",
+    "vue": "^3.4.30",
     "vue-eslint-parser": "^9.1.0",
-    "webpack": "^5.73.0",
-    "webpack-cli": "^4.10.0"
-  },
-  "resolutions": {
-    "strip-ansi-cjs": "1.0.0",
-    "semver": "^7"
+    "vue-tsc": "^2.0.22",
+    "webdriverio": "^8.39.0"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
+    "preview": "vite preview",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest --ui --watch",
+    "lint": "eslint --quiet \"{src,tests}/**/*\"",
     "postinstall": "node ./scripts/postinstall.js",
-    "build": "webpack --mode production",
-    "postbuild": "tsc -p ./tsconfig.json --emitDeclarationOnly",
-    "develop": "webpack --mode development --watch",
     "changelog": "node ./scripts/changelog.js",
     "release:prepare-packages": "node ./scripts/preparepackages.js",
-    "release:publish-packages": "node ./scripts/publishpackages.js",
-    "test": "node ./scripts/test.js",
-    "coverage": "node ./scripts/test.js --coverage",
-    "lint": "eslint --quiet \"src/**/*.{js,ts}\""
+    "release:publish-packages": "node ./scripts/publishpackages.js"
   },
   "repository": {
     "type": "git",
@@ -107,7 +100,7 @@
     "dist/**"
   ],
   "lint-staged": {
-    "**/*.{js,ts}": [
+    "**/*.{js,ts,vue}": [
       "eslint --quiet"
     ]
   }

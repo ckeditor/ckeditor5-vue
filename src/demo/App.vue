@@ -1,7 +1,7 @@
 <template>
   <h1>Example of using CKEditor 5 in Vue.js 3.x</h1>
 
-  <ckeditor
+  <CKEditor
     v-model="data"
     tag-name="textarea"
     :disable-two-way-data-binding="isTwoWayDataBindingDisabled"
@@ -38,25 +38,23 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import {
-  ClassicEditor,
-  Essentials,
-  Paragraph,
-  Heading,
-  Bold,
-  Italic,
-  type EventInfo
+	ClassicEditor,
+	Essentials,
+	Paragraph,
+	Heading,
+	Bold,
+	Italic,
+	type EventInfo
 } from 'ckeditor5';
 
-import 'ckeditor5/ckeditor5.css';
-
 class TestEditor extends ClassicEditor {
-  static builtinPlugins = [
-    Essentials,
-    Paragraph,
-    Heading,
-    Bold,
-    Italic,
-  ];
+	static builtinPlugins = [
+		Essentials,
+		Paragraph,
+		Heading,
+		Bold,
+		Italic
+	];
 }
 
 // State
@@ -70,7 +68,7 @@ const config = reactive( {
 
 // Methods
 function setEditorData() {
-  data.value = editorInstance.value?.getData() ?? '';
+	data.value = editorInstance.value?.getData() ?? '';
 }
 
 function toggleTwoWayBinding() {
@@ -82,7 +80,7 @@ function toggleEditorDisabled() {
 }
 
 function onReady( editor: TestEditor ) {
-  editorInstance.value = editor;
+	editorInstance.value = editor;
 
 	console.log( 'Editor is ready.', { editor } );
 }
@@ -99,8 +97,8 @@ function onInput( data: string, event: EventInfo, editor: TestEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 
-function onDestroy( editor: TestEditor ) {
-	console.log( 'Editor destroyed.', { editor } );
+function onDestroy() {
+	console.log( 'Editor destroyed.' );
 }
 </script>
 
