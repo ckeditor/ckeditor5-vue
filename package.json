@@ -18,9 +18,6 @@
     "ckeditor 5"
   ],
   "type": "module",
-  "types": "./dist/plugin.d.ts",
-  "main": "./dist/ckeditor.js",
-  "module": "./dist/ckeditor.js",
   "exports": {
     ".": {
       "types": "./dist/plugin.d.ts",
@@ -46,7 +43,7 @@
     "@vitest/coverage-istanbul": "^1.6.0",
     "@vitest/ui": "^1.6.0",
     "@vue/test-utils": "^2.3.1",
-    "ckeditor5": "alpha",
+    "ckeditor5": "nightly",
     "coveralls": "^3.1.1",
     "eslint": "^7.32.0",
     "eslint-config-ckeditor5": "^5.3.2",
