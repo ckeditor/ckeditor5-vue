@@ -7,8 +7,6 @@
 
 /* eslint-env node */
 
-'use strict';
-
 import { Listr } from 'listr2';
 import releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 import { provideToken } from '@ckeditor/ckeditor5-dev-release-tools/lib/utils/cli';

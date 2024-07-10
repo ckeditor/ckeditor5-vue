@@ -5,8 +5,6 @@
 
 /* eslint-env node */
 
-'use strict';
-
 import minimist from 'minimist';
 
 /**
