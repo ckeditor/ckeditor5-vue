@@ -18,6 +18,7 @@ export default defineConfig( {
 
 	build: {
 		minify: false,
+		target: 'es2019',
 
 		// https://vitejs.dev/guide/build#library-mode
 		lib: {
