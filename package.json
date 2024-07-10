@@ -92,7 +92,6 @@
   "homepage": "https://github.com/ckeditor/ckeditor5-vue",
   "eslintIgnore": [
     "coverage/**",
-    "demo/node_modules/**",
     "dist/**"
   ],
   "lint-staged": {
