@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
-    "vue": "^3.3.0"
+    "vue": "^3.4.0"
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-dev-bump-year": "^40.1.0",
