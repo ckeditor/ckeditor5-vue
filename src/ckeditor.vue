@@ -1,5 +1,8 @@
 <template>
-	<component :is="tagName" ref="element" />
+  <component
+    :is="tagName"
+    ref="element"
+  />
 </template>
 
 <script
