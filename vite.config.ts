@@ -49,7 +49,6 @@ export default defineConfig( {
 		coverage: {
 			provider: 'istanbul',
 			include: [ 'src/*' ],
-			exclude: [ 'src/demo' ],
 			thresholds: {
 				100: true
 			},
