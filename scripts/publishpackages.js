@@ -11,6 +11,7 @@ import { Listr } from 'listr2';
 import releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 import { provideToken } from '@ckeditor/ckeditor5-dev-release-tools/lib/utils/cli';
 import parseArguments from './utils/parsearguments';
+import getListrOptions from './utils/getlistroptions';
 
 const cliArguments = parseArguments( process.argv.slice( 2 ) );
 const latestVersion = releaseTools.getLastFromChangelog();
@@ -28,11 +29,30 @@ const tasks = new Listr( [
 				npmTag: cliArguments.npmTag,
 				listrTask: task,
 				confirmationCallback: () => {
+					if ( cliArguments.ci ) {
+						return true;
+					}
+
 					return task.prompt( { type: 'Confirm', message: 'Do you want to continue?' } );
 				}
 			} );
 		},
 		retry: 3
+	},
+	{
+		title: 'Checking if packages that returned E409 error code were uploaded correctly.',
+		task: async ( _, task ) => {
+			return releaseTools.verifyPackagesPublishedCorrectly( {
+				packagesDirectory: 'release',
+				version: latestVersion,
+				onSuccess: text => {
+					task.output = text;
+				}
+			} );
+		},
+		options: {
+			persistentOutput: true
+		}
 	},
 	{
 		title: 'Pushing changes.',
@@ -53,13 +73,20 @@ const tasks = new Listr( [
 			} );
 
 			task.output = `Release page: ${ releaseUrl }`;
+		},
+		options: {
+			persistentOutput: true
 		}
 	}
-] );
+], getListrOptions( cliArguments ) );
 
 ( async () => {
 	try {
-		githubToken = await provideToken();
+		if ( process.env.CKE5_RELEASE_TOKEN ) {
+			githubToken = process.env.CKE5_RELEASE_TOKEN;
+		} else {
+			githubToken = await provideToken();
+		}
 
 		await tasks.run();
 	} catch ( err ) {
