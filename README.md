@@ -25,56 +25,40 @@ See the ["Rich text editor component for Vue.js"](https://ckeditor.com/docs/cked
 After cloning this repository, install necessary dependencies:
 
 ```bash
-yarn install
+npm install
+```
+
+You can also use [Yarn](https://yarnpkg.com/).
+
+### Running the development server
+
+To manually test the editor integration, you can start the development server using one of the commands below:
+
+```bash
+npm run dev
 ```
 
 ### Executing tests
 
+To test the editor integration against a set of automated tests, run the following command:
+
 ```bash
-yarn run test -- [additional options]
-# or
-yarn t -- [additional options]
+npm run test
 ```
 
-The command accepts the following options:
+If you want to run the tests in watch mode, use the following command:
 
-* `--coverage` (`-c`) &ndash; Whether to generate the code coverage.
-* `--source-map` (`-s`) &ndash; Whether to attach the source maps.
-* `--watch` (`-w`) &ndash; Whether to watch test files.
-* `--reporter` (`-r`) &ndash; Reporter for Karma (default: `mocha`, can be changed to `dots`).
-* `--browsers` (`-b`) &ndash; Browsers that will be used to run tests (default: `Chrome`, available: `Firefox`).
-
-If you are going to change the component (`src/ckeditor.js`) or plugin (`src/plugin.js`) files, remember about rebuilding the package. You can use `yarn run develop` in order to do it automatically.
+```bash
+npm run test:watch
+```
 
 ### Building the package
 
-Build a minified version of the package that is ready to publish:
+To build the package that is ready to publish, use the following command:
 
 ```bash
-yarn run build
+npm run build
 ```
-
-### Changelog generator
-
-```bash
-yarn run changelog
-```
-
-### Testing component with Vue CLI
-
-When symlinking the component in an application generated using [Vue CLI](https://cli.vuejs.org/), make sure your `vue.config.js` file configures webpack in the following way:
-
-```js
-module.exports = {
-	configureWebpack: {
-		resolve: {
-			symlinks: false
-		}
-	}
-};
-```
-
-Otherwise, the application will fail to load the component correctly and, as a result, it will throw a build error.
 
 ## Releasing package
 
@@ -82,21 +66,17 @@ Otherwise, the application will fail to load the component correctly and, as a r
 
 Before releasing a new version, run a demo project to confirm that the integration works in a real-world scenario.
 
-1. Navigate to the `demo` folder.
-2. Reinstall the dependencies.
-3. Run `yarn dev` to see if the integration works as expected.
-4. Run `yarn build` to see if the project with the integration builds without errors.
-
-```Text
-Dependencies in the `demo` project need to be reinstalled after any changes to the integration, because in `package.json` we use `file:` instead of `link:` due to Vite limitations. Unlike `link:`, which creates a symlink to the integration, `file:` copies its contents when `yarn install` is run and never updates after that.
-```
+1. Reinstall the dependencies.
+2. Run `npm run dev` to see if the integration works as expected.
+3. Run `npm run test` to see if the project passes all automated tests.
+4. Run `npm run build` to see if the project with the integration builds without errors.
 
 ### Changelog
 
 Before starting the release process, you need to generate the changelog:
 
 ```bash
-yarn run changelog
+npm run changelog
 ```
 
 ### Publishing
@@ -106,13 +86,13 @@ After generating the changelog, you are able to release the package.
 First, you need to bump the version:
 
 ```bash
-yarn run release:prepare-packages
+npm run release:prepare-packages
 ```
 
 After bumping the version, you can publish the changes:
 
 ```bash
-yarn run release:publish-packages
+npm run release:publish-packages
 ```
 
 Note: The `release/` directory will be published.
