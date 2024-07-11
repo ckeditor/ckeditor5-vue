@@ -25,29 +25,39 @@ See the ["Rich text editor component for Vue.js"](https://ckeditor.com/docs/cked
 After cloning this repository, install necessary dependencies:
 
 ```bash
-yarn install
+npm install
+```
+
+You can also use [Yarn](https://yarnpkg.com/).
+
+### Running the development server
+
+To manually test the editor integration, you can start the development server using one of the commands below:
+
+```bash
+npm run dev
 ```
 
 ### Executing tests
 
+To test the editor integration against a set of automated tests, run the following command:
+
 ```bash
-yarn run test
-# or
-yarn run test:watch
+npm run test
+```
+
+If you want to run the tests in watch mode, use the following command:
+
+```bash
+npm run test:watch
 ```
 
 ### Building the package
 
-Build a minified version of the package that is ready to publish:
+To build the package that is ready to publish, use the following command:
 
 ```bash
-yarn run build
-```
-
-### Changelog generator
-
-```bash
-yarn run changelog
+npm run build
 ```
 
 ## Releasing package
@@ -57,15 +67,16 @@ yarn run changelog
 Before releasing a new version, run a demo project to confirm that the integration works in a real-world scenario.
 
 1. Reinstall the dependencies.
-2. Run `yarn dev` to see if the integration works as expected.
-3. Run `yarn build` to see if the project with the integration builds without errors.
+2. Run `npm run dev` to see if the integration works as expected.
+3. Run `npm run test` to see if the project passes all automated tests.
+4. Run `npm run build` to see if the project with the integration builds without errors.
 
 ### Changelog
 
 Before starting the release process, you need to generate the changelog:
 
 ```bash
-yarn run changelog
+npm run changelog
 ```
 
 ### Publishing
@@ -75,13 +86,13 @@ After generating the changelog, you are able to release the package.
 First, you need to bump the version:
 
 ```bash
-yarn run release:prepare-packages
+npm run release:prepare-packages
 ```
 
 After bumping the version, you can publish the changes:
 
 ```bash
-yarn run release:publish-packages
+npm run release:publish-packages
 ```
 
 Note: The `release/` directory will be published.
