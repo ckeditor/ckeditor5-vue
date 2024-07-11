@@ -7,7 +7,7 @@
 
 /* eslint-env node */
 
-import parseArguments from './utils/parsearguments';
+import parseArguments from './utils/parsearguments.js';
 
 /**
  * Scripts for generating the changelog before starting the release process.

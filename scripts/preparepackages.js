@@ -11,8 +11,8 @@ import { createRequire } from 'module';
 import { Listr } from 'listr2';
 import releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 import devUtils from '@ckeditor/ckeditor5-dev-utils';
-import parseArguments from './utils/parsearguments';
-import getListrOptions from './utils/getlistroptions';
+import parseArguments from './utils/parsearguments.js';
+import getListrOptions from './utils/getlistroptions.js';
 
 const require = createRequire( import.meta.url );
 const packageJson = require( '../package.json' );
