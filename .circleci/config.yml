@@ -167,10 +167,13 @@ jobs:
           name: Verify if the project is ready to release
           command: |
             #!/bin/bash
+
             # Do not fail if the Node script ends with non-zero exit code.
             set +e
+
             node scripts/ci/is-project-ready-to-release.js
             EXIT_CODE=$( echo $? )
+
             if [ ${EXIT_CODE} -eq 1 ];
             then
               circleci-agent step halt
@@ -188,8 +191,10 @@ jobs:
           name: Verify the trigger commit from the repository
           command: |
             #!/bin/bash
+
             CKE5_LATEST_COMMIT_HASH=$( git log -n 1 --pretty=format:%H origin/master )
             CKE5_TRIGGER_COMMIT_HASH=<< pipeline.parameters.triggerCommitHash >>
+
             if [[ "${CKE5_LATEST_COMMIT_HASH}" != "${CKE5_TRIGGER_COMMIT_HASH}" ]]; then
               echo "There is a newer commit in the repository on the \`#master\` branch. Use its build to start the release."
               circleci-agent step halt
@@ -203,8 +208,10 @@ jobs:
             
             # Do not fail if the Node script ends with non-zero exit code.
             set +e
+    
             yarn ckeditor5-dev-ci-is-job-triggered-by-member
             EXIT_CODE=$( echo $? )
+    
             if [ ${EXIT_CODE} -ne 0 ];
             then
               echo "Aborting the release due to failed verification of the approver (no rights to release)."
