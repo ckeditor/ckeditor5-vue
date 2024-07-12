@@ -16,7 +16,7 @@ if ( !Vue.version || !Vue.version.startsWith( '3.' ) ) {
 	);
 }
 
-const plugin = {
+const CkeditorPlugin = {
 	/**
 	 * Installs the plugin, registering the `<ckeditor>` component.
 	 *
@@ -28,7 +28,7 @@ const plugin = {
 };
 
 export {
-	plugin as default,
+	CkeditorPlugin,
 	Ckeditor
 };
 

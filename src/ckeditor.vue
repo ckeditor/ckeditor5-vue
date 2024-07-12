@@ -10,7 +10,6 @@
 	lang="ts"
 	generic="TEditor extends { create( ...args: any[] ): Promise<Editor> }"
 >
-import { debounce } from 'lodash-es';
 import {
 	ref,
 	watch,
@@ -19,6 +18,7 @@ import {
 	onBeforeUnmount
 } from 'vue';
 import type { Editor, EditorConfig, EventInfo } from 'ckeditor5';
+import { debounce } from './debounce.js';
 
 type EditorType = TEditor extends { create( ...args: any[] ): Promise<infer E> } ? E : never;
 

@@ -6,7 +6,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ClassicEditor, Essentials, Paragraph } from 'ckeditor5';
-import CKEditor from '../../src/plugin.js';
+import { CkeditorPlugin } from '../../src/plugin.js';
 
 describe( 'CKEditor plugin', () => {
 	it( 'should work with an actual editor build', async () => {
@@ -40,7 +40,7 @@ describe( 'CKEditor plugin', () => {
 			{
 				attachTo: domElement,
 				global: {
-					plugins: [ CKEditor ]
+					plugins: [ CkeditorPlugin ]
 				},
 				data: () => ( {
 					editor: TestEditor,

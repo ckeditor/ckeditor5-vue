@@ -25,15 +25,20 @@ export default defineConfig( {
 		lib: {
 			entry: resolve( __dirname, 'src/plugin.ts' ),
 			name: 'CKEditor',
-			fileName: 'ckeditor',
-			formats: [ 'es' ]
+			fileName: 'ckeditor'
 		},
 
 		rollupOptions: {
 			external: Object.keys( {
 				...pkg.dependencies,
 				...pkg.peerDependencies
-			} )
+			} ),
+
+			output: {
+				globals: {
+					'vue': 'Vue'
+				}
+			}
 		}
 	},
 
@@ -51,6 +56,7 @@ export default defineConfig( {
 		coverage: {
 			provider: 'istanbul',
 			include: [ 'src/*' ],
+			exclude: [ 'src/debounce.ts' ], // This file is a copy of the lodash debounce function. We don't need coverage for it.
 			thresholds: {
 				100: true
 			},
