@@ -4,7 +4,7 @@
  */
 
 /**
- * @license Copy of lodash's debounce function. See https://github.com/lodash/lodash/blob/main/LICENSE.
+ * @license Modified version of lodash's debounce function. See https://github.com/lodash/lodash/blob/main/LICENSE.
  *
  * Source code: https://github.com/lodash/lodash/blob/main/src/debounce.ts
  */
@@ -43,7 +43,7 @@ export function debounce<TArgs extends Array<any>, TReturnType>(
 
 	wait = Number( wait ) || 0;
 
-	if ( !options ) {
+	if ( options ) {
 		leading = !!options.leading;
 		maxing = 'maxWait' in options;
 		maxWait = maxing ? Math.max( options.maxWait || 0, wait ) : maxWait;
