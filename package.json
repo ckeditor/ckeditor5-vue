@@ -52,6 +52,7 @@
     "lint-staged": "^10.2.11",
     "listr2": "^6.5.0",
     "minimist": "^1.2.5",
+    "semver": "^7.6.2",
     "typescript": "~5.4.5",
     "vite": "^5.3.1",
     "vitest": "^2.0.0",
@@ -59,6 +60,11 @@
     "vue-eslint-parser": "^9.1.0",
     "vue-tsc": "^2.0.22",
     "webdriverio": "^8.39.0"
+  },
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0",
+    "semver": "^7.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
