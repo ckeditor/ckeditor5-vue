@@ -36,7 +36,8 @@ export default defineConfig( {
 
 			output: {
 				globals: {
-					'vue': 'Vue'
+					'vue': 'Vue',
+					'lodash-es': '_'
 				}
 			}
 		}
@@ -56,7 +57,6 @@ export default defineConfig( {
 		coverage: {
 			provider: 'istanbul',
 			include: [ 'src/*' ],
-			exclude: [ 'src/debounce.ts' ], // This file is a copy of the lodash debounce function. We don't need coverage for it.
 			thresholds: {
 				100: true
 			},

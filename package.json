@@ -29,6 +29,9 @@
     },
     "./package.json": "./package.json"
   },
+  "dependencies": {
+    "lodash-es": "^4.17.21"
+  },
   "peerDependencies": {
     "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
     "vue": "^3.4.0"
@@ -38,6 +41,7 @@
     "@ckeditor/ckeditor5-dev-ci": "^40.1.0",
     "@ckeditor/ckeditor5-dev-release-tools": "^40.1.0",
     "@ckeditor/ckeditor5-dev-utils": "^40.1.0",
+    "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.0.0",
     "@vitest/coverage-istanbul": "^2.0.0",
