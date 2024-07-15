@@ -39,7 +39,7 @@ export {
 };
 
 declare module 'vue' {
-	export interface GlobalComponents {
+	interface GlobalComponents {
 		Ckeditor: typeof Ckeditor;
 	}
 }
