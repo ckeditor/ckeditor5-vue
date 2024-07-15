@@ -5,7 +5,7 @@
 
 /* eslint-env browser */
 import * as Vue from 'vue';
-import Ckeditor from './ckeditor.vue';
+import CKEditor from './ckeditor.vue';
 
 /* istanbul ignore if -- @preserve */
 if ( !Vue.version || !Vue.version.startsWith( '3.' ) ) {
@@ -16,24 +16,24 @@ if ( !Vue.version || !Vue.version.startsWith( '3.' ) ) {
 	);
 }
 
-const CkeditorPlugin = {
+const CKEditorPlugin = {
 	/**
 	 * Installs the plugin, registering the `<ckeditor>` component.
 	 *
 	 * @param app The application instance.
 	 */
 	install( app: Vue.App ): void {
-		app.component( 'Ckeditor', Ckeditor );
+		app.component( 'Ckeditor', CKEditor );
 	}
 };
 
 export {
-	CkeditorPlugin,
-	Ckeditor
+	CKEditorPlugin,
+	CKEditor
 };
 
 declare module 'vue' {
 	interface GlobalComponents {
-		Ckeditor: typeof Ckeditor;
+		Ckeditor: typeof CKEditor;
 	}
 }

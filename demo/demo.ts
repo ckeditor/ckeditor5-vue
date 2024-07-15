@@ -4,11 +4,11 @@
  */
 
 import { createApp } from 'vue';
-import { CkeditorPlugin } from '../src/plugin.js';
+import { CKEditorPlugin } from '../src/plugin.js';
 import App from './App.vue';
 
 import 'ckeditor5/ckeditor5.css';
 
 createApp( App )
-	.use( CkeditorPlugin )
+	.use( CKEditorPlugin )
 	.mount( '#app' );
