@@ -25,15 +25,21 @@ export default defineConfig( {
 		lib: {
 			entry: resolve( __dirname, 'src/plugin.ts' ),
 			name: 'CKEditor',
-			fileName: 'ckeditor',
-			formats: [ 'es' ]
+			fileName: 'ckeditor'
 		},
 
 		rollupOptions: {
 			external: Object.keys( {
 				...pkg.dependencies,
 				...pkg.peerDependencies
-			} )
+			} ),
+
+			output: {
+				globals: {
+					'vue': 'Vue',
+					'lodash-es': '_'
+				}
+			}
 		}
 	},
 

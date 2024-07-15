@@ -6,7 +6,7 @@
 import { nextTick } from 'vue';
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Ckeditor } from '../src/plugin.ts';
+import { CKEditor } from '../src/plugin.ts';
 import {
 	MockEditor,
 	ModelDocument,
@@ -26,7 +26,7 @@ describe( 'CKEditor component', () => {
 	} );
 
 	it( 'should have a name', () => {
-		expect( Ckeditor.name ).to.equal( 'Ckeditor' );
+		expect( CKEditor.name ).to.equal( 'CKEditor' );
 	} );
 
 	it( 'should print a warning if the "window.CKEDITOR_VERSION" variable is not available', async () => {
@@ -251,7 +251,7 @@ describe( 'CKEditor component', () => {
 
 				const component = mount( {
 					components: {
-						ckeditor: Ckeditor
+						ckeditor: CKEditor
 					},
 					data: () => ( {
 						editor: MockEditor,
@@ -524,7 +524,7 @@ describe( 'CKEditor component', () => {
 } );
 
 function mountComponent( props: Record<string, any> = {} ) {
-	return mount( Ckeditor, {
+	return mount( CKEditor, {
 		props: {
 			editor: MockEditor,
 			...props

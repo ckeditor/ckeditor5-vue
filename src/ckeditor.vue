@@ -23,7 +23,7 @@ import type { Editor, EditorConfig, EventInfo } from 'ckeditor5';
 type EditorType = TEditor extends { create( ...args: any[] ): Promise<infer E> } ? E : never;
 
 defineOptions( {
-	name: 'Ckeditor'
+	name: 'CKEditor'
 } );
 
 const model = defineModel( 'modelValue', { type: String, default: '' } );

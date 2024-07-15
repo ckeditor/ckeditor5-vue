@@ -18,10 +18,14 @@
     "ckeditor 5"
   ],
   "type": "module",
+  "main": "./dist/ckeditor.umd.cjs",
+  "module": "./dist/ckeditor.js",
+  "types": "./dist/plugin.d.ts",
   "exports": {
     ".": {
       "types": "./dist/plugin.d.ts",
-      "import": "./dist/ckeditor.js"
+      "import": "./dist/ckeditor.js",
+      "require": "./dist/ckeditor.umd.cjs"
     },
     "./package.json": "./package.json"
   },

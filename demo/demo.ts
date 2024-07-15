@@ -4,7 +4,7 @@
  */
 
 import { createApp } from 'vue';
-import CKEditorPlugin from '../src/plugin.js';
+import { CKEditorPlugin } from '../src/plugin.js';
 import App from './App.vue';
 
 import 'ckeditor5/ckeditor5.css';
