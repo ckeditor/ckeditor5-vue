@@ -3,25 +3,57 @@ Changelog
 
 ## [7.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v6.0.0...v7.0.0-alpha.0) (2024-07-15)
 
+We are excited to announce the alpha release of the next major version of the Vue integration.
+
+In this release, we have introduced the following breaking changes that should make using the integration more intuitive and easier.
+
+- **Composition API**: The integration has been rewritten in Composition API, which follows the recommended way of writing components in Vue 3.
+- **Vue 3.4+**: The minimum required version of Vue is now 3.4+ because we are using the [Generics](https://vuejs.org/api/sfc-script-setup.html#generics) and [`defineModel()`](https://vuejs.org/api/sfc-script-setup.html#definemodel) features to provide better typings for the `editor` prop and component events.
+- **ESM-first**: Besides the UMD build, the integration is now available in ESM format. In most projects, the new ESM build should be automatically prioritized by bundlers and other tools.
+- **Changed exports**: We have changed how the Vue plugin and component are exported. The Vue plugin is no longer the `default` export but is exported as `CKEditorPlugin`. The component is now exported as `CKEditor` instead of `default.component`.
+
+  Here's a comparison of how you can import the Vue plugin that registers a global `<ckeditor>` component:
+
+  ```diff
+  // Before the change
+  import CKEditor from '@ckeditor/ckeditor5-vue';
+
+  // After the changes
+  import { CKEditorPlugin } from '@ckeditor/ckeditor5-vue';
+  ```
+
+  If you prefer to use a local component instead of a global component, here's a comparison of how you can import it:
+
+  ```diff
+  // Before the change
+  import CKEditor from '@ckeditor/ckeditor5-vue';
+
+  const component = CKEditor.component;
+
+  // After the changes
+  import { CKEditor } from '@ckeditor/ckeditor5-vue';
+
+  const component = CKEditor;
+  ```
+
+- **Remove the `editor` argument from the `destroy` event**: The `destroy` event no longer has an `editor` argument since it was always `null`.
+
 ### BREAKING CHANGES
 
-* Bump required version to Vue 3.4+. See [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282).
-* Export the component as `Ckeditor` instead of `default.component`. Closes [#284](https://github.com/ckeditor/ckeditor5-vue/issues/284).
+* The `@ckeditor/ckeditor5-vue` package requires Vue 3.4+. See [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282).
+* Export the component as `CKEditor` instead of `default.component`. Closes [#284](https://github.com/ckeditor/ckeditor5-vue/issues/284).
 * Migrate to Composition API. Closes [#172](https://github.com/ckeditor/ckeditor5-vue/issues/172).
 * Migrate to ESM. See [ckeditor/ckeditor5#16616](https://github.com/ckeditor/ckeditor5/issues/16616).
-* Remove argument from the `destroy` event, as it was always `null`. Closes [#283](https://github.com/ckeditor/ckeditor5-vue/issues/283).
+* Remove the argument from the `destroy` event, as it was always `null`. Closes [#283](https://github.com/ckeditor/ckeditor5-vue/issues/283).
 * Replace the default export with named `CKEditorPlugin` export.
-
-### Features
-
-* Add UMD for better backward compatibility. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/0412b19f26ef954a7cf8fb8c2bc7d1bce686e0e6))
 
 ### Bug fixes
 
-* Use type of the passed `editor` prop rather than generic `Editor` type. Closes [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/c82a0040dfd2f23a87aca257c354b6a2c302c340))
+* Use the type of the passed `editor` prop rather than generic `Editor` type. Closes [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/c82a0040dfd2f23a87aca257c354b6a2c302c340))
 
 ### Other changes
 
+* Add UMD for better backward compatibility. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/0412b19f26ef954a7cf8fb8c2bc7d1bce686e0e6))
 * Updated yarn.lock to fix dependabot alert. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/e0d7a9e9c974025f6d0060b70d1d19718cb14f48))
 
 
