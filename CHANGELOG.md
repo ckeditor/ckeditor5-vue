@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## [7.0.0-alpha.1](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0-alpha.0...v7.0.0-alpha.1) (2024-07-16)
+
+### BREAKING CHANGES
+
+* Rename main package exports to `CkeditorPlugin` and `Ckeditor`.
+
+### Other changes
+
+* Rename exports to improve name of the editor component in Vue. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/fac44822ca6f41c9a7ea4b529b6274da1ee66cfc))
+
+
 ## [7.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v6.0.0...v7.0.0-alpha.0) (2024-07-15)
 
 We are excited to announce the alpha release of the next major version of the Vue integration.
