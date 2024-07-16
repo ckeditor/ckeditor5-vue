@@ -26,5 +26,7 @@
     "declaration": true,
     "declarationDir": "./dist"
   },
-  "include": ["src/plugin.ts"]
+  "include": [
+    "src"
+  ]
 }

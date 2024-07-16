@@ -19,8 +19,9 @@ import {
 	onBeforeUnmount
 } from 'vue';
 import type { Editor, EditorConfig, EventInfo } from 'ckeditor5';
+import type { Props, ExtractEditorType } from './types.js';
 
-type EditorType = TEditor extends { create( ...args: any[] ): Promise<infer E> } ? E : never;
+type EditorType = ExtractEditorType<TEditor>;
 
 defineOptions( {
 	name: 'CKEditor'
@@ -28,13 +29,7 @@ defineOptions( {
 
 const model = defineModel( 'modelValue', { type: String, default: '' } );
 
-const props = withDefaults( defineProps<{
-	editor: TEditor;
-	config?: EditorConfig;
-	tagName?: string;
-	disabled?: boolean;
-	disableTwoWayDataBinding?: boolean;
-}>(), {
+const props = withDefaults( defineProps<Props<TEditor>>(), {
 	config: () => ( {} ),
 	tagName: 'div',
 	disabled: false,
