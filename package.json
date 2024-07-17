@@ -78,7 +78,7 @@
     "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
     "test": "vitest run --coverage",
     "test:watch": "vitest --ui --watch",
-    "lint": "eslint \"{demo,src,tests}/**/*\"",
+    "lint": "eslint \"{demo,src,tests}/**/*.{ts,vue}\"",
     "postinstall": "node ./scripts/postinstall.js",
     "changelog": "node ./scripts/changelog.js",
     "release:prepare-packages": "node ./scripts/preparepackages.js",
