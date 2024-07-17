@@ -24,7 +24,7 @@ export default defineConfig( {
 		// https://vitejs.dev/guide/build#library-mode
 		lib: {
 			entry: resolve( __dirname, 'src/plugin.ts' ),
-			name: 'CKEditor',
+			name: 'CKEDITOR_VUE',
 			fileName: 'ckeditor'
 		},
 
