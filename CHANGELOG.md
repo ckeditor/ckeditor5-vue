@@ -1,6 +1,18 @@
 Changelog
 =========
 
+## [7.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0-alpha.1...v7.0.0-alpha.2) (2024-07-17)
+
+### BREAKING CHANGES
+
+* Change the global name used in the UMD build from `CKEditor` to `CKEDITOR_VUE`.
+
+### Bug fixes
+
+* Change the global name used in the UMD build from `CKEditor` to `CKEDITOR_VUE` to match the new convention. See [ckeditor/ckeditor5#16736](https://github.com/ckeditor/ckeditor5/issues/16736). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/eba73a525e1422ff3a3a1a95825d6c4807b3a232))
+* Fix the component properties and event types. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/e2a9bbcaec754ab680fc28dae545ea27defe68e3))
+
+
 ## [7.0.0-alpha.1](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0-alpha.0...v7.0.0-alpha.1) (2024-07-16)
 
 ### BREAKING CHANGES
