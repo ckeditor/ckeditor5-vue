@@ -42,16 +42,10 @@ export {
  * CDN related exports.
  */
 export { waitForWindowEntry } from './utils/waitForWindowEntry';
-
 export {
 	default as loadCKEditorCloud,
 	type CKEditorCloudResult
 } from './cloud/loadCKEditorCloud';
-
-export {
-	createCKCdnBaseBundlePack,
-	createCKCdnPremiumBundlePack
-} from './cloud/cdn';
 
 declare module 'vue' {
 	interface GlobalComponents {
