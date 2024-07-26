@@ -4,7 +4,10 @@
  */
 
 import type * as CKEditor from 'ckeditor5';
+import type { EventInfo } from 'ckeditor5';
+
 import type { CKCdnResourcesPack } from './loadCKCdnResourcesPack';
+import type { Overwrite } from '../../types';
 
 import { createCKCdnUrl, type CKCdnVersion } from './createCKCdnUrl';
 import { waitForWindowEntry } from '../../utils/waitForWindowEntry';
@@ -15,7 +18,14 @@ import { injectScriptsInParallel } from '../../utils/injectScript';
  */
 declare global {
 	interface Window {
-		CKEDITOR: typeof CKEditor;
+		CKEDITOR: Overwrite<
+			typeof CKEditor,
+			{
+				// FIXME: This is a temporary workaround for the missing `prototype` property in the `EventInfo` type.
+				EventInfo: EventInfo;
+			}
+		>;
+
 		ckeditor5: Window['CKEDITOR'];
 	}
 }
