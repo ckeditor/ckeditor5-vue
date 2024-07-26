@@ -14,6 +14,11 @@ import type { EditorConfig } from 'ckeditor5';
  */
 
 /**
+ * Represents a type that can be awaited.
+ */
+export type Awaitable<T> = T | PromiseLike<T>;
+
+/**
  * The props accepted by the `<ckeditor>` component.
  */
 export interface Props<TEditor> {
