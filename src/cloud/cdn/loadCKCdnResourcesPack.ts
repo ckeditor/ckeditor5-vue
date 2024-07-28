@@ -69,7 +69,7 @@ export const loadCKCdnResourcesPack = async <P extends CKCdnResourcesPack<any>>(
 		preload = [
 			...stylesheets.filter( item => typeof item === 'string' ),
 			...scripts.filter( item => typeof item === 'string' )
-		] as Array<string>;
+		];
 	}
 
 	// Preload resources specified in the pack.

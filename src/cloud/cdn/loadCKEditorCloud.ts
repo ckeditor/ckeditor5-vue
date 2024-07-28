@@ -3,15 +3,16 @@
  * For licensing, see LICENSE.md.
  */
 
+import { combineCKCdnBundlesPacks } from './combineCKCdnBundlesPacks';
+import { createCKCdnBaseBundlePack } from './createCKCdnBaseBundlePack';
+import { createCKCdnPremiumBundlePack } from './createCKCdnPremiumBundlePack';
+
+import type { CKCdnVersion } from './createCKCdnUrl';
 import {
-	combineCKCdnBundlesPacks,
-	createCKCdnBaseBundlePack,
-	createCKCdnPremiumBundlePack,
 	loadCKCdnResourcesPack,
 	type CKCdnResourcesPack,
-	type CKCdnVersion,
 	type InferCKCdnResourcesPackExportsType
-} from './cdn';
+} from './loadCKCdnResourcesPack';
 
 /**
  * A composable function that loads CKEditor Cloud Services bundles.

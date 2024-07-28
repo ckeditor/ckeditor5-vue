@@ -41,11 +41,14 @@ export {
 /**
  * CDN related exports.
  */
+import './cloud/cdn/globals.d';
+
 export { waitForWindowEntry } from './utils/waitForWindowEntry';
+export { default as useCKEditorCloud } from './cloud/useCKEditorCloud';
 export {
 	default as loadCKEditorCloud,
 	type CKEditorCloudResult
-} from './cloud/loadCKEditorCloud';
+} from './cloud/cdn/loadCKEditorCloud';
 
 declare module 'vue' {
 	interface GlobalComponents {

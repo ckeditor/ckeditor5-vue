@@ -19,11 +19,6 @@ import type { EditorConfig } from 'ckeditor5';
 export type Awaitable<T> = T | PromiseLike<T>;
 
 /**
- * Overwrites properties of type `T` with properties of type `U`.
- */
-export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
-
-/**
  * The props accepted by the `<ckeditor>` component.
  */
 export interface Props<TEditor> {

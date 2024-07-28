@@ -2,10 +2,11 @@
   <h1>Example of using CKEditor 5 in Vue.js 3.x</h1>
 
   <ckeditor
+    v-if="EditorConstructor"
     v-model="data"
     tag-name="textarea"
     :disable-two-way-data-binding="isTwoWayDataBindingDisabled"
-    :editor="TestEditor"
+    :editor="EditorConstructor"
     :config="config"
     :disabled="disabled"
     @ready="onReady"
@@ -36,34 +37,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { loadCKEditorCloud } from '../../src/plugin.js';
+import { ref, reactive, watchEffect } from 'vue';
 
-type CKEDITOR = Window['CKEDITOR'];
+import type * as CKEditor5 from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
+import { useCKEditorCloud } from '../../src/plugin.js';
 
-const { CKEditor } = await loadCKEditorCloud( {
+const cloud = useCKEditorCloud( {
 	version: '42.0.2'
 } );
 
-const { ClassicEditor, Paragraph, Essentials, Heading, Bold, Italic } = CKEditor;
-
-class TestEditor extends ClassicEditor {
-	static builtinPlugins = [
-		Essentials,
-		Paragraph,
-		Heading,
-		Bold,
-		Italic
-	];
-}
-
 // State
-const editorInstance = ref<TestEditor | null>( null );
 const data = ref( '<p>Hello world!</p>' );
 const disabled = ref( false );
 const isTwoWayDataBindingDisabled = ref( false );
 const config = reactive( {
 	toolbar: [ 'heading', '|', 'bold', 'italic' ]
+} );
+
+const EditorConstructor = ref<typeof CKEditor5.ClassicEditor | null>( null );
+const editorInstance = ref<CKEditor5.ClassicEditor | null>( null );
+
+watchEffect( () => {
+	if ( !cloud.data.value ) {
+		return;
+	}
+
+	const { ClassicEditor, Paragraph, Essentials, Heading, Bold, Italic } = cloud.data.value.CKEditor;
+
+	EditorConstructor.value = class TestEditor extends ClassicEditor {
+		static builtinPlugins = [
+			Essentials,
+			Paragraph,
+			Heading,
+			Bold,
+			Italic
+		];
+	};
 } );
 
 // Methods
@@ -79,21 +88,21 @@ function toggleEditorDisabled() {
 	disabled.value = !disabled.value;
 }
 
-function onReady( editor: TestEditor ) {
+function onReady( editor: CKEditor5.ClassicEditor ) {
 	editorInstance.value = editor;
 
 	console.log( 'Editor is ready.', { editor } );
 }
 
-function onFocus( event: CKEDITOR['EventInfo'], editor: TestEditor ) {
+function onFocus( event: CKEditor5.EventInfo, editor: CKEditor5.ClassicEditor ) {
 	console.log( 'Editor focused.', { event, editor } );
 }
 
-function onBlur( event: CKEDITOR['EventInfo'], editor: TestEditor ) {
+function onBlur( event: CKEditor5.EventInfo, editor: CKEditor5.ClassicEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: CKEDITOR['EventInfo'], editor: TestEditor ) {
+function onInput( data: string, event: CKEditor5.EventInfo, editor: CKEditor5.ClassicEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 
