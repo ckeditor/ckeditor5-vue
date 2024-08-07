@@ -1,6 +1,35 @@
 Changelog
 =========
 
+## [7.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v6.0.0...v7.0.0) (2024-08-07)
+
+### BREAKING CHANGES
+
+* Bump required version to Vue 3.4+. See [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282).
+* Change the global name used in the UMD build from `CKEditor` to `CKEDITOR_VUE`.
+* Export the component as `Ckeditor` instead of `default.component`. Closes [#284](https://github.com/ckeditor/ckeditor5-vue/issues/284).
+* Migrate to Composition API. Closes [#172](https://github.com/ckeditor/ckeditor5-vue/issues/172).
+* Migrate to ESM. See [ckeditor/ckeditor5#16616](https://github.com/ckeditor/ckeditor5/issues/16616).
+* Remove argument from the `destroy` event, as it was always `null`. Closes [#283](https://github.com/ckeditor/ckeditor5-vue/issues/283).
+* Rename main package exports to `CkeditorPlugin` and `Ckeditor`.
+* Replace the default export with named `CKEditorPlugin` export.
+
+### Features
+
+* Add UMD for better backward compatibility. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/0412b19f26ef954a7cf8fb8c2bc7d1bce686e0e6))
+
+### Bug fixes
+
+* Change the global name used in the UMD build from `CKEditor` to `CKEDITOR_VUE` to match the new convention. See [ckeditor/ckeditor5#16736](https://github.com/ckeditor/ckeditor5/issues/16736). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/eba73a525e1422ff3a3a1a95825d6c4807b3a232))
+* Fix the component properties and event types. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/e2a9bbcaec754ab680fc28dae545ea27defe68e3))
+* Use type of the passed `editor` prop rather than generic `Editor` type. Closes [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/c82a0040dfd2f23a87aca257c354b6a2c302c340))
+
+### Other changes
+
+* Rename exports to improve name of the editor component in Vue. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/fac44822ca6f41c9a7ea4b529b6274da1ee66cfc))
+* Updated yarn.lock to fix dependabot alert. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/e0d7a9e9c974025f6d0060b70d1d19718cb14f48))
+
+
 ## [7.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0-alpha.1...v7.0.0-alpha.2) (2024-07-17)
 
 ### BREAKING CHANGES
