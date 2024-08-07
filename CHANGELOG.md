@@ -1,6 +1,64 @@
 Changelog
 =========
 
+## [7.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v6.0.0...v7.0.0) (2024-08-07)
+
+We are excited to announce a new major release of the Vue integration.
+
+In this release, we have introduced the following breaking changes that should make using the integration more intuitive and easier.
+
+* **Composition API**: The integration has been rewritten in Composition API, which follows the recommended way of writing components in Vue 3.
+* **Vue 3.4+**: The minimum required version of Vue is now 3.4+ because we are using the [Generics](https://vuejs.org/api/sfc-script-setup.html#generics) and [`defineModel()`](https://vuejs.org/api/sfc-script-setup.html#definemodel) features to provide better typings for the `editor` prop and component events.
+* **ESM-first**: Besides the UMD build, the integration is now available in ESM format. In most projects, the new ESM build should be automatically prioritized by bundlers and other tools.
+* **Changed exports**: We have changed how the Vue plugin and component are exported. The Vue plugin is no longer the `default` export but is exported as `CkeditorPlugin`. The component is now exported as `Ckeditor` instead of `default.component`.
+
+  Here's a comparison of how you can import the Vue plugin that registers a global `<ckeditor>` component:
+
+  ```ts
+  // Before the release.
+  import CKEditor from '@ckeditor/ckeditor5-vue';
+
+  // After the release.
+  import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
+  ```
+
+  If you prefer to use a local component instead of a global component, here's a comparison of how you can import it:
+
+  ```ts
+  // Before the release.
+  import CKEditor from '@ckeditor/ckeditor5-vue';
+
+  const component = CKEditor.component;
+
+  // After the release.
+  import { Ckeditor } from '@ckeditor/ckeditor5-vue';
+
+  const component = Ckeditor;
+  ```
+
+* **Remove the `editor` argument from the `destroy` event**: The `destroy` event no longer has an `editor` argument since it was always `null`.
+* **New name of the global variable**: The name of the global variable used in the UMD build changed from `CKEditor` to `CKEDITOR_VUE`.
+
+### BREAKING CHANGES
+
+* Bump required version to Vue 3.4+. See [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282).
+* Change the global name used in the UMD build from `CKEditor` to `CKEDITOR_VUE`.
+* Export the component as `Ckeditor` instead of `default.component`. Closes [#284](https://github.com/ckeditor/ckeditor5-vue/issues/284).
+* Migrate to Composition API. Closes [#172](https://github.com/ckeditor/ckeditor5-vue/issues/172).
+* Migrate to ESM. See [ckeditor/ckeditor5#16616](https://github.com/ckeditor/ckeditor5/issues/16616).
+* Remove argument from the `destroy` event, as it was always `null`. Closes [#283](https://github.com/ckeditor/ckeditor5-vue/issues/283).
+* Rename main package exports to `CkeditorPlugin` and `Ckeditor`.
+
+### Bug fixes
+
+* Change the global name used in the UMD build from `CKEditor` to `CKEDITOR_VUE` to match the new convention. See [ckeditor/ckeditor5#16736](https://github.com/ckeditor/ckeditor5/issues/16736). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/eba73a525e1422ff3a3a1a95825d6c4807b3a232))
+* Fix the component properties and event types. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/e2a9bbcaec754ab680fc28dae545ea27defe68e3))
+* Use type of the passed `editor` prop rather than generic `Editor` type. Closes [#282](https://github.com/ckeditor/ckeditor5-vue/issues/282). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/c82a0040dfd2f23a87aca257c354b6a2c302c340))
+
+### Other changes
+
+* Rename exports to improve name of the editor component in Vue. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/fac44822ca6f41c9a7ea4b529b6274da1ee66cfc))
+
 ## [7.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0-alpha.1...v7.0.0-alpha.2) (2024-07-17)
 
 ### BREAKING CHANGES
