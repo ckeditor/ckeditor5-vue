@@ -18,5 +18,6 @@ const cliArguments = parseArguments( process.argv.slice( 2 ) );
 import { generateChangelogForSinglePackage } from '@ckeditor/ckeditor5-dev-release-tools';
 
 await generateChangelogForSinglePackage( {
+	from: cliArguments.from,
 	releaseBranch: cliArguments.branch
 } );
