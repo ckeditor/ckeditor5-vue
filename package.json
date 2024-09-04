@@ -30,10 +30,12 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "@ckeditor/ckeditor5-integrations-common": "^1.0.0"
   },
   "peerDependencies": {
     "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
+    "ckeditor5-premium-features": ">=42.0.0 || ^0.0.0-nightly",
     "vue": "^3.4.0"
   },
   "devDependencies": {
@@ -48,6 +50,7 @@
     "@vitest/ui": "^2.0.0",
     "@vue/test-utils": "^2.3.1",
     "ckeditor5": "^42.0.0",
+    "ckeditor5-premium-features": "^42.0.2",
     "coveralls": "^3.1.1",
     "eslint": "^7.32.0",
     "eslint-config-ckeditor5": "^5.3.2",
@@ -79,7 +82,7 @@
     "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
     "test": "vitest run --coverage",
     "test:watch": "vitest --ui --watch",
-    "lint": "eslint \"{demo,src,tests}/**/*.{ts,vue}\"",
+    "lint": "eslint \"{demos,src,tests}/**/*.{ts,vue}\"",
     "postinstall": "node ./scripts/postinstall.js",
     "changelog": "node ./scripts/changelog.js",
     "release:prepare-packages": "node ./scripts/preparepackages.js",

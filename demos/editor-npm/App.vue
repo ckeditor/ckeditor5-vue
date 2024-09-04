@@ -1,5 +1,5 @@
 <template>
-  <h1>Example of using CKEditor 5 in Vue.js 3.x</h1>
+  <h2>Using CKEditor 5 from NPM in Vue 3</h2>
 
   <ckeditor
     v-model="data"

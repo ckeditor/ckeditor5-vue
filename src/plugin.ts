@@ -38,6 +38,19 @@ export {
 	Ckeditor
 };
 
+/**
+ * CDN related exports.
+ */
+
+export { default as useCKEditorCloud } from './useCKEditorCloud';
+
+export {
+	loadCKEditorCloud,
+	type CKEditorCloudResult,
+	type CKEditorCloudConfig,
+	type CdnPluginsPacks
+} from '@ckeditor/ckeditor5-integrations-common';
+
 declare module 'vue' {
 	interface GlobalComponents {
 		Ckeditor: typeof Ckeditor;
