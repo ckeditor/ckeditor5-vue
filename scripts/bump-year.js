@@ -32,7 +32,7 @@ bumpYear( {
 			pattern: '.husky/*'
 		},
 		{
-			pattern: '!(coverage|.nyc_output|dist|demo)/**'
+			pattern: '!(coverage|.nyc_output|dist|demos)/**'
 		}
 	]
 } );
