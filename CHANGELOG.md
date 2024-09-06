@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [7.1.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0...v7.1.0-alpha.0) (2024-09-06)
+
+### Features
+
+* **Experimental:** Added a `useCKEditorCloud()` composable for managing asynchronous loading of CKEditor 5 from a CDN. (https://github.com/ckeditor/ckeditor5-vue/commit/d17eb7f99c50c05f987a436c7a2884eafbc2d5e0)
+
+
 ## [7.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v6.0.0...v7.0.0) (2024-08-07)
 
 We are excited to announce a new major release of the Vue integration.
