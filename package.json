@@ -82,6 +82,7 @@
     "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
     "test": "vitest run --coverage",
     "test:watch": "vitest --ui --watch",
+    "test:check:types": "tsc --noEmit -p ./tests/tsconfig.json",
     "lint": "eslint \"{demos,src,tests}/**/*.{ts,vue}\"",
     "postinstall": "node ./scripts/postinstall.js",
     "changelog": "node ./scripts/changelog.js",

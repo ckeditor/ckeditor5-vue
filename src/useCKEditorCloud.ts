@@ -8,7 +8,6 @@ import { useAsync, type AsyncComposableResult } from './composables/useAsync';
 
 import {
 	loadCKEditorCloud,
-	type CdnPluginsPacks,
 	type CKEditorCloudConfig,
 	type CKEditorCloudResult
 } from '@ckeditor/ckeditor5-integrations-common';
@@ -18,7 +17,7 @@ import {
  *
  * @param config The configuration of the CKEditor Cloud services.
  * @returns The result of the loaded CKEditor Cloud services.
- * @template A The type of the additional resources to load.
+ * @template Config The type of the CKEditor Cloud configuration.
  * @experimental
  * @example
  * ```ts
@@ -35,11 +34,11 @@ import {
  * 	// ..
  * }
  */
-export default function useCKEditorCloud<A extends CdnPluginsPacks>(
-	config: MaybeRefOrGetter<CKEditorCloudConfig<A>>
-): AsyncComposableResult<CKEditorCloudResult<A>> {
+export default function useCKEditorCloud<Config extends CKEditorCloudConfig>(
+	config: MaybeRefOrGetter<Config>
+): AsyncComposableResult<CKEditorCloudResult<Config>> {
 	return useAsync(
-		(): Promise<CKEditorCloudResult<A>> => loadCKEditorCloud(
+		(): Promise<CKEditorCloudResult<Config>> => loadCKEditorCloud(
 			toValue( config )
 		)
 	);
