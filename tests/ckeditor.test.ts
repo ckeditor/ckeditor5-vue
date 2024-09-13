@@ -6,7 +6,7 @@
 import { nextTick } from 'vue';
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Ckeditor } from '../src/plugin.ts';
+import { Ckeditor } from '../src/plugin';
 import {
 	MockEditor,
 	ModelDocument,

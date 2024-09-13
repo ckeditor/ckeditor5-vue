@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
-    "@ckeditor/ckeditor5-integrations-common": "^1.0.0"
+    "@ckeditor/ckeditor5-integrations-common": "^2.0.0"
   },
   "peerDependencies": {
     "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
@@ -82,6 +82,7 @@
     "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
     "test": "vitest run --coverage",
     "test:watch": "vitest --ui --watch",
+    "test:check:types": "tsc --noEmit -p ./tests/tsconfig.json",
     "lint": "eslint \"{demos,src,tests}/**/*.{ts,vue}\"",
     "postinstall": "node ./scripts/postinstall.js",
     "changelog": "node ./scripts/changelog.js",
