@@ -5,11 +5,7 @@ Changelog
 
 ### Features
 
-* Improve result type of `useCKEditorCloud` to make `CKEditorPremiumFeatures` and `CKBox` non-nullable when proper configuration is passed. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/94327099b9dbacbb886198b047eef575e4114e11))
-
-### Bug fixes
-
-* Rename the `languages` configuration property to `translations` in `useCKEditorCloud`. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/94327099b9dbacbb886198b047eef575e4114e11))
+* **Experimental:** Added a `useCKEditorCloud()` composable for managing asynchronous loading of CKEditor 5 from a CDN. (https://github.com/ckeditor/ckeditor5-vue/commit/d17eb7f99c50c05f987a436c7a2884eafbc2d5e0)
 
 
 ## [7.1.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0...v7.1.0-alpha.0) (2024-09-06)
