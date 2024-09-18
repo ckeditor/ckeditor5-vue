@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## [7.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0...v7.1.0) (2024-09-17)
+## [7.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0...v7.1.0) (2024-09-19)
 
 ### Features
 
