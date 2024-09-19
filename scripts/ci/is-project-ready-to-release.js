@@ -8,7 +8,7 @@
 /* eslint-env node */
 
 import { createRequire } from 'module';
-import releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
+import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 
 const require = createRequire( import.meta.url );
 const { name: packageName } = require( '../../package.json' );
