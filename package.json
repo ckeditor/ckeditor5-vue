@@ -39,10 +39,10 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^40.1.0",
-    "@ckeditor/ckeditor5-dev-ci": "^40.1.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^40.1.0",
-    "@ckeditor/ckeditor5-dev-utils": "^40.1.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^44.0.0-alpha.0",
+    "@ckeditor/ckeditor5-dev-ci": "^44.0.0-alpha.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^44.0.0-alpha.0",
+    "@ckeditor/ckeditor5-dev-utils": "^44.0.0-alpha.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.0.0",
