@@ -59,13 +59,13 @@ commands:
           name: Prepare environment variables
           command: |
             #!/bin/bash
-            
+
             # Non-secret environment variables needed for the pipeline scripts.
             CKE5_GITHUB_ORGANIZATION="ckeditor"
             CKE5_GITHUB_REPOSITORY="ckeditor5-vue"
             CKE5_CIRCLE_APPROVAL_JOB_NAME="release_approval"
             CKE5_GITHUB_RELEASE_BRANCH="master"
-            
+
             echo export CKE5_CIRCLE_APPROVAL_JOB_NAME=$CKE5_CIRCLE_APPROVAL_JOB_NAME >> $BASH_ENV
             echo export CKE5_GITHUB_RELEASE_BRANCH=$CKE5_GITHUB_RELEASE_BRANCH >> $BASH_ENV
             echo export CKE5_GITHUB_ORGANIZATION=$CKE5_GITHUB_ORGANIZATION >> $BASH_ENV
@@ -117,6 +117,9 @@ jobs:
       - run:
           name: Build demo app
           command: yarn run build
+      - run:
+          name: Check types of tests
+          command: yarn run test:check:types
       - run:
          name: Verify the code coverage
          command: |
@@ -205,13 +208,13 @@ jobs:
           name: Verify if a releaser triggered the job
           command: |
             #!/bin/bash
-            
+
             # Do not fail if the Node script ends with non-zero exit code.
             set +e
-    
+
             yarn ckeditor5-dev-ci-is-job-triggered-by-member
             EXIT_CODE=$( echo $? )
-    
+
             if [ ${EXIT_CODE} -ne 0 ];
             then
               echo "Aborting the release due to failed verification of the approver (no rights to release)."
