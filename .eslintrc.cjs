@@ -24,6 +24,7 @@ module.exports = {
 			' * For licensing, see LICENSE.md.',
 			' */'
 		] } ],
+		'ckeditor5-rules/prevent-license-key-leak': 'error',
 		'vue/multi-word-component-names': 'off',
 		'no-unused-vars': 'off',
 		'@typescript-eslint/no-unused-vars': [ 'error' ]

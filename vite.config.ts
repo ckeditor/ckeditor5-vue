@@ -37,7 +37,8 @@ export default defineConfig( {
 			output: {
 				globals: {
 					'vue': 'Vue',
-					'lodash-es': '_'
+					'lodash-es': '_',
+					'@ckeditor/ckeditor5-integrations-common': 'CKEDITOR_INTEGRATIONS_COMMON'
 				}
 			}
 		}
