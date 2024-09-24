@@ -35,7 +35,6 @@
   },
   "peerDependencies": {
     "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
-    "ckeditor5-premium-features": ">=42.0.0 || ^0.0.0-nightly",
     "vue": "^3.4.0"
   },
   "devDependencies": {
@@ -50,7 +49,6 @@
     "@vitest/ui": "^2.0.0",
     "@vue/test-utils": "^2.3.1",
     "ckeditor5": "^42.0.0",
-    "ckeditor5-premium-features": "^42.0.2",
     "coveralls": "^3.1.1",
     "eslint": "^7.32.0",
     "eslint-config-ckeditor5": "^7.1.0",
