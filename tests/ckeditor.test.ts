@@ -6,12 +6,12 @@
 import { nextTick } from 'vue';
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Ckeditor } from '../src/plugin';
+import { Ckeditor } from '../src/plugin.js';
 import {
 	MockEditor,
 	ModelDocument,
 	ViewDocument
-} from './_utils/mockeditor';
+} from './_utils/mockeditor.js';
 
 describe( 'CKEditor component', () => {
 	beforeEach( () => {

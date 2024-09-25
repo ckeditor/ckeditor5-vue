@@ -8,7 +8,7 @@ import { ref } from 'vue';
 import { flushPromises } from '@vue/test-utils';
 
 import { createDefer } from '@ckeditor/ckeditor5-integrations-common';
-import { useAsync } from '../../src/composables/useAsync';
+import { useAsync } from '../../src/composables/useAsync.js';
 
 describe( 'useAsync', () => {
 	it( 'should call async function and return the result in data ref', async () => {
