@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2019",
     "useDefineForClassFields": true,
-    "module": "NodeNext",
+    "module": "ESNext",
     "lib": [
       "ES2019", // Must match the "target"
       "ES2020.String",
@@ -11,7 +11,8 @@
     ],
     "skipLibCheck": true,
 
-    "moduleResolution": "NodeNext",
+    /* Bundler mode */
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
 
