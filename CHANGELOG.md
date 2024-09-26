@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## [7.2.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.1.0...v7.2.0) (2024-09-26)
+
+### Bug fixes
+
+* Improve ESM support by adding missing file extensions in imports. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/af84547ee5c9b1264c7fbf69b7256ef8f76d3ad9))
+
+### Other changes
+
+* Remove `ckeditor5-premium-features` from `peerDependencies`. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/af84547ee5c9b1264c7fbf69b7256ef8f76d3ad9))
+
+
 ## [7.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0...v7.1.0) (2024-09-19)
 
 ### Features
