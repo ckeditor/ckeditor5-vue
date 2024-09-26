@@ -24,6 +24,12 @@ module.exports = {
 			' * For licensing, see LICENSE.md.',
 			' */'
 		] } ],
+		'ckeditor5-rules/require-file-extensions-in-imports': [
+			'error',
+			{
+				extensions: [ '.ts', '.js', '.json' ]
+			}
+		],
 		'ckeditor5-rules/prevent-license-key-leak': 'error',
 		'vue/multi-word-component-names': 'off',
 		'no-unused-vars': 'off',

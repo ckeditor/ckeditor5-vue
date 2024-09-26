@@ -7,7 +7,7 @@ import { nextTick } from 'vue';
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { Ckeditor } from '../../src/plugin.js';
-import { MockEditor } from '../_utils/mockeditor';
+import { MockEditor } from '../_utils/mockeditor.js';
 
 class FooEditor extends MockEditor {}
 
