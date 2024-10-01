@@ -75,5 +75,9 @@ export default defineConfig( {
 			name: 'chrome',
 			screenshotFailures: false
 		}
+	},
+
+	define: {
+		__VUE_INTEGRATION_VERSION__: JSON.stringify( pkg.version )
 	}
 } );

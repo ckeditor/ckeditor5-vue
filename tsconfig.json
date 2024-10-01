@@ -9,6 +9,9 @@
       "DOM",
       "DOM.Iterable"
     ],
+    "types": [
+        "./vite-env.d.ts"
+    ],
     "skipLibCheck": true,
 
     /* Bundler mode */

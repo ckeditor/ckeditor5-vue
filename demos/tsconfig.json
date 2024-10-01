@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "types": [
-      "../src/plugin.ts"
+      "../src/plugin.ts",
+      "../vite-env.d.ts"
     ]
   },
   "include": [

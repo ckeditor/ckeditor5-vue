@@ -2,7 +2,10 @@
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
 		"emitDeclarationOnly": false,
-		"noImplicitAny": false
+		"noImplicitAny": false,
+		"types": [
+			"../vite-env.d.ts"
+		]
 	},
 	"include": [
 		"./",
