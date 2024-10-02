@@ -4,7 +4,7 @@
  */
 
 import { toValue, type MaybeRefOrGetter } from 'vue';
-import { useAsync, type AsyncComposableResult } from './composables/useAsync';
+import { useAsync, type AsyncComposableResult } from './composables/useAsync.js';
 
 import {
 	loadCKEditorCloud,

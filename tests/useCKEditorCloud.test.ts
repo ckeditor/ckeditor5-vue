@@ -10,7 +10,7 @@ import { ref } from 'vue';
 import { removeAllCkCdnResources } from '@ckeditor/ckeditor5-integrations-common/test-utils';
 import type { CKEditorCloudConfig } from '@ckeditor/ckeditor5-integrations-common';
 
-import useCKEditorCloud from '../src/useCKEditorCloud';
+import useCKEditorCloud from '../src/useCKEditorCloud.js';
 
 describe( 'useCKEditorCloud', () => {
 	beforeEach( removeAllCkCdnResources );

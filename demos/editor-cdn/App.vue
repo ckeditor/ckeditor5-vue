@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import useCKEditorCloud from '../../src/useCKEditorCloud';
+import useCKEditorCloud from '../../src/useCKEditorCloud.js';
 import type { EventInfo, ClassicEditor } from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
 
 // Load CKEditor from the CDN

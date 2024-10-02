@@ -21,8 +21,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
-    "emitDeclarationOnly": true,
     "declaration": true,
     "declarationDir": "./dist"
   },

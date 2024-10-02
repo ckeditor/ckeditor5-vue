@@ -42,7 +42,7 @@ export {
  * CDN related exports.
  */
 
-export { default as useCKEditorCloud } from './useCKEditorCloud';
+export { default as useCKEditorCloud } from './useCKEditorCloud.js';
 
 export {
 	loadCKEditorCloud,
