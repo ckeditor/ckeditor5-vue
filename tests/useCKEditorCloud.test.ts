@@ -12,7 +12,7 @@ import type { CKEditorCloudConfig } from '@ckeditor/ckeditor5-integrations-commo
 
 import useCKEditorCloud from '../src/useCKEditorCloud.js';
 
-describe( 'useCKEditorCloud', () => {
+describe( 'useCKEditorCloud', { timeout: 8000 }, () => {
 	beforeEach( removeAllCkCdnResources );
 
 	it( 'should load CKEditor bundle from CDN', async () => {
@@ -36,7 +36,7 @@ describe( 'useCKEditorCloud', () => {
 		await vi.waitFor( () => {
 			expect( data.value?.CKEditor ).toBeDefined();
 			expect( data.value?.CKEditorPremiumFeatures ).toBeDefined();
-		} );
+		}, { timeout: 4000 } );
 	} );
 
 	it( 'should load additional resources from CDN after updating config ref', async () => {
@@ -51,7 +51,7 @@ describe( 'useCKEditorCloud', () => {
 		await vi.waitFor( () => {
 			expect( data.value?.CKEditor ).toBeDefined();
 			expect( data.value?.CKEditorPremiumFeatures ).toBeDefined();
-		} );
+		}, { timeout: 4000 } );
 	} );
 
 	describe( 'typings', () => {
@@ -60,9 +60,10 @@ describe( 'useCKEditorCloud', () => {
 				version: '43.0.0',
 				premium: true
 			} );
+
 			await vi.waitFor( () => {
 				expect( data.value?.CKEditor ).toBeDefined();
-			} );
+			}, { timeout: 4000 } );
 
 			if ( data.value ) {
 				expectTypeOf( data.value?.CKEditorPremiumFeatures ).not.toBeNullable();
@@ -76,7 +77,7 @@ describe( 'useCKEditorCloud', () => {
 
 			await vi.waitFor( () => {
 				expect( data.value?.CKEditor ).toBeDefined();
-			} );
+			}, { timeout: 4000 } );
 
 			if ( data.value ) {
 				expectTypeOf( data.value.CKEditorPremiumFeatures ).toBeNullable();
@@ -91,7 +92,7 @@ describe( 'useCKEditorCloud', () => {
 
 			await vi.waitFor( () => {
 				expect( data.value?.CKEditor ).toBeDefined();
-			} );
+			}, { timeout: 4000 } );
 
 			if ( data.value ) {
 				expectTypeOf( data.value.CKEditorPremiumFeatures ).toBeNullable();
@@ -108,7 +109,7 @@ describe( 'useCKEditorCloud', () => {
 
 			await vi.waitFor( () => {
 				expect( data.value?.CKEditor ).toBeDefined();
-			} );
+			}, { timeout: 4000 } );
 
 			if ( data.value ) {
 				expectTypeOf( data.value.CKBox ).not.toBeNullable();
@@ -122,7 +123,7 @@ describe( 'useCKEditorCloud', () => {
 
 			await vi.waitFor( () => {
 				expect( data.value?.CKEditor ).toBeDefined();
-			} );
+			}, { timeout: 4000 } );
 
 			if ( data.value ) {
 				expectTypeOf( data.value.CKBox ).toBeNullable();
