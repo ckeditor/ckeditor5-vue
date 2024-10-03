@@ -9,8 +9,8 @@
 
 import { createRequire } from 'module';
 import { Listr } from 'listr2';
-import releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
-import devUtils from '@ckeditor/ckeditor5-dev-utils';
+import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
+import * as devUtils from '@ckeditor/ckeditor5-dev-utils';
 import parseArguments from './utils/parsearguments.js';
 import getListrOptions from './utils/getlistroptions.js';
 
