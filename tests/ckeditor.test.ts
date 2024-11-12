@@ -7,6 +7,7 @@ import { nextTick } from 'vue';
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { Ckeditor } from '../src/plugin.js';
+import { VueIntegrationUsageDataPlugin } from '../src/plugins/VueIntegrationUsageDataPlugin.js';
 import {
 	MockEditor,
 	ModelDocument,
@@ -157,7 +158,9 @@ describe( 'CKEditor component', () => {
 				await nextTick();
 
 				expect( editor ).toHaveBeenCalledOnce();
-				expect( editor ).toHaveBeenCalledWith( expect.any( HTMLElement ), { initialData: 'foo' } );
+				expect( editor ).toHaveBeenCalledWith( expect.any( HTMLElement ), {
+					initialData: 'foo'
+				} );
 
 				component.unmount();
 			} );
@@ -241,7 +244,10 @@ describe( 'CKEditor component', () => {
 
 				await nextTick();
 
-				expect( component.vm.instance!.config ).to.deep.equal( { foo: 'bar' } );
+				expect( component.vm.instance!.config ).to.deep.equal( {
+					foo: 'bar'
+				} );
+
 				component.unmount();
 			} );
 
@@ -274,11 +280,106 @@ describe( 'CKEditor component', () => {
 				await nextTick();
 
 				expect( stub ).toHaveBeenCalledTimes( 3 );
-				expect( stub ).toHaveBeenNthCalledWith( 1, expect.any( HTMLElement ), { foo: 'bar', initialData: 'foo' } );
-				expect( stub ).toHaveBeenNthCalledWith( 2, expect.any( HTMLElement ), { foo: 'bar', initialData: 'bar' } );
-				expect( stub ).toHaveBeenNthCalledWith( 3, expect.any( HTMLElement ), { foo: 'bar', initialData: 'baz' } );
+				expect( stub ).toHaveBeenNthCalledWith( 1, expect.any( HTMLElement ), {
+					foo: 'bar',
+					initialData: 'foo'
+				} );
+
+				expect( stub ).toHaveBeenNthCalledWith( 2, expect.any( HTMLElement ), {
+					foo: 'bar',
+					initialData: 'bar'
+				} );
+
+				expect( stub ).toHaveBeenNthCalledWith( 3, expect.any( HTMLElement ), {
+					foo: 'bar',
+					initialData: 'baz'
+				} );
 
 				component.unmount();
+			} );
+
+			describe( 'license v2', () => {
+				it( 'should add usage data extra plugin if it\'s commercial', async () => {
+					window.CKEDITOR_VERSION = '43.0.0';
+
+					const component = mountComponent( {
+						config: {
+							foo: 'bar',
+							licenseKey: '<YOUR_LICENSE_KEY>'
+						}
+					} );
+
+					await nextTick();
+
+					expect( component.vm.instance!.config ).to.deep.equal( {
+						foo: 'bar',
+						licenseKey: '<YOUR_LICENSE_KEY>',
+						extraPlugins: [ VueIntegrationUsageDataPlugin ]
+					} );
+
+					component.unmount();
+				} );
+
+				it( 'should not add usage data extra plugin if it\'s free', async () => {
+					window.CKEDITOR_VERSION = '43.0.0';
+
+					const component = mountComponent( {
+						config: {
+							foo: 'bar'
+						}
+					} );
+
+					await nextTick();
+
+					expect( component.vm.instance!.config ).to.deep.equal( {
+						foo: 'bar'
+					} );
+
+					component.unmount();
+				} );
+			} );
+
+			describe( 'license v3', () => {
+				it( 'should add usage data extra plugin if it\'s commercial license', async () => {
+					window.CKEDITOR_VERSION = '44.0.0';
+
+					const component = mountComponent( {
+						config: {
+							foo: 'bar',
+							licenseKey: '<YOUR_LICENSE_KEY>'
+						}
+					} );
+
+					await nextTick();
+
+					expect( component.vm.instance!.config ).to.deep.equal( {
+						foo: 'bar',
+						licenseKey: '<YOUR_LICENSE_KEY>',
+						extraPlugins: [ VueIntegrationUsageDataPlugin ]
+					} );
+
+					component.unmount();
+				} );
+
+				it( 'should not add usage data extra plugin if it\'s free license v3', async () => {
+					window.CKEDITOR_VERSION = '44.0.0';
+
+					const component = mountComponent( {
+						config: {
+							foo: 'bar',
+							licenseKey: 'GPL'
+						}
+					} );
+
+					await nextTick();
+
+					expect( component.vm.instance!.config ).to.deep.equal( {
+						foo: 'bar',
+						licenseKey: 'GPL'
+					} );
+
+					component.unmount();
+				} );
 			} );
 		} );
 

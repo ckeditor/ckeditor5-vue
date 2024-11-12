@@ -21,6 +21,8 @@ import {
 import type { Editor, EditorConfig, EventInfo } from 'ckeditor5';
 import type { Props, ExtractEditorType } from './types.js';
 
+import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
+
 type EditorType = ExtractEditorType<TEditor>;
 
 defineOptions( {
@@ -149,7 +151,9 @@ checkVersion();
 onMounted( () => {
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
-	const editorConfig: EditorConfig = Object.assign( {}, props.config );
+	const editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig(
+		Object.assign( {}, props.config )
+	);
 
 	if ( model.value ) {
 		editorConfig.initialData = model.value;
