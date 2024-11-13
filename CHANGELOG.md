@@ -5,7 +5,7 @@ Changelog
 
 ### Features
 
-* Align integration to work with self-service premium features. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/37153260e5a60cd09e1f47c443f83d4df2dcd2c7))
+* Align integration to work with the future self-service plan. Read more in the [CKEditor 5 repository](https://github.com/ckeditor/ckeditor5/issues/17317). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/37153260e5a60cd09e1f47c443f83d4df2dcd2c7))
 
 
 ## [7.2.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.1.0...v7.2.0) (2024-09-26)
