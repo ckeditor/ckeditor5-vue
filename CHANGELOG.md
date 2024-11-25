@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [7.3.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.2.0...v7.3.0) (2024-11-25)
+
+### Features
+
+* Align integration to work with the future self-service plan. Read more in the [CKEditor 5 repository](https://github.com/ckeditor/ckeditor5/issues/17317). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/37153260e5a60cd09e1f47c443f83d4df2dcd2c7))
+
+
 ## [7.3.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.2.0...v7.3.0-alpha.0) (2024-11-13)
 
 ### Features

@@ -18,7 +18,6 @@ import {
  * @param config The configuration of the CKEditor Cloud services.
  * @returns The result of the loaded CKEditor Cloud services.
  * @template Config The type of the CKEditor Cloud configuration.
- * @experimental
  * @example
  * ```ts
  * const { data } = useCKEditorCloud( {
