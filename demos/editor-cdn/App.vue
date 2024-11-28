@@ -37,19 +37,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, effect } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import useCKEditorCloud from '../../src/useCKEditorCloud.js';
 import type { EventInfo, ClassicEditor } from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
 
 // Load CKEditor from the CDN
 const cloud = useCKEditorCloud( {
 	version: '43.0.0'
-} );
-
-effect( () => {
-	if ( cloud.error.value ) {
-		console.error( cloud.error.value );
-	}
 } );
 
 const TestEditor = computed<typeof ClassicEditor | null>( () => {
