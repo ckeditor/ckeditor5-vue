@@ -61,6 +61,8 @@ export const useAsync = <R>(
 				data.value = result;
 			}
 		} catch ( err: any ) {
+			console.error( err );
+
 			if ( !shouldDiscardQuery() ) {
 				error.value = err;
 			}

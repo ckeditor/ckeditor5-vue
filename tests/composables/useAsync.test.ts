@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md.
  */
 
-import { it, describe, expect } from 'vitest';
+import { it, vi, describe, expect } from 'vitest';
 import { ref } from 'vue';
 import { flushPromises } from '@vue/test-utils';
 
@@ -40,6 +40,20 @@ describe( 'useAsync', () => {
 		expect( error.value ).toEqual( errorInstance );
 		expect( loading.value ).toBe( false );
 		expect( data.value ).toBe( null );
+	} );
+
+	it( 'should print errors in console if the async function throws an error', async () => {
+		const errorInstance = new Error( 'test' );
+		const consoleSpy = vi.spyOn( console, 'error' );
+
+		useAsync( async () => {
+			throw errorInstance;
+		} );
+
+		await flushPromises();
+
+		expect( consoleSpy ).toHaveBeenCalledWith( errorInstance );
+		consoleSpy.mockRestore();
 	} );
 
 	it( 'should re-run async function on change ref inside async function', async () => {
