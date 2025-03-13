@@ -52,6 +52,7 @@ export default defineConfig( {
 
 	// https://vitest.dev/config/
 	test: {
+		setupFiles: [ './vitest-setup.ts' ],
 		include: [
 			'tests/**/*.test.[j|t]s'
 		],
