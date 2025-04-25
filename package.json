@@ -38,10 +38,10 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^44.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^44.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^44.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^44.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^48.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^48.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^48.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^48.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.1.9",
@@ -65,7 +65,7 @@
     "vue": "^3.4.30",
     "vue-eslint-parser": "^9.1.0",
     "vue-tsc": "^2.1.6",
-    "webdriverio": "^8.39.0"
+    "webdriverio": "^9.12.7"
   },
   "resolutions": {
     "wrap-ansi": "7.0.0",
