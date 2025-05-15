@@ -3,7 +3,6 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-/* eslint-env browser */
 import * as Vue from 'vue';
 import Ckeditor from './ckeditor.vue';
 
