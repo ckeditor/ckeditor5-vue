@@ -105,7 +105,7 @@
   },
   "homepage": "https://github.com/ckeditor/ckeditor5-vue",
   "lint-staged": {
-    "**/*.{js,ts,vue}": [
+    "**/*": [
       "eslint --quiet"
     ]
   }
