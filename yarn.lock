@@ -5634,7 +5634,7 @@ eslint-config-ckeditor5@^10.0.0-alpha.0:
     globals "^16.1.0"
     typescript-eslint "^8.32.0"
 
-eslint-plugin-ckeditor5-rules@^10.0.0-alpha.3:
+eslint-plugin-ckeditor5-rules@^10.0.0-alpha.0, eslint-plugin-ckeditor5-rules@^10.0.0-alpha.3:
   version "10.0.0-alpha.3"
   resolved "https://registry.yarnpkg.com/eslint-plugin-ckeditor5-rules/-/eslint-plugin-ckeditor5-rules-10.0.0-alpha.3.tgz#7503f88520a383e5694515584192c73a52279137"
   integrity sha512-mhvZ0SXuBef7gscsUbizURyOVgSEjdmwvKfms0D+nrJmO9ChpPFpJGZvg8/YUumsr4anq+YDMNdMEOqCzhV3OA==
