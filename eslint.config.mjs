@@ -89,10 +89,6 @@ export default defineConfig( [
 			globals: {
 				...globals.node
 			}
-		},
-
-		rules: {
-			'ckeditor5-rules/license-header': 'off'
 		}
 	}
 ] );
