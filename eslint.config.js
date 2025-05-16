@@ -53,7 +53,6 @@ export default defineConfig( [
 				}
 			],
 			'ckeditor5-rules/prevent-license-key-leak': 'error',
-			'vue/multi-word-component-names': 'off',
 			'no-unused-vars': 'off'
 		}
 	},
