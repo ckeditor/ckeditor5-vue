@@ -51,9 +51,11 @@
     "ckeditor5": "^44.3.0",
     "ckeditor5-premium-features": "^44.3.0",
     "coveralls": "^3.1.1",
-    "eslint": "^7.32.0",
-    "eslint-config-ckeditor5": "^7.1.0",
-    "eslint-plugin-vue": "^9.9.0",
+    "eslint": "^9.26.0",
+    "eslint-config-ckeditor5": "^10.0.0-alpha.0",
+    "eslint-plugin-ckeditor5-rules": "^10.0.0-alpha.0",
+    "eslint-plugin-vue": "^10.1.0",
+    "globals": "^16.1.0",
     "husky": "^8.0.2",
     "lint-staged": "^10.2.11",
     "listr2": "^6.5.0",
@@ -63,7 +65,7 @@
     "vite": "^5.3.1",
     "vitest": "^2.1.9",
     "vue": "^3.4.30",
-    "vue-eslint-parser": "^9.1.0",
+    "vue-eslint-parser": "^10.1.3",
     "vue-tsc": "^2.1.6",
     "webdriverio": "^9.12.7"
   },
@@ -74,7 +76,7 @@
     "ws": "^8"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "vite",
@@ -82,7 +84,7 @@
     "test": "vitest run --coverage",
     "test:watch": "vitest --ui --watch",
     "test:check:types": "tsc --noEmit -p ./tests/tsconfig.json",
-    "lint": "eslint \"{demos,src,tests}/**/*.{ts,vue}\"",
+    "lint": "eslint",
     "postinstall": "node ./scripts/postinstall.js",
     "changelog": "node ./scripts/changelog.js",
     "release:prepare-packages": "node ./scripts/preparepackages.js",
@@ -104,12 +106,8 @@
     "url": "https://github.com/ckeditor/ckeditor5-vue/issues"
   },
   "homepage": "https://github.com/ckeditor/ckeditor5-vue",
-  "eslintIgnore": [
-    "coverage/**",
-    "dist/**"
-  ],
   "lint-staged": {
-    "**/*.{js,ts,vue}": [
+    "**/*": [
       "eslint --quiet"
     ]
   }
