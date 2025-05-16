@@ -3,6 +3,8 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+/* eslint-env node */
+
 /**
  * @param {ReleaseOptions} cliArguments
  * @returns {Object}
