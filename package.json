@@ -38,10 +38,10 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^48.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^48.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^48.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^48.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^49.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^49.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^49.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^49.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.1.9",
@@ -52,8 +52,8 @@
     "ckeditor5-premium-features": "^44.3.0",
     "coveralls": "^3.1.1",
     "eslint": "^9.26.0",
-    "eslint-config-ckeditor5": "^10.0.0-alpha.0",
-    "eslint-plugin-ckeditor5-rules": "^10.0.0-alpha.0",
+    "eslint-config-ckeditor5": "^10.0.0",
+    "eslint-plugin-ckeditor5-rules": "^10.0.0",
     "eslint-plugin-vue": "^10.1.0",
     "globals": "^16.1.0",
     "husky": "^8.0.2",
@@ -109,7 +109,7 @@
   "homepage": "https://github.com/ckeditor/ckeditor5-vue",
   "lint-staged": {
     "**/*": [
-      "eslint --quiet"
+      "eslint"
     ]
   }
 }
