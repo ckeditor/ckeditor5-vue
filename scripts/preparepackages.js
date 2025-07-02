@@ -66,10 +66,10 @@ const tasks = new Listr( [
 	},
 	{
 		title: 'Creating the `ckeditor5-vue` package in the release directory.',
-		task: () => {
+		task: async () => {
 			return releaseTools.prepareRepository( {
 				outputDirectory: 'release',
-				rootPackageJson: preparePackageJson()
+				rootPackageJson: await preparePackageJson()
 			} );
 		}
 	},
