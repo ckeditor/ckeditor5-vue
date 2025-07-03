@@ -14,13 +14,15 @@ export default function parseArguments( cliArguments ) {
 		boolean: [
 			'verbose',
 			'compile-only',
-			'ci'
+			'ci',
+			'dry-run'
 		],
 
 		string: [
 			'branch',
 			'from',
-			'npm-tag'
+			'npm-tag',
+			'date'
 		],
 
 		default: {
@@ -28,7 +30,9 @@ export default function parseArguments( cliArguments ) {
 			ci: false,
 			'compile-only': false,
 			'npm-tag': null,
-			verbose: false
+			verbose: false,
+			date: undefined,
+			'dry-run': false
 		}
 	};
 
@@ -39,6 +43,9 @@ export default function parseArguments( cliArguments ) {
 
 	options.npmTag = options[ 'npm-tag' ];
 	delete options[ 'npm-tag' ];
+
+	options.dryRun = options[ 'dry-run' ];
+	delete options[ 'dry-run' ];
 
 	if ( process.env.CI ) {
 		options.ci = true;
@@ -59,4 +66,8 @@ export default function parseArguments( cliArguments ) {
  * @property {Boolean} [verbose=false]
  *
  * @property {Boolean} [ci=false]
+ *
+ * @property {String} [date=undefined]
+ *
+ * @property {Boolean} [dryRun=false]
  */
