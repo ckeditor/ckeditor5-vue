@@ -38,10 +38,11 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^49.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^49.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^49.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^49.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^50.0.0",
+    "@ckeditor/ckeditor5-dev-changelog": "^50.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^50.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^50.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^50.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.1.9",
@@ -63,6 +64,7 @@
     "semver": "^7.0.0",
     "typescript": "~5.4.5",
     "typescript-eslint": "^8.32.1",
+    "upath": "^2.0.1",
     "vite": "^5.3.1",
     "vitest": "^2.1.9",
     "vue": "^3.4.30",
@@ -80,6 +82,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
+    "nice": "ckeditor5-dev-changelog-create-entry",
     "dev": "vite",
     "build": "tsc --noEmit && vite build && vue-tsc --emitDeclarationOnly",
     "test": "vitest run --coverage",
@@ -87,7 +90,7 @@
     "test:check:types": "tsc --noEmit -p ./tests/tsconfig.json",
     "lint": "eslint",
     "postinstall": "node ./scripts/postinstall.js",
-    "changelog": "node ./scripts/changelog.js",
+    "release:prepare-changelog": "node ./scripts/preparechangelog.js",
     "release:prepare-packages": "node ./scripts/preparepackages.js",
     "release:publish-packages": "node ./scripts/publishpackages.js"
   },

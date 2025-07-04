@@ -14,13 +14,15 @@ export default function parseArguments( cliArguments ) {
 		boolean: [
 			'verbose',
 			'compile-only',
-			'ci'
+			'ci',
+			'dry-run'
 		],
 
 		string: [
 			'branch',
 			'from',
-			'npm-tag'
+			'npm-tag',
+			'date'
 		],
 
 		default: {
@@ -28,23 +30,46 @@ export default function parseArguments( cliArguments ) {
 			ci: false,
 			'compile-only': false,
 			'npm-tag': null,
-			verbose: false
+			verbose: false,
+			date: undefined,
+			'dry-run': false
 		}
 	};
 
 	const options = minimist( cliArguments, config );
 
-	options.compileOnly = options[ 'compile-only' ];
-	delete options[ 'compile-only' ];
-
-	options.npmTag = options[ 'npm-tag' ];
-	delete options[ 'npm-tag' ];
+	replaceKebabCaseWithCamelCase( options, [
+		'npm-tag',
+		'compile-only',
+		'dry-run'
+	] );
 
 	if ( process.env.CI ) {
 		options.ci = true;
 	}
 
 	return options;
+}
+
+function replaceKebabCaseWithCamelCase( options, keys ) {
+	for ( const key of keys ) {
+		const camelCaseKey = toCamelCase( key );
+
+		options[ camelCaseKey ] = options[ key ];
+		delete options[ key ];
+	}
+}
+
+function toCamelCase( value ) {
+	return value.split( '-' )
+		.map( ( item, index ) => {
+			if ( index == 0 ) {
+				return item.toLowerCase();
+			}
+
+			return item.charAt( 0 ).toUpperCase() + item.slice( 1 ).toLowerCase();
+		} )
+		.join( '' );
 }
 
 /**
@@ -59,4 +84,8 @@ export default function parseArguments( cliArguments ) {
  * @property {Boolean} [verbose=false]
  *
  * @property {Boolean} [ci=false]
+ *
+ * @property {String} [date=undefined]
+ *
+ * @property {Boolean} [dryRun=false]
  */
