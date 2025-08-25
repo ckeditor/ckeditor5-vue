@@ -11,7 +11,7 @@ Official [CKEditor 5](https://ckeditor.com/ckeditor-5/) rich text editor compone
 
 ## [Developer Documentation](https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html) 📖
 
-See the ["Rich text editor component for Vue.js"](https://ckeditor.com/docs/ckeditor5/llatest/getting-started/installation/vuejs-v3.html) guide in the [CKEditor 5 documentation](https://ckeditor.com/docs/ckeditor5/latest) to learn more:
+See the ["Rich text editor component for Vue.js"](https://ckeditor.com/docs/ckeditor5/latest/getting-started/installation/vuejs-v3.html) guide in the [CKEditor 5 documentation](https://ckeditor.com/docs/ckeditor5/latest) to learn more:
 
 * [Quick start](https://ckeditor.com/docs/ckeditor5/latest/getting-started/installation/vuejs-v3.html#quick-start)
 * [Using CKEditor 5 builder](https://ckeditor.com/docs/ckeditor5/latest/getting-started/installation/vuejs-v3.html#using-ckeditor-5-builder)
