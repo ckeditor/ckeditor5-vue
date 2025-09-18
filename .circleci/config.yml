@@ -177,7 +177,7 @@ jobs:
       - bootstrap_repository_command
       - run:
           name: Check if packages are ready to be released
-          command: pnpm run release:prepare-packages --verbose --compile-only
+          command: npm run release:prepare-packages -- --verbose --compile-only
 
   trigger_release_process:
     docker:
@@ -245,10 +245,10 @@ jobs:
           command: pnpm ckeditor5-dev-ci-circle-disable-auto-cancel-builds
       - run:
           name: Prepare the new version to release
-          command: pnpm run release:prepare-packages --verbose
+          command: npm run release:prepare-packages -- --verbose
       - run:
           name: Publish the packages
-          command: pnpm run release:publish-packages --verbose
+          command: npm run release:publish-packages -- --verbose
       - run:
           name: Enable the redundant workflows option
           command: pnpm ckeditor5-dev-ci-circle-enable-auto-cancel-builds
