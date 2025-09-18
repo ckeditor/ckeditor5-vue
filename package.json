@@ -38,11 +38,11 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^50.0.0",
-    "@ckeditor/ckeditor5-dev-changelog": "^50.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^50.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^50.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^50.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^53.0.0",
+    "@ckeditor/ckeditor5-dev-changelog": "^53.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^53.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^53.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^53.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.1.9",
@@ -72,15 +72,15 @@
     "vue-tsc": "^2.1.6",
     "webdriverio": "^9.12.7"
   },
-  "resolutions": {
-    "form-data": "^4.0.4",
-    "semver": "^7.0.0",
-    "string-width": "4.1.0",
-    "wrap-ansi": "7.0.0",
-    "ws": "^8"
+  "pnpm": {
+    "overrides": {
+      "form-data": "^4.0.4"
+    }
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.0.0",
+    "pnpm": ">=10.14.0",
+    "yarn": "\n\n┌─────────────────────────┐\n│  Hey, we use pnpm now!  │\n└─────────────────────────┘\n\n"
   },
   "scripts": {
     "nice": "ckeditor5-dev-changelog-create-entry",
