@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40ckeditor%2Fckeditor5-vue.svg)](https://www.npmjs.com/package/@ckeditor/ckeditor5-vue)
 [![CircleCI](https://circleci.com/gh/ckeditor/ckeditor5-vue.svg?style=shield)](https://app.circleci.com/pipelines/github/ckeditor/ckeditor5-vue?branch=master)
-[![Coverage Status](https://codecov.io/github/ckeditor/ckeditor5-vue/badge.svg)](https://codecov.io/github/ckeditor/ckeditor5-vue)
+[![Coverage Status](https://codecov.io/github/ckeditor/ckeditor5-vue/graph/badge.svg)](https://codecov.io/github/ckeditor/ckeditor5-vue)
 ![Dependency Status](https://img.shields.io/librariesio/release/npm/@ckeditor/ckeditor5-vue)
 
 ⚠️ This repository contains the CKEditor 5 component for Vue.js `3+`. The component for lower Vue.js versions is located in another repository - [@ckeditor/ckeditor5-vue2](https://github.com/ckeditor/ckeditor5-vue2).
