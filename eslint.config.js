@@ -61,6 +61,11 @@ export default defineConfig( [
 	{
 		extends: pluginVue.configs[ 'flat/recommended' ],
 
+		files: [
+			'**/*.vue',
+			'**/*.ts'
+		],
+
 		rules: {
 			'vue/multi-word-component-names': 'off'
 		}
@@ -89,6 +94,23 @@ export default defineConfig( [
 			globals: {
 				...globals.node
 			}
+		}
+	},
+
+	// Rules specific to changelog files.
+	{
+		extends: ckeditor5Config,
+
+		files: [ '.changelog/**/*.md' ],
+
+		plugins: {
+			'ckeditor5-rules': ckeditor5Rules
+		},
+
+		rules: {
+			'ckeditor5-rules/validate-changelog-entry': [ 'error', {
+				repositoryType: 'single'
+			} ]
 		}
 	}
 ] );
