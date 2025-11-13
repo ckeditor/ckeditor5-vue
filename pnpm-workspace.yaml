@@ -5,6 +5,9 @@ onlyBuiltDependencies:
   - msw
   - protobufjs
 
+overrides:
+  esbuild: ^0.25.0
+
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   - '@ckeditor/*'
