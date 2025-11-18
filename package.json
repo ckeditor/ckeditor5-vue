@@ -38,11 +38,11 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^53.0.0",
-    "@ckeditor/ckeditor5-dev-changelog": "^53.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^53.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^53.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^53.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^54.0.0",
+    "@ckeditor/ckeditor5-dev-changelog": "^54.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^54.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^54.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^54.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitest/browser": "^2.1.9",
