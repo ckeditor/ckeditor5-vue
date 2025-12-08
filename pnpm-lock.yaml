@@ -45,6 +45,9 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^2.1.4
         version: 2.1.9(vitest@2.1.9)
+      '@vitest/coverage-v8':
+        specifier: ^2.1.9
+        version: 2.1.9(@vitest/browser@2.1.9)(vitest@2.1.9)
       '@vitest/ui':
         specifier: ^2.1.4
         version: 2.1.9(vitest@2.1.9)
@@ -116,6 +119,10 @@ importers:
         version: 9.20.0
 
 packages:
+
+  '@ampproject/remapping@2.3.0':
+    resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
+    engines: {node: '>=6.0.0'}
 
   '@aws-crypto/crc32@5.2.0':
     resolution: {integrity: sha512-nLbCWqQNgUiwwtFsen1AdzAtvuLRsQS8rYgMuxCrdKf9kOssamGLuPwyTY9wyYblNr9+1XM8v6zoDTPPSIeANg==}
@@ -308,6 +315,9 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
+
+  '@bcoe/v8-coverage@0.2.3':
+    resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
   '@ckeditor/ckeditor-cloud-services-collaboration@53.0.0':
     resolution: {integrity: sha512-fvPDzpWW6X0cPaz0nTV2e1kKIGCCUZWCYcgaY8Nfk/Lol1uqqhOaYqzL33ONDPf/TeEIrBNXDU+WtBPWLGMNIQ==}
@@ -1795,6 +1805,15 @@ packages:
     resolution: {integrity: sha512-vdYE4FkC/y2lxcN3Dcj54Bw+ericmDwiex0B8LV5F/YNYEYP1mgVwhPnHwWGAXu38qizkjOuyczKbFTALfzFKw==}
     peerDependencies:
       vitest: 2.1.9
+
+  '@vitest/coverage-v8@2.1.9':
+    resolution: {integrity: sha512-Z2cOr0ksM00MpEfyVE8KXIYPEcBFxdbLSs56L8PO0QQMxt/6bDj45uQfxoc96v05KW3clk7vvgP0qfDit9DmfQ==}
+    peerDependencies:
+      '@vitest/browser': 2.1.9
+      vitest: 2.1.9
+    peerDependenciesMeta:
+      '@vitest/browser':
+        optional: true
 
   '@vitest/expect@2.1.9':
     resolution: {integrity: sha512-UJCIkTBenHeKT1TTlKMJWy1laZewsRIzYighyYiJKZreqtdxSos/S1t+ktRMQWu2CKqaarrkeszJx1cgC5tGZw==}
@@ -5182,6 +5201,11 @@ packages:
 
 snapshots:
 
+  '@ampproject/remapping@2.3.0':
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.31
+
   '@aws-crypto/crc32@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
@@ -5671,6 +5695,8 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@bcoe/v8-coverage@0.2.3': {}
 
   '@ckeditor/ckeditor-cloud-services-collaboration@53.0.0(@ckeditor/ckeditor5-utils@45.2.2)(ckeditor5@45.2.2)':
     dependencies:
@@ -8025,6 +8051,26 @@ snapshots:
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
       vitest: 2.1.9(@types/node@24.10.0)(@vitest/browser@2.1.9)(@vitest/ui@2.1.9)(msw@2.11.6(@types/node@24.10.0)(typescript@5.4.5))(sugarss@4.0.1(postcss@8.5.6))(terser@5.44.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/coverage-v8@2.1.9(@vitest/browser@2.1.9)(vitest@2.1.9)':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@bcoe/v8-coverage': 0.2.3
+      debug: 4.4.3(supports-color@8.1.1)
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.6
+      istanbul-reports: 3.2.0
+      magic-string: 0.30.21
+      magicast: 0.3.5
+      std-env: 3.10.0
+      test-exclude: 7.0.1
+      tinyrainbow: 1.2.0
+      vitest: 2.1.9(@types/node@24.10.0)(@vitest/browser@2.1.9)(@vitest/ui@2.1.9)(msw@2.11.6(@types/node@24.10.0)(typescript@5.4.5))(sugarss@4.0.1(postcss@8.5.6))(terser@5.44.0)
+    optionalDependencies:
+      '@vitest/browser': 2.1.9(@types/node@24.10.0)(typescript@5.4.5)(vite@5.4.21(@types/node@24.10.0)(sugarss@4.0.1(postcss@8.5.6))(terser@5.44.0))(vitest@2.1.9)(webdriverio@9.20.0)
     transitivePeerDependencies:
       - supports-color
 
