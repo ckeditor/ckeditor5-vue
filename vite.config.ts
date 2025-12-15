@@ -3,8 +3,8 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { resolve } from 'path';
-import { createRequire } from 'module';
+import { resolve } from 'node:path';
+import { createRequire } from 'node:module';
 import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 

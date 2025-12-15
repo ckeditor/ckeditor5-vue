@@ -3,9 +3,9 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
-import { existsSync } from 'fs';
+import { fileURLToPath } from 'node:url';
+import { join, dirname } from 'node:path';
+import { existsSync } from 'node:fs';
 
 const ROOT_DIRECTORY = join(
 	dirname( fileURLToPath( import.meta.url ) ),
