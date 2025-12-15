@@ -5,7 +5,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { createRequire } from 'module';
+import { createRequire } from 'node:module';
 import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 
 const require = createRequire( import.meta.url );
