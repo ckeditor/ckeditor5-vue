@@ -34,7 +34,7 @@
     "lodash-es": "^4.17.21"
   },
   "peerDependencies": {
-    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
+    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly || ^0.0.0-internal",
     "vue": "^3.4.0"
   },
   "devDependencies": {
