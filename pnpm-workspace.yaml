@@ -7,12 +7,15 @@ onlyBuiltDependencies:
 
 overrides:
   esbuild: ^0.25.0
+  diff@^7.0.0: ^8.0.3
+  '@smithy/config-resolver@^3': ^4.4.0
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   - '@ckeditor/*'
   - '@cksource/*'
   - '*ckeditor5*'
+  - lodash-es
 
 shellEmulator: true
 shamefullyHoist: true
