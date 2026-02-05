@@ -6,6 +6,7 @@
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vitest/config';
+import { webdriverio } from '@vitest/browser-webdriverio';
 import vue from '@vitejs/plugin-vue';
 
 const require = createRequire( import.meta.url );
@@ -72,8 +73,8 @@ export default defineConfig( {
 		browser: {
 			enabled: true,
 			headless: true,
-			provider: 'webdriverio',
-			name: 'chrome',
+			provider: webdriverio(),
+			instances: [ { browser: 'chrome' } ],
 			screenshotFailures: false
 		}
 	},
