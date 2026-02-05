@@ -66,7 +66,7 @@
     "typescript": "~5.4.5",
     "typescript-eslint": "^8.32.1",
     "upath": "^2.0.1",
-    "vite": "^5.4.21",
+    "vite": "^7.3.1",
     "vitest": "^4.0.18",
     "vue": "^3.4.30",
     "vue-eslint-parser": "^10.2.0",
