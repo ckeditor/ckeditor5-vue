@@ -6,7 +6,7 @@ Changelog
 ### Other changes
 
 * Added logging CDN fetch errors to console when an exception is thrown.
-* Upgrade to Node v24.11.
+* Upgrade the development environment to Node v24.11.
 * Accept internal CKEditor 5 releases in `peerDependencies`. Closes [#386](https://github.com/ckeditor/ckeditor5-vue/issues/386).
 
 
