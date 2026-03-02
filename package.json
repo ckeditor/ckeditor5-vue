@@ -71,7 +71,7 @@
     "vue": "^3.4.30",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^2.1.6",
-    "webdriverio": "^9.12.7"
+    "webdriverio": "^9.24.0"
   },
   "engines": {
     "node": ">=24.11.0",

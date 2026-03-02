@@ -6,9 +6,11 @@ onlyBuiltDependencies:
   - protobufjs
 
 overrides:
-  esbuild: ^0.25.0
-  diff@^7.0.0: ^8.0.3
   '@smithy/config-resolver@^3': ^4.4.0
+  'diff@^7': '^8.0.3'
+  'esbuild': '^0.25.0'
+  'minimatch@^9': '^9.0.7'
+
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
