@@ -73,11 +73,14 @@ export function getInitialDataFromEditorConfig( config: Record<string, any> ): s
 export function isRootsMapConfigurationSupported(): boolean {
 	const bundleInfo = getCKBaseBundleInstallationInfo();
 
+	if ( !bundleInfo ) {
+		return false;
+	}
+
 	// If it's nightly, internal, or any other version, assume it's compatible with all newest features.
 	// Versions >= 48 prefer to use `root.initialData` instead of `initialData` field, so we need to normalize
 	// the configuration object to make it work with all versions.
 	return (
-		!bundleInfo ||
 		!isSemanticVersion( bundleInfo.version ) ||
 		destructureSemanticVersion( bundleInfo.version ).major >= 48
 	);

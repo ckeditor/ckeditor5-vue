@@ -24,10 +24,10 @@ describe( 'isRootsMapConfigurationSupported', () => {
 		setCKEditorVersion( undefined );
 	} );
 
-	it( 'should return true when CKEDITOR_VERSION is not set (editor not loaded yet)', () => {
+	it( 'should return false when CKEDITOR_VERSION is not set (editor not loaded yet)', () => {
 		setCKEditorVersion( undefined );
 
-		expect( isRootsMapConfigurationSupported() ).toBe( true );
+		expect( isRootsMapConfigurationSupported() ).toBe( false );
 	} );
 
 	it( 'should return true when version is not a semantic version (e.g. nightly)', () => {
