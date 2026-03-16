@@ -15,8 +15,8 @@ importers:
   .:
     dependencies:
       '@ckeditor/ckeditor5-integrations-common':
-        specifier: ^2.2.2
-        version: 2.2.3(ckeditor5@45.2.2)
+        specifier: ^2.2.4
+        version: 2.2.4(ckeditor5@45.2.2)
       lodash-es:
         specifier: ^4.17.22
         version: 4.17.23
@@ -485,9 +485,8 @@ packages:
   '@ckeditor/ckeditor5-indent@45.2.2':
     resolution: {integrity: sha512-y9cnJHgsrQkKjvQk1a1AK18CmIKswEpIQO2eNkXq7Qm0CSanHzS9hYYZdiei0pFk14ZlPgAUKDzFU9oGh12d8g==}
 
-  '@ckeditor/ckeditor5-integrations-common@2.2.3':
-    resolution: {integrity: sha512-92kQWQj1wiABF7bY1+J79Ze+WHr7pwVBufn1eeJLWcTXbPQq4sAolfKv8Y8Ka9g69mdyE9+GPWmGFYDeQJVPDg==}
-    engines: {node: '>=18.0.0'}
+  '@ckeditor/ckeditor5-integrations-common@2.2.4':
+    resolution: {integrity: sha512-Qd6nTE6ldCZ8JyCVZWBRmBOqQnV/LlGHZqsnhxYv5IbXkJuUdskbsg+0VYDD1v9JEH2B0sTHLY3WYJHpijm2tg==}
     peerDependencies:
       ckeditor5: '>=42.0.0 || ^0.0.0-nightly'
 
@@ -6268,7 +6267,7 @@ snapshots:
       '@ckeditor/ckeditor5-utils': 45.2.2
       ckeditor5: 45.2.2
 
-  '@ckeditor/ckeditor5-integrations-common@2.2.3(ckeditor5@45.2.2)':
+  '@ckeditor/ckeditor5-integrations-common@2.2.4(ckeditor5@45.2.2)':
     dependencies:
       ckeditor5: 45.2.2
 

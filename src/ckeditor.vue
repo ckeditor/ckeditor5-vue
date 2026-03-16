@@ -22,6 +22,7 @@ import type { Editor, EditorConfig, EventInfo } from 'ckeditor5';
 import type { Props, ExtractEditorType } from './types.js';
 
 import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
+import { assignInitialDataToEditorConfig, getInitialDataFromEditorConfig } from './utils/assignInitialDataToEditorConfig.js';
 
 type EditorType = ExtractEditorType<TEditor>;
 
@@ -151,12 +152,12 @@ checkVersion();
 onMounted( () => {
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
-	const editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig(
+	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig(
 		Object.assign( {}, props.config )
 	);
 
 	if ( model.value ) {
-		editorConfig.initialData = model.value;
+		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value );
 	}
 
 	( props.editor.create( element.value, editorConfig ) as unknown as Promise<EditorType> )
@@ -168,7 +169,7 @@ onMounted( () => {
 
 			// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
 			// to be synchronized with these potential changes as soon as it is ready.
-			if ( model.value !== editorConfig.initialData ) {
+			if ( model.value !== getInitialDataFromEditorConfig( editorConfig ) ) {
 				editor.data.set( model.value );
 			}
 
