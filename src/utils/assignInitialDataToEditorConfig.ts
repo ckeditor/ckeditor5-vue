@@ -34,7 +34,7 @@ export function assignInitialDataToEditorConfig( config: Record<string, any>, da
 				main: {
 					...config.root,
 					...config.roots?.main,
-					initialData: data || ''
+					initialData: data
 				}
 			}
 		};
@@ -47,7 +47,7 @@ export function assignInitialDataToEditorConfig( config: Record<string, any>, da
 
 	return {
 		...config,
-		initialData: data || ''
+		initialData: data
 	} as unknown as EditorConfig;
 }
 
