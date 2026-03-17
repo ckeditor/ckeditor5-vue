@@ -65,8 +65,7 @@ export function getInitialDataFromEditorConfig( config: Record<string, any> ): s
 /**
  * Retrieve information about the base CKEditor bundle installation and checks if it supports per-root configuration.
  * It may return `null` if the editor is not loaded yet, or something else removed global editor versions variable.
- * In such case, we will assume that the loaded CKEditor version is compatible with all newest features
- * and use `root.initialData` field.
+ * In such case, we fall back to the legacy `initialData` field for backwards compatibility.
  *
  * @returns `true` if the loaded CKEditor version supports per-root configuration, `false` otherwise.
  */
