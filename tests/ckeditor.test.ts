@@ -396,7 +396,7 @@ describe( 'CKEditor component', () => {
 
 			describe( 'license v2', () => {
 				it( 'should add usage data extra plugin if it\'s commercial', async () => {
-					window.CKEDITOR_VERSION = '43.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '43.0.0' );
 
 					const component = mountComponent( {
 						config: {
@@ -417,7 +417,7 @@ describe( 'CKEditor component', () => {
 				} );
 
 				it( 'should not add usage data extra plugin if it\'s free', async () => {
-					window.CKEDITOR_VERSION = '43.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '43.0.0' );
 
 					const component = mountComponent( {
 						config: {
@@ -437,7 +437,7 @@ describe( 'CKEditor component', () => {
 
 			describe( 'license v3', () => {
 				it( 'should add usage data extra plugin if it\'s commercial license', async () => {
-					window.CKEDITOR_VERSION = '44.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '44.0.0' );
 
 					const component = mountComponent( {
 						config: {
@@ -458,7 +458,7 @@ describe( 'CKEditor component', () => {
 				} );
 
 				it( 'should not add usage data extra plugin if it\'s free license v3', async () => {
-					window.CKEDITOR_VERSION = '44.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '44.0.0' );
 
 					const component = mountComponent( {
 						config: {
