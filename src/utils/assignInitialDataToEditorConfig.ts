@@ -1,0 +1,86 @@
+/**
+ * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
+ */
+
+import type { EditorConfig } from 'ckeditor5';
+
+import {
+	destructureSemanticVersion,
+	getCKBaseBundleInstallationInfo,
+	isSemanticVersion
+} from '@ckeditor/ckeditor5-integrations-common';
+
+/**
+ * Assigns the `data` property to the correct field in the editor configuration object, depending on the loaded CKEditor version.
+ *
+ * At this moment, CKEditor 5 might be loaded in two different versions:
+ *
+ * 1. LTS-one 47.x - It supports both `initialData` and does not support `root.initialData`. It means
+ *    that the `data` property should be assigned to `initialData` field in the configuration object.
+ *
+ * 2. Latest 48.x and newer - It supports `root.initialData` and deprecates `initialData` (which'll be removed in the future).
+ *    It means that the `data` property should be assigned to `root.initialData` field in the configuration object.
+ *
+ * @param config The editor configuration.
+ * @param data The editor data. It is used to log warnings when both `data` and `initialData` are specified.
+ */
+export function assignInitialDataToEditorConfig( config: Record<string, any>, data: string ): EditorConfig {
+	if ( isRootsMapConfigurationSupported() ) {
+		const normalizedConfig: any = {
+			...config,
+			roots: {
+				...config.roots,
+				main: {
+					...config.root,
+					...config.roots?.main,
+					initialData: data
+				}
+			}
+		};
+
+		delete normalizedConfig.root;
+		delete normalizedConfig.initialData;
+
+		return normalizedConfig as unknown as EditorConfig;
+	}
+
+	return {
+		...config,
+		initialData: data
+	} as unknown as EditorConfig;
+}
+
+/**
+ * Retrieves the initial data from the editor configuration object, depending on the loaded CKEditor version.
+ */
+export function getInitialDataFromEditorConfig( config: Record<string, any> ): string | undefined {
+	if ( isRootsMapConfigurationSupported() ) {
+		return config.roots?.main?.initialData;
+	}
+
+	return config.initialData;
+}
+
+/**
+ * Retrieve information about the base CKEditor bundle installation and checks if it supports per-root configuration.
+ * It may return `null` if the editor is not loaded yet, or something else removed global editor versions variable.
+ * In such case, we fall back to the legacy `initialData` field for backwards compatibility.
+ *
+ * @returns `true` if the loaded CKEditor version supports per-root configuration, `false` otherwise.
+ */
+export function isRootsMapConfigurationSupported(): boolean {
+	const bundleInfo = getCKBaseBundleInstallationInfo();
+
+	if ( !bundleInfo ) {
+		return false;
+	}
+
+	// If it's nightly, internal, or any other version, assume it's compatible with all newest features.
+	// Versions >= 48 prefer to use `root.initialData` instead of `initialData` field, so we need to normalize
+	// the configuration object to make it work with all versions.
+	return (
+		!isSemanticVersion( bundleInfo.version ) ||
+		destructureSemanticVersion( bundleInfo.version ).major >= 48
+	);
+}

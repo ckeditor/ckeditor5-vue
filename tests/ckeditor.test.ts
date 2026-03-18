@@ -165,6 +165,31 @@ describe( 'CKEditor component', () => {
 				component.unmount();
 			} );
 
+			it( 'should set the initial data using roots.main.initialData on CKEditor 48+', async () => {
+				vi.stubGlobal( 'CKEDITOR_VERSION', '48.0.0' );
+				const editor = vi.spyOn( MockEditor, 'create' );
+
+				const component = mountComponent( {
+					modelValue: 'foo'
+				} );
+
+				await nextTick();
+
+				expect( editor ).toHaveBeenCalledOnce();
+				expect( editor ).toHaveBeenCalledWith(
+					expect.any( HTMLElement ),
+					expect.objectContaining( {
+						roots: {
+							main: {
+								initialData: 'foo'
+							}
+						}
+					} )
+				);
+
+				component.unmount();
+			} );
+
 			it( 'should sync the editor data after editor is ready', async () => {
 				const component = mountComponent( {
 					modelValue: 'foo'
@@ -298,9 +323,80 @@ describe( 'CKEditor component', () => {
 				component.unmount();
 			} );
 
+			it( 'should not be mutated on CKEditor 48+ when initial data is normalized to roots.main', async () => {
+				vi.stubGlobal( 'CKEDITOR_VERSION', '48.0.0' );
+				const stub = vi.spyOn( MockEditor, 'create' );
+
+				const component = mount( {
+					components: {
+						Ckeditor
+					},
+					data: () => ( {
+						editor: MockEditor,
+						editorConfig: {
+							foo: 'bar'
+						},
+						first: 'foo',
+						second: 'bar',
+						third: 'baz'
+					} ),
+					template: `
+					<div>
+						<ckeditor ref="first" :editor="editor" tag-name="textarea" v-model="first" :config="editorConfig">foo</ckeditor>
+						<ckeditor ref="second" :editor="editor" tag-name="textarea" v-model="second" :config="editorConfig">bar</ckeditor>
+						<ckeditor ref="third" :editor="editor" tag-name="textarea" v-model="third" :config="editorConfig">baz</ckeditor>
+					</div>
+				`
+				} );
+
+				await nextTick();
+
+				expect( stub ).toHaveBeenCalledTimes( 3 );
+				expect( stub ).toHaveBeenNthCalledWith(
+					1,
+					expect.any( HTMLElement ),
+					expect.objectContaining( {
+						foo: 'bar',
+						roots: {
+							main: {
+								initialData: 'foo'
+							}
+						}
+					} )
+				);
+
+				expect( stub ).toHaveBeenNthCalledWith(
+					2,
+					expect.any( HTMLElement ),
+					expect.objectContaining( {
+						foo: 'bar',
+						roots: {
+							main: {
+								initialData: 'bar'
+							}
+						}
+					} )
+				);
+
+				expect( stub ).toHaveBeenNthCalledWith(
+					3,
+					expect.any( HTMLElement ),
+					expect.objectContaining( {
+						foo: 'bar',
+						roots: {
+							main: {
+								initialData: 'baz'
+							}
+						}
+					} )
+				);
+
+				component.unmount();
+			} );
+
 			describe( 'license v2', () => {
 				it( 'should add usage data extra plugin if it\'s commercial', async () => {
-					window.CKEDITOR_VERSION = '43.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '43.0.0' );
 
 					const component = mountComponent( {
 						config: {
@@ -321,7 +417,7 @@ describe( 'CKEditor component', () => {
 				} );
 
 				it( 'should not add usage data extra plugin if it\'s free', async () => {
-					window.CKEDITOR_VERSION = '43.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '43.0.0' );
 
 					const component = mountComponent( {
 						config: {
@@ -341,7 +437,7 @@ describe( 'CKEditor component', () => {
 
 			describe( 'license v3', () => {
 				it( 'should add usage data extra plugin if it\'s commercial license', async () => {
-					window.CKEDITOR_VERSION = '44.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '44.0.0' );
 
 					const component = mountComponent( {
 						config: {
@@ -362,7 +458,7 @@ describe( 'CKEditor component', () => {
 				} );
 
 				it( 'should not add usage data extra plugin if it\'s free license v3', async () => {
-					window.CKEDITOR_VERSION = '44.0.0';
+					vi.stubGlobal( 'CKEDITOR_VERSION', '44.0.0' );
 
 					const component = mountComponent( {
 						config: {
