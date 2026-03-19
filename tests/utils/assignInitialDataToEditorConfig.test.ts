@@ -25,14 +25,14 @@ describe( 'isRootsMapConfigurationSupported', () => {
 	} );
 
 	it( 'should return false if window.CKEDITOR_VERSION is not defined', () => {
-		delete ( window as any ).CKEDITOR_VERSION;
+		setCKEditorVersion( undefined );
 		expect( isRootsMapConfigurationSupported() ).toBe( false );
 	} );
 
 	it.each( [ 'nightly', '0.0.0-nightly-20260319.0', '48.0.0', '49.0.0' ] )(
 		'should return true if window.CKEDITOR_VERSION is "%s"',
 		version => {
-			window.CKEDITOR_VERSION = version as any;
+			setCKEditorVersion( version );
 			expect( isRootsMapConfigurationSupported() ).toBe( true );
 		}
 	);
@@ -40,7 +40,7 @@ describe( 'isRootsMapConfigurationSupported', () => {
 	it.each( [ '47.0.0', '46.0.0' ] )(
 		'should return false if window.CKEDITOR_VERSION is "%s"',
 		version => {
-			window.CKEDITOR_VERSION = version as any;
+			setCKEditorVersion( version );
 			expect( isRootsMapConfigurationSupported() ).toBe( false );
 		}
 	);
