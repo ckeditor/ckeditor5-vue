@@ -8,6 +8,7 @@ import type { EditorConfig } from 'ckeditor5';
 import {
 	destructureSemanticVersion,
 	getCKBaseBundleInstallationInfo,
+	isCKTestingVersion,
 	isSemanticVersion
 } from '@ckeditor/ckeditor5-integrations-common';
 
@@ -81,6 +82,7 @@ export function isRootsMapConfigurationSupported(): boolean {
 	// the configuration object to make it work with all versions.
 	return (
 		!isSemanticVersion( bundleInfo.version ) ||
+		isCKTestingVersion( bundleInfo.version ) ||
 		destructureSemanticVersion( bundleInfo.version ).major >= 48
 	);
 }

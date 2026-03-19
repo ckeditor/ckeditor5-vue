@@ -24,41 +24,26 @@ describe( 'isRootsMapConfigurationSupported', () => {
 		setCKEditorVersion( undefined );
 	} );
 
-	it( 'should return false when CKEDITOR_VERSION is not set (editor not loaded yet)', () => {
+	it( 'should return false if window.CKEDITOR_VERSION is not defined', () => {
 		setCKEditorVersion( undefined );
-
 		expect( isRootsMapConfigurationSupported() ).toBe( false );
 	} );
 
-	it( 'should return true when version is not a semantic version (e.g. nightly)', () => {
-		setCKEditorVersion( 'nightly' );
+	it.each( [ 'nightly', '0.0.0-nightly-20260319.0', '48.0.0', '49.0.0' ] )(
+		'should return true if window.CKEDITOR_VERSION is "%s"',
+		version => {
+			setCKEditorVersion( version );
+			expect( isRootsMapConfigurationSupported() ).toBe( true );
+		}
+	);
 
-		expect( isRootsMapConfigurationSupported() ).toBe( true );
-	} );
-
-	it( 'should return true for version exactly 48.0.0', () => {
-		setCKEditorVersion( '48.0.0' );
-
-		expect( isRootsMapConfigurationSupported() ).toBe( true );
-	} );
-
-	it( 'should return true for version greater than 48', () => {
-		setCKEditorVersion( '50.3.1' );
-
-		expect( isRootsMapConfigurationSupported() ).toBe( true );
-	} );
-
-	it( 'should return false for version 47.x (LTS)', () => {
-		setCKEditorVersion( '47.0.0' );
-
-		expect( isRootsMapConfigurationSupported() ).toBe( false );
-	} );
-
-	it( 'should return false for version lower than 47', () => {
-		setCKEditorVersion( '42.0.0' );
-
-		expect( isRootsMapConfigurationSupported() ).toBe( false );
-	} );
+	it.each( [ '47.0.0', '46.0.0' ] )(
+		'should return false if window.CKEDITOR_VERSION is "%s"',
+		version => {
+			setCKEditorVersion( version );
+			expect( isRootsMapConfigurationSupported() ).toBe( false );
+		}
+	);
 } );
 
 describe( 'assignInitialDataToEditorConfig', () => {
