@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [7.4.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.3.1...v7.4.0) (March 24, 2026)
+
+### Features
+
+* Added support for CKEditor 5 `48.0.0` and the new `roots` editor configuration. Closes [#397](https://github.com/ckeditor/ckeditor5-vue/issues/397).
+
+
 ## [7.3.1](https://github.com/ckeditor/ckeditor5-vue/compare/v7.3.0...v7.3.1) (February 16, 2026)
 
 ### Other changes
@@ -34,13 +41,6 @@ Changelog
 ### Other changes
 
 * Remove `ckeditor5-premium-features` from `peerDependencies`. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/af84547ee5c9b1264c7fbf69b7256ef8f76d3ad9))
-
-
-## [7.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.0.0...v7.1.0) (2024-09-19)
-
-### Features
-
-* **Experimental:** Added a `useCKEditorCloud()` composable for managing asynchronous loading of CKEditor 5 from a CDN. (https://github.com/ckeditor/ckeditor5-vue/commit/d17eb7f99c50c05f987a436c7a2884eafbc2d5e0)
 
 ---
 
