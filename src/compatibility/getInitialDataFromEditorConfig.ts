@@ -14,7 +14,7 @@ export function getInitialDataFromEditorConfig( config: EditorRelaxedConfig ): s
 	const supports = getInstalledCKBaseFeatures();
 
 	if ( supports.rootsConfigEntry ) {
-		return config.roots?.main?.initialData || config.root?.main || /* legacy */ config.initialData;
+		return config.roots?.main?.initialData || config.root?.initialData || /* legacy */ config.initialData;
 	}
 
 	return config.initialData;
