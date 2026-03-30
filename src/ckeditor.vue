@@ -8,7 +8,7 @@
 <script
 	setup
 	lang="ts"
-	generic="TEditor extends { create( ...args: any[] ): Promise<Editor> }"
+	generic="TEditorConstructor extends EditorConstructor"
 >
 import { debounce } from 'lodash-es';
 import {
@@ -18,13 +18,16 @@ import {
 	onMounted,
 	onBeforeUnmount
 } from 'vue';
-import type { Editor, EditorConfig, EventInfo } from 'ckeditor5';
-import type { Props, ExtractEditorType } from './types.js';
+import type { EditorConfig, EventInfo } from 'ckeditor5';
+import type { EditorConstructor, ExtractEditorType, Props } from './types.js';
 
 import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
-import { assignInitialDataToEditorConfig, getInitialDataFromEditorConfig } from './utils/assignInitialDataToEditorConfig.js';
+import { assignInitialDataToEditorConfig } from './compatibility/assignInitialDataToEditorConfig.js';
+import { getInitialDataFromEditorConfig } from './compatibility/getInitialDataFromEditorConfig.js';
+import { getInstalledCKBaseFeatures } from '@ckeditor/ckeditor5-integrations-common';
+import { assignElementToEditorConfig } from './compatibility/assignElementToEditorConfig.js';
 
-type EditorType = ExtractEditorType<TEditor>;
+type TEditor = ExtractEditorType<TEditorConstructor>;
 
 defineOptions( {
 	name: 'CKEditor'
@@ -40,19 +43,19 @@ const props = withDefaults( defineProps<Props<TEditor>>(), {
 } );
 
 const emit = defineEmits<{
-	ready: [ editor: EditorType ],
+	ready: [ editor: TEditor ],
 	destroy: [],
-	blur: [ event: EventInfo, editor: EditorType ],
-	focus: [ event: EventInfo, editor: EditorType ],
-	input: [ data: string, event: EventInfo, editor: EditorType ],
-	'update:modelValue': [ data: string, event: EventInfo, editor: EditorType ],
+	blur: [ event: EventInfo, editor: TEditor ],
+	focus: [ event: EventInfo, editor: TEditor ],
+	input: [ data: string, event: EventInfo, editor: TEditor ],
+	'update:modelValue': [ data: string, event: EventInfo, editor: TEditor ],
 }>();
 
 const VUE_INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
 const element = ref<HTMLElement>();
-const instance = ref<EditorType>();
+const instance = ref<TEditor>();
 const lastEditorData = ref<string>();
 
 defineExpose( {
@@ -112,7 +115,7 @@ function checkVersion(): void {
 	console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
 }
 
-function setUpEditorEvents( editor: EditorType ) {
+function setUpEditorEvents( editor: TEditor ) {
 	// Use the leading edge so the first event in the series is emitted immediately.
 	// Failing to do so leads to race conditions, for instance, when the component modelValue
 	// is set twice in a time span shorter than the debounce time.
@@ -150,6 +153,9 @@ function setUpEditorEvents( editor: EditorType ) {
 checkVersion();
 
 onMounted( () => {
+	const { editor: Editor } = props;
+	const supports = getInstalledCKBaseFeatures();
+
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
 	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig(
@@ -160,7 +166,13 @@ onMounted( () => {
 		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value );
 	}
 
-	( props.editor.create( element.value, editorConfig ) as unknown as Promise<EditorType> )
+	const editorPromise = (
+		supports.elementConfigAttachment ?
+			Editor.create( assignElementToEditorConfig( Editor, element.value!, editorConfig ) ) :
+			Editor.create( element.value, editorConfig )
+	) as unknown as Promise<TEditor>;
+
+	editorPromise
 		.then( editor => {
 			// Save the reference to the instance for further use.
 			instance.value = markRaw( editor );

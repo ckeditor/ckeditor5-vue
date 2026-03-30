@@ -64,6 +64,7 @@ const data = ref( '<p>Hello world!</p>' );
 const disabled = ref( false );
 const isTwoWayDataBindingDisabled = ref( false );
 const config = reactive( {
+	licenseKey: 'GPL',
 	toolbar: [ 'heading', '|', 'bold', 'italic' ]
 } );
 

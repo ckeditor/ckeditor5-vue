@@ -5,46 +5,8 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-import {
-	assignInitialDataToEditorConfig,
-	getInitialDataFromEditorConfig,
-	isRootsMapConfigurationSupported
-} from '../../src/utils/assignInitialDataToEditorConfig.js';
-
-function setCKEditorVersion( version: string | undefined ): void {
-	if ( version === undefined ) {
-		delete ( window as any ).CKEDITOR_VERSION;
-	} else {
-		( window as any ).CKEDITOR_VERSION = version;
-	}
-}
-
-describe( 'isRootsMapConfigurationSupported', () => {
-	afterEach( () => {
-		setCKEditorVersion( undefined );
-	} );
-
-	it( 'should return false if window.CKEDITOR_VERSION is not defined', () => {
-		setCKEditorVersion( undefined );
-		expect( isRootsMapConfigurationSupported() ).toBe( false );
-	} );
-
-	it.each( [ 'nightly', '0.0.0-nightly-20260319.0', '48.0.0', '49.0.0' ] )(
-		'should return true if window.CKEDITOR_VERSION is "%s"',
-		version => {
-			setCKEditorVersion( version );
-			expect( isRootsMapConfigurationSupported() ).toBe( true );
-		}
-	);
-
-	it.each( [ '47.0.0', '46.0.0' ] )(
-		'should return false if window.CKEDITOR_VERSION is "%s"',
-		version => {
-			setCKEditorVersion( version );
-			expect( isRootsMapConfigurationSupported() ).toBe( false );
-		}
-	);
-} );
+import { assignInitialDataToEditorConfig } from '../../src/compatibility/assignInitialDataToEditorConfig.js';
+import { setCKEditorVersion } from '../_utils/setCKEditorVersion.js';
 
 describe( 'assignInitialDataToEditorConfig', () => {
 	afterEach( () => {
@@ -162,57 +124,3 @@ describe( 'assignInitialDataToEditorConfig', () => {
 	} );
 } );
 
-describe( 'getInitialDataFromEditorConfig', () => {
-	afterEach( () => {
-		setCKEditorVersion( undefined );
-	} );
-
-	describe( 'when CKEditor >= 48 is loaded', () => {
-		beforeEach( () => {
-			setCKEditorVersion( '48.0.0' );
-		} );
-
-		it( 'should return initialData from roots.main', () => {
-			const config = { roots: { main: { initialData: '<p>Hello</p>' } } };
-
-			expect( getInitialDataFromEditorConfig( config ) ).toBe( '<p>Hello</p>' );
-		} );
-
-		it( 'should return undefined when roots is missing', () => {
-			expect( getInitialDataFromEditorConfig( {} ) ).toBeUndefined();
-		} );
-
-		it( 'should return undefined when roots.main is missing', () => {
-			const config = { roots: { secondary: { initialData: '<p>Data</p>' } } };
-
-			expect( getInitialDataFromEditorConfig( config ) ).toBeUndefined();
-		} );
-
-		it( 'should return undefined when roots.main has no initialData', () => {
-			expect( getInitialDataFromEditorConfig( { roots: { main: {} } } ) ).toBeUndefined();
-		} );
-	} );
-
-	describe( 'when CKEditor 47.x LTS is loaded', () => {
-		beforeEach( () => {
-			setCKEditorVersion( '47.0.0' );
-		} );
-
-		it( 'should return top-level initialData', () => {
-			expect( getInitialDataFromEditorConfig( { initialData: '<p>Hello</p>' } ) ).toBe( '<p>Hello</p>' );
-		} );
-
-		it( 'should return undefined when initialData is not present', () => {
-			expect( getInitialDataFromEditorConfig( {} ) ).toBeUndefined();
-		} );
-
-		it( 'should not read from roots.main even if present', () => {
-			const config = {
-				initialData: '<p>Top level</p>',
-				roots: { main: { initialData: '<p>Nested</p>' } }
-			};
-
-			expect( getInitialDataFromEditorConfig( config ) ).toBe( '<p>Top level</p>' );
-		} );
-	} );
-} );
