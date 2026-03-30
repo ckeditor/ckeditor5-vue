@@ -21,10 +21,11 @@ import {
 import type { EditorConfig, EventInfo } from 'ckeditor5';
 import type { EditorConstructor, ExtractEditorType, Props } from './types.js';
 
+import { compareInstalledCKBaseVersion, getInstalledCKBaseFeatures } from '@ckeditor/ckeditor5-integrations-common';
+
 import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
 import { assignInitialDataToEditorConfig } from './compatibility/assignInitialDataToEditorConfig.js';
 import { getInitialDataFromEditorConfig } from './compatibility/getInitialDataFromEditorConfig.js';
-import { getInstalledCKBaseFeatures } from '@ckeditor/ckeditor5-integrations-common';
 import { assignElementToEditorConfig } from './compatibility/assignElementToEditorConfig.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
@@ -100,19 +101,15 @@ watch( () => props.disabled, readOnlyMode => {
 } );
 
 function checkVersion(): void {
-	const version = window.CKEDITOR_VERSION;
+	switch ( compareInstalledCKBaseVersion( '42.0.0' ) ) {
+		case null:
+			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
+			break;
 
-	if ( !version ) {
-		return console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
+		case -1:
+			console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
+			break;
 	}
-
-	const [ major ] = version.split( '.' ).map( Number );
-
-	if ( major >= 42 || version.startsWith( '0.0.0' ) ) {
-		return;
-	}
-
-	console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
 }
 
 function setUpEditorEvents( editor: TEditor ) {

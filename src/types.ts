@@ -25,6 +25,7 @@ export interface Props<TEditor extends Editor = Editor> {
 }
 
 export type EditorConstructor<TEditor extends Editor = Editor> = {
+	new ( ...args: Array<any> ): any;
 	create( ...args: any ): Promise<TEditor>;
 	editorName?: string;
 };
