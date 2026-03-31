@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import type { Editor, EditorConfig } from 'ckeditor5';
+import type { EditorConfig } from 'ckeditor5';
 
 /**
  * This file contains types for the CKEditor 5 Vue component.
@@ -16,33 +16,10 @@ import type { Editor, EditorConfig } from 'ckeditor5';
 /**
  * The props accepted by the `<ckeditor>` component.
  */
-export interface Props<TEditor extends Editor = Editor> {
-	editor: EditorConstructor<TEditor>;
+export interface Props<TEditorConstructor> {
+	editor: TEditorConstructor;
 	config?: EditorConfig;
 	tagName?: string;
 	disabled?: boolean;
 	disableTwoWayDataBinding?: boolean;
 }
-
-export type EditorConstructor<TEditor extends Editor = Editor> = {
-	new ( ...args: Array<any> ): any;
-	create( ...args: any ): Promise<TEditor>;
-	editorName?: string;
-};
-
-/**
- * The editor type extracted from the editor instance type.
- */
-export type ExtractEditorType<TEditor> = TEditor extends { create( ...args: Array<any> ): Promise<infer E> }
-	? E
-	: never;
-
-/**
- * The editor's configuration may vary slightly depending on the version.
- * For example, some fields are present in the LTS version of the editor,
- * while others are no longer available in newer versions. Unfortunately,
- * when these fields are required by utilities that normalize them,
- * this can cause issues if the user has strict type checking enabled.
- * To reduce the number of casts, a relaxed type is used.
- */
-export type EditorRelaxedConfig = Record<string, any>;

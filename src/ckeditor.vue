@@ -8,7 +8,7 @@
 <script
 	setup
 	lang="ts"
-	generic="TEditorConstructor extends EditorConstructor"
+	generic="TEditorConstructor extends EditorRelaxedConstructor"
 >
 import { debounce } from 'lodash-es';
 import {
@@ -19,14 +19,19 @@ import {
 	onBeforeUnmount
 } from 'vue';
 import type { EditorConfig, EventInfo } from 'ckeditor5';
-import type { EditorConstructor, ExtractEditorType, Props } from './types.js';
+import type { Props } from './types.js';
 
-import { compareInstalledCKBaseVersion, getInstalledCKBaseFeatures } from '@ckeditor/ckeditor5-integrations-common';
+import {
+	assignElementToEditorConfig,
+	assignInitialDataToEditorConfig,
+	compareInstalledCKBaseVersion,
+	getInitialDataFromEditorConfig,
+	getInstalledCKBaseFeatures,
+	type EditorRelaxedConstructor,
+	type ExtractEditorType
+} from '@ckeditor/ckeditor5-integrations-common';
 
 import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
-import { assignInitialDataToEditorConfig } from './compatibility/assignInitialDataToEditorConfig.js';
-import { getInitialDataFromEditorConfig } from './compatibility/getInitialDataFromEditorConfig.js';
-import { assignElementToEditorConfig } from './compatibility/assignElementToEditorConfig.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
 
@@ -36,7 +41,7 @@ defineOptions( {
 
 const model = defineModel( 'modelValue', { type: String, default: '' } );
 
-const props = withDefaults( defineProps<Props<TEditor>>(), {
+const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 	config: () => ( {} ),
 	tagName: 'div',
 	disabled: false,
