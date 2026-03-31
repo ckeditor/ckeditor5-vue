@@ -165,7 +165,7 @@ onMounted( () => {
 	);
 
 	if ( model.value ) {
-		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value );
+		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value, true );
 	}
 
 	const editorPromise = (
