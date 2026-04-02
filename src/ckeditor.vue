@@ -25,7 +25,6 @@ import {
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
 	compareInstalledCKBaseVersion,
-	getInitialDataFromEditorConfig,
 	getInstalledCKBaseFeatures,
 	type EditorRelaxedConstructor,
 	type ExtractEditorType
@@ -164,6 +163,8 @@ onMounted( () => {
 		Object.assign( {}, props.config )
 	);
 
+	let prevModelValue = model.value;
+
 	if ( model.value ) {
 		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value, true );
 	}
@@ -183,7 +184,7 @@ onMounted( () => {
 
 			// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
 			// to be synchronized with these potential changes as soon as it is ready.
-			if ( model.value !== getInitialDataFromEditorConfig( editorConfig ) ) {
+			if ( model.value !== prevModelValue ) {
 				editor.data.set( model.value );
 			}
 
