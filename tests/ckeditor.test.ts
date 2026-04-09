@@ -177,8 +177,8 @@ describe( 'CKEditor component', () => {
 
 				expect( editor ).toHaveBeenCalledOnce();
 				expect( editor ).toHaveBeenCalledWith(
-					expect.any( HTMLElement ),
 					expect.objectContaining( {
+						attachTo: expect.any( HTMLElement ),
 						roots: {
 							main: {
 								initialData: 'foo'
@@ -354,8 +354,8 @@ describe( 'CKEditor component', () => {
 				expect( stub ).toHaveBeenCalledTimes( 3 );
 				expect( stub ).toHaveBeenNthCalledWith(
 					1,
-					expect.any( HTMLElement ),
 					expect.objectContaining( {
+						attachTo: expect.any( HTMLElement ),
 						foo: 'bar',
 						roots: {
 							main: {
@@ -367,8 +367,8 @@ describe( 'CKEditor component', () => {
 
 				expect( stub ).toHaveBeenNthCalledWith(
 					2,
-					expect.any( HTMLElement ),
 					expect.objectContaining( {
+						attachTo: expect.any( HTMLElement ),
 						foo: 'bar',
 						roots: {
 							main: {
@@ -380,8 +380,8 @@ describe( 'CKEditor component', () => {
 
 				expect( stub ).toHaveBeenNthCalledWith(
 					3,
-					expect.any( HTMLElement ),
 					expect.objectContaining( {
+						attachTo: expect.any( HTMLElement ),
 						foo: 'bar',
 						roots: {
 							main: {

@@ -30,7 +30,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-integrations-common": "^2.2.5",
+    "@ckeditor/ckeditor5-integrations-common": "^2.3.0",
     "lodash-es": "^4.17.22"
   },
   "peerDependencies": {

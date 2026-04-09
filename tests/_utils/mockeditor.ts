@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import type { EditorConfig } from 'ckeditor5';
+import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
 
 export class ModelDocument {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,7 +17,7 @@ export class ViewDocument {
 
 export class MockEditor {
 	public declare element?: HTMLElement;
-	public declare config?: EditorConfig;
+	public declare config?: EditorRelaxedConfig;
 	public declare _data: any;
 	public declare setDataCounter: number;
 	public declare model: any;
@@ -25,9 +25,9 @@ export class MockEditor {
 	public declare data: any;
 	public declare _readOnlyLocks: Set<any>;
 
-	constructor( el?: HTMLElement, config?: EditorConfig ) {
-		this.element = el;
-		this.config = config;
+	constructor( elOrConfig?: EditorRelaxedConfig | HTMLElement, config?: EditorRelaxedConfig ) {
+		this.element = elOrConfig instanceof HTMLElement ? elOrConfig : elOrConfig?.attachTo;
+		this.config = config ?? elOrConfig;
 		this._data = '';
 		this.setDataCounter = 0;
 
@@ -55,8 +55,8 @@ export class MockEditor {
 		this._readOnlyLocks = new Set();
 	}
 
-	public static create( el: HTMLElement, config: EditorConfig ): Promise<any> {
-		const editor = new this( el, config );
+	public static create( ...args: Array<any> ): Promise<any> {
+		const editor = new this( ...args );
 
 		return Promise.resolve( editor );
 	}
