@@ -9,6 +9,8 @@ overrides:
   esbuild: ^0.25.0
   basic-ftp: '>=5.2.1'
   serialize-javascript: '>=7.0.5'
+  "minimatch@>=9.0.0 <9.0.7": "9.0.7"
+  "diff@>=6.0.0 <8.0.3": "8.0.3"
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
