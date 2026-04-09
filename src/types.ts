@@ -16,17 +16,10 @@ import type { EditorConfig } from 'ckeditor5';
 /**
  * The props accepted by the `<ckeditor>` component.
  */
-export interface Props<TEditor> {
-	editor: TEditor;
+export interface Props<TEditorConstructor> {
+	editor: TEditorConstructor;
 	config?: EditorConfig;
 	tagName?: string;
 	disabled?: boolean;
 	disableTwoWayDataBinding?: boolean;
 }
-
-/**
- * The editor type extracted from the editor instance type.
- */
-export type ExtractEditorType<TEditor> = TEditor extends { create( ...args: Array<any> ): Promise<infer E> }
-	? E
-	: never;

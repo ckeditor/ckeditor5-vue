@@ -1,6 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-vue",
-  "version": "7.3.0",
+  "version": "7.4.0",
   "description": "Official Vue.js 3+ component for CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
     "wysiwyg",
@@ -30,7 +30,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-integrations-common": "^2.2.2",
+    "@ckeditor/ckeditor5-integrations-common": "^2.3.0",
     "lodash-es": "^4.18.1"
   },
   "peerDependencies": {
