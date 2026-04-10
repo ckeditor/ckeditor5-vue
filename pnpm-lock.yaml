@@ -5,11 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  esbuild: ^0.25.0
-  basic-ftp: '>=5.2.1'
-  serialize-javascript: '>=7.0.5'
-  minimatch@>=9.0.0 <9.0.7: 9.0.7
-  diff@>=6.0.0 <8.0.3: 8.0.3
+  serialize-javascript@^6: ^7.0.5
+  minimatch@^9: 9.0.7
+  diff@^7: ^8.0.3
 
 importers:
 
@@ -27,31 +25,31 @@ importers:
         version: 55.4.0
       '@ckeditor/ckeditor5-dev-changelog':
         specifier: ^55.4.0
-        version: 55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1(esbuild@0.25.12))
+        version: 55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1)
       '@ckeditor/ckeditor5-dev-ci':
         specifier: ^55.4.0
         version: 55.4.0
       '@ckeditor/ckeditor5-dev-release-tools':
         specifier: ^55.4.0
-        version: 55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1(esbuild@0.25.12))
+        version: 55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1)
       '@ckeditor/ckeditor5-dev-utils':
         specifier: ^55.4.0
-        version: 55.4.0(@babel/core@7.29.0)(webpack@5.104.1(esbuild@0.25.12))
+        version: 55.4.0(@babel/core@7.29.0)(webpack@5.104.1)
       '@types/lodash-es':
         specifier: ^4.17.6
         version: 4.17.12
       '@vitejs/plugin-vue':
         specifier: ^6.0.5
-        version: 6.0.5(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vue@3.5.22(typescript@5.4.5))
+        version: 6.0.5(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vue@3.5.22(typescript@5.4.5))
       '@vitest/browser-webdriverio':
         specifier: ^4.1.2
-        version: 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)(webdriverio@9.27.0)
+        version: 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)(webdriverio@9.27.0)
       '@vitest/coverage-istanbul':
         specifier: ^4.1.2
         version: 4.1.2(vitest@4.1.2)
       '@vitest/coverage-v8':
         specifier: ^4.1.2
-        version: 4.1.2(@vitest/browser@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2))(vitest@4.1.2)
+        version: 4.1.2(@vitest/browser@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2))(vitest@4.1.2)
       '@vitest/ui':
         specifier: ^4.1.2
         version: 4.1.2(vitest@4.1.2)
@@ -105,10 +103,10 @@ importers:
         version: 2.0.1
       vite:
         specifier: ^8.0.0
-        version: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
+        version: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
       vitest:
         specifier: ^4.1.2
-        version: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+        version: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       vue:
         specifier: ^3.4.30
         version: 3.5.22(typescript@5.4.5)
@@ -4627,7 +4625,7 @@ packages:
     peerDependencies:
       '@types/node': ^20.19.0 || >=22.12.0
       '@vitejs/devtools': ^0.1.0
-      esbuild: ^0.25.0
+      esbuild: ^0.27.0 || ^0.28.0
       jiti: '>=1.21.0'
       less: ^4.0.0
       sass: ^1.70.0
@@ -5240,9 +5238,9 @@ snapshots:
     dependencies:
       glob: 13.0.0
 
-  '@ckeditor/ckeditor5-dev-changelog@55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1(esbuild@0.25.12))':
+  '@ckeditor/ckeditor5-dev-changelog@55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1)':
     dependencies:
-      '@ckeditor/ckeditor5-dev-utils': 55.4.0(@babel/core@7.29.0)(webpack@5.104.1(esbuild@0.25.12))
+      '@ckeditor/ckeditor5-dev-utils': 55.4.0(@babel/core@7.29.0)(webpack@5.104.1)
       date-fns: 4.1.0
       glob: 13.0.0
       gray-matter: 4.0.3
@@ -5262,9 +5260,9 @@ snapshots:
       slack-notify: 2.0.7
       snyk: 1.1303.2
 
-  '@ckeditor/ckeditor5-dev-release-tools@55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1(esbuild@0.25.12))':
+  '@ckeditor/ckeditor5-dev-release-tools@55.4.0(@babel/core@7.29.0)(@types/node@25.5.2)(webpack@5.104.1)':
     dependencies:
-      '@ckeditor/ckeditor5-dev-utils': 55.4.0(@babel/core@7.29.0)(webpack@5.104.1(esbuild@0.25.12))
+      '@ckeditor/ckeditor5-dev-utils': 55.4.0(@babel/core@7.29.0)(webpack@5.104.1)
       '@octokit/rest': 22.0.1
       cli-columns: 4.0.0
       glob: 13.0.0
@@ -5280,24 +5278,24 @@ snapshots:
       - supports-color
       - webpack
 
-  '@ckeditor/ckeditor5-dev-utils@55.4.0(@babel/core@7.29.0)(webpack@5.104.1(esbuild@0.25.12))':
+  '@ckeditor/ckeditor5-dev-utils@55.4.0(@babel/core@7.29.0)(webpack@5.104.1)':
     dependencies:
       '@types/through2': 2.0.41
-      babel-loader: 10.0.0(@babel/core@7.29.0)(webpack@5.104.1(esbuild@0.25.12))
+      babel-loader: 10.0.0(@babel/core@7.29.0)(webpack@5.104.1)
       cli-cursor: 5.0.0
       cli-spinners: 3.3.0
-      css-loader: 7.1.2(webpack@5.104.1(esbuild@0.25.12))
-      esbuild-loader: 4.4.0(webpack@5.104.1(esbuild@0.25.12))
+      css-loader: 7.1.2(webpack@5.104.1)
+      esbuild-loader: 4.4.0(webpack@5.104.1)
       glob: 13.0.0
       is-interactive: 2.0.0
       lightningcss: 1.32.0
-      mini-css-extract-plugin: 2.9.4(webpack@5.104.1(esbuild@0.25.12))
+      mini-css-extract-plugin: 2.9.4(webpack@5.104.1)
       mocha: 11.7.5
       pacote: 21.5.0
-      raw-loader: 4.0.2(webpack@5.104.1(esbuild@0.25.12))
+      raw-loader: 4.0.2(webpack@5.104.1)
       shelljs: 0.10.0
       simple-git: 3.33.0
-      style-loader: 4.0.0(webpack@5.104.1(esbuild@0.25.12))
+      style-loader: 4.0.0(webpack@5.104.1)
       through2: 4.0.2
       upath: 2.0.1
     transitivePeerDependencies:
@@ -7098,16 +7096,16 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@vitejs/plugin-vue@6.0.5(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vue@3.5.22(typescript@5.4.5))':
+  '@vitejs/plugin-vue@6.0.5(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vue@3.5.22(typescript@5.4.5))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.2
-      vite: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
+      vite: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
       vue: 3.5.22(typescript@5.4.5)
 
-  '@vitest/browser-webdriverio@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)(webdriverio@9.27.0)':
+  '@vitest/browser-webdriverio@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)(webdriverio@9.27.0)':
     dependencies:
-      '@vitest/browser': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)
-      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      '@vitest/browser': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)
+      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       webdriverio: 9.27.0
     transitivePeerDependencies:
       - bufferutil
@@ -7115,16 +7113,16 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@vitest/browser@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)':
+  '@vitest/browser@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)':
     dependencies:
       '@blazediff/core': 1.9.1
-      '@vitest/mocker': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      '@vitest/mocker': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       '@vitest/utils': 4.1.2
       magic-string: 0.30.21
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       ws: 8.20.0
     transitivePeerDependencies:
       - bufferutil
@@ -7144,11 +7142,11 @@ snapshots:
       magicast: 0.5.2
       obug: 2.1.1
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@4.1.2(@vitest/browser@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2))(vitest@4.1.2)':
+  '@vitest/coverage-v8@4.1.2(@vitest/browser@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2))(vitest@4.1.2)':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.1.2
@@ -7160,9 +7158,9 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
     optionalDependencies:
-      '@vitest/browser': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)
+      '@vitest/browser': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)
 
   '@vitest/expect@4.1.2':
     dependencies:
@@ -7173,14 +7171,14 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.0
 
-  '@vitest/mocker@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))':
+  '@vitest/mocker@4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))':
     dependencies:
       '@vitest/spy': 4.1.2
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
       msw: 2.11.6(@types/node@25.5.2)(typescript@5.4.5)
-      vite: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
+      vite: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
 
   '@vitest/pretty-format@4.1.2':
     dependencies:
@@ -7209,7 +7207,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      vitest: 4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
 
   '@vitest/utils@4.1.2':
     dependencies:
@@ -7572,11 +7570,11 @@ snapshots:
 
   b4a@1.7.3: {}
 
-  babel-loader@10.0.0(@babel/core@7.29.0)(webpack@5.104.1(esbuild@0.25.12)):
+  babel-loader@10.0.0(@babel/core@7.29.0)(webpack@5.104.1):
     dependencies:
       '@babel/core': 7.29.0
       find-up: 5.0.0
-      webpack: 5.104.1(esbuild@0.25.12)
+      webpack: 5.104.1
 
   bail@2.0.2: {}
 
@@ -7993,7 +7991,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  css-loader@7.1.2(webpack@5.104.1(esbuild@0.25.12)):
+  css-loader@7.1.2(webpack@5.104.1):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.8)
       postcss: 8.5.8
@@ -8004,7 +8002,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       semver: 7.7.3
     optionalDependencies:
-      webpack: 5.104.1(esbuild@0.25.12)
+      webpack: 5.104.1
 
   css-select@5.2.2:
     dependencies:
@@ -8226,12 +8224,12 @@ snapshots:
 
   es6-error@4.1.1: {}
 
-  esbuild-loader@4.4.0(webpack@5.104.1(esbuild@0.25.12)):
+  esbuild-loader@4.4.0(webpack@5.104.1):
     dependencies:
       esbuild: 0.25.12
       get-tsconfig: 4.13.0
       loader-utils: 2.0.4
-      webpack: 5.104.1(esbuild@0.25.12)
+      webpack: 5.104.1
       webpack-sources: 1.4.3
 
   esbuild@0.25.12:
@@ -9634,11 +9632,11 @@ snapshots:
 
   mimic-function@5.0.1: {}
 
-  mini-css-extract-plugin@2.9.4(webpack@5.104.1(esbuild@0.25.12)):
+  mini-css-extract-plugin@2.9.4(webpack@5.104.1):
     dependencies:
       schema-utils: 4.3.3
       tapable: 2.3.0
-      webpack: 5.104.1(esbuild@0.25.12)
+      webpack: 5.104.1
 
   minimatch@10.2.3:
     dependencies:
@@ -10105,11 +10103,11 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  raw-loader@4.0.2(webpack@5.104.1(esbuild@0.25.12)):
+  raw-loader@4.0.2(webpack@5.104.1):
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.104.1(esbuild@0.25.12)
+      webpack: 5.104.1
 
   readable-stream@2.3.8:
     dependencies:
@@ -10560,9 +10558,9 @@ snapshots:
 
   strnum@2.2.2: {}
 
-  style-loader@4.0.0(webpack@5.104.1(esbuild@0.25.12)):
+  style-loader@4.0.0(webpack@5.104.1):
     dependencies:
-      webpack: 5.104.1(esbuild@0.25.12)
+      webpack: 5.104.1
 
   style-mod@4.1.3: {}
 
@@ -10607,15 +10605,13 @@ snapshots:
       minizlib: 3.1.0
       yallist: 5.0.0
 
-  terser-webpack-plugin@5.4.0(esbuild@0.25.12)(webpack@5.104.1(esbuild@0.25.12)):
+  terser-webpack-plugin@5.4.0(webpack@5.104.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       terser: 5.46.1
-      webpack: 5.104.1(esbuild@0.25.12)
-    optionalDependencies:
-      esbuild: 0.25.12
+      webpack: 5.104.1
 
   terser@5.46.1:
     dependencies:
@@ -10824,7 +10820,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3):
+  vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -10833,7 +10829,6 @@ snapshots:
       tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 25.5.2
-      esbuild: 0.25.12
       fsevents: 2.3.3
       jiti: 2.6.1
       terser: 5.46.1
@@ -10842,10 +10837,10 @@ snapshots:
       - '@emnapi/core'
       - '@emnapi/runtime'
 
-  vitest@4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)):
+  vitest@4.1.2(@types/node@25.5.2)(@vitest/browser-webdriverio@4.1.2)(@vitest/ui@4.1.2)(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.2
-      '@vitest/mocker': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
+      '@vitest/mocker': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       '@vitest/pretty-format': 4.1.2
       '@vitest/runner': 4.1.2
       '@vitest/snapshot': 4.1.2
@@ -10862,11 +10857,11 @@ snapshots:
       tinyexec: 1.0.4
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vite: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
+      vite: 8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 25.5.2
-      '@vitest/browser-webdriverio': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(esbuild@0.25.12)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)(webdriverio@9.27.0)
+      '@vitest/browser-webdriverio': 4.1.2(msw@2.11.6(@types/node@25.5.2)(typescript@5.4.5))(vite@8.0.5(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.5.2)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))(vitest@4.1.2)(webdriverio@9.27.0)
       '@vitest/ui': 4.1.2(vitest@4.1.2)
     transitivePeerDependencies:
       - msw
@@ -10985,7 +10980,7 @@ snapshots:
 
   webpack-sources@3.3.4: {}
 
-  webpack@5.104.1(esbuild@0.25.12):
+  webpack@5.104.1:
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.8
@@ -11009,7 +11004,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.2
-      terser-webpack-plugin: 5.4.0(esbuild@0.25.12)(webpack@5.104.1(esbuild@0.25.12))
+      terser-webpack-plugin: 5.4.0(webpack@5.104.1)
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     transitivePeerDependencies:
