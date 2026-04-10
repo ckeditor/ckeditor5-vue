@@ -6,15 +6,16 @@ onlyBuiltDependencies:
   - protobufjs
 
 overrides:
+  'serialize-javascript@^6': '^7.0.5'
+  'minimatch@^9': '9.0.7'
   'diff@^7': '^8.0.3'
-  'minimatch@^9': '^9.0.7'
-  'serialize-javascript@^6': '^7.0.3'
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   - '@ckeditor/*'
   - '@cksource/*'
   - '*ckeditor5*'
+  - vite
 
 shellEmulator: true
 shamefullyHoist: true

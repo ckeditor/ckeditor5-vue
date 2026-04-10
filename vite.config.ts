@@ -6,8 +6,8 @@
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vitest/config';
-import { webdriverio } from '@vitest/browser-webdriverio';
 import vue from '@vitejs/plugin-vue';
+import { webdriverio } from '@vitest/browser-webdriverio';
 
 const require = createRequire( import.meta.url );
 const pkg = require( './package.json' );
@@ -24,7 +24,7 @@ export default defineConfig( {
 
 		// https://vitejs.dev/guide/build#library-mode
 		lib: {
-			entry: resolve( __dirname, 'src/plugin.ts' ),
+			entry: resolve( import.meta.dirname, 'src/plugin.ts' ),
 			name: 'CKEDITOR_VUE',
 			fileName: 'ckeditor'
 		},
@@ -59,7 +59,7 @@ export default defineConfig( {
 		],
 		coverage: {
 			provider: 'istanbul',
-			include: [ 'src/*' ],
+			include: [ 'src/**/*.{ts,vue}' ],
 			thresholds: {
 				100: true
 			},
@@ -72,10 +72,17 @@ export default defineConfig( {
 		},
 		browser: {
 			enabled: true,
-			headless: true,
-			provider: webdriverio(),
-			instances: [ { browser: 'chrome' } ],
-			screenshotFailures: false
+			screenshotFailures: false,
+			provider: webdriverio( {
+				capabilities: {
+					'goog:chromeOptions': {
+						args: [ '--headless', '--disable-gpu', '--no-sandbox' ]
+					}
+				}
+			} ),
+			instances: [
+				{ browser: 'chrome' }
+			]
 		}
 	},
 
