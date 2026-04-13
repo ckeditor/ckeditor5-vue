@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [7.4.1](https://github.com/ckeditor/ckeditor5-vue/compare/v7.4.0...v7.4.1) (April 13, 2026)
+
+### Other changes
+
+* Improved compatibility with the latest CKEditor 48.x. Closes [#400](https://github.com/ckeditor/ckeditor5-vue/issues/400).
+
+
 ## [7.4.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.3.1...v7.4.0) (March 24, 2026)
 
 ### Features
@@ -29,18 +36,6 @@ Changelog
 ### Features
 
 * Align integration to work with the future self-service plan. Read more in the [CKEditor 5 repository](https://github.com/ckeditor/ckeditor5/issues/17317). ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/37153260e5a60cd09e1f47c443f83d4df2dcd2c7))
-
-
-## [7.2.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.1.0...v7.2.0) (2024-09-26)
-
-### Bug fixes
-
-* **Experimental:** Better error messages in `useCKEditorCloud`. It now detects existing editor installations and gives migration info from NPM to CDN. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/aeb3236556db3a4238cd6187b376ae55432ccd69))
-
-
-### Other changes
-
-* Remove `ckeditor5-premium-features` from `peerDependencies`. ([commit](https://github.com/ckeditor/ckeditor5-vue/commit/af84547ee5c9b1264c7fbf69b7256ef8f76d3ad9))
 
 ---
 
