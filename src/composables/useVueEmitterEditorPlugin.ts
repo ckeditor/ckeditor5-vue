@@ -10,6 +10,7 @@ import { useIsUnmounted } from './useIsUnmounted.js';
 import { debounce } from 'lodash-es';
 
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
+const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
 
 /**
  * Vue integration for CKEditor that registers handlers through a dedicated plugin.
@@ -18,7 +19,10 @@ const INPUT_EVENT_DEBOUNCE_WAIT = 300;
  */
 export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 	emit: EmitFn<EditorInstanceLifecycleEmitters<TEditor>>,
-	isDataBindingDisabled: () => boolean
+	props: {
+		disableTwoWayBinding?: boolean;
+		disabled?: boolean;
+	}
 ): EditorLifecycleEmitterResult<TEditor> {
 	const isUnmounted = useIsUnmounted();
 	const lastEditorData = ref<string>();
@@ -46,7 +50,7 @@ export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 		// is set twice in a time span shorter than the debounce time.
 		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
 		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-			if ( isDataBindingDisabled() || isUnmounted.value ) {
+			if ( props.disableTwoWayBinding || isUnmounted.value ) {
 				return;
 			}
 
@@ -67,10 +71,18 @@ export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 			editor.editing.view.document.on( 'blur', ( evt: EventInfo ) => {
 				emit( 'blur', evt, editor );
 			} );
+
+			if ( props.disabled ) {
+				editor.enableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
+			}
+
+			// Let the world know the editor is ready.
+			emit( 'ready', editor );
 		} );
 
 		editor.on( 'destroy', () => {
 			emitDebouncedInputEvent.cancel();
+			emit( 'destroy', editor );
 		} );
 	}
 
@@ -88,6 +100,8 @@ type EditorLifecycleEmitterResult<TEditor extends Editor> = {
 };
 
 export type EditorInstanceLifecycleEmitters<TEditor extends Editor> = {
+	ready: [ editor: TEditor ];
+	destroy: [ editor: TEditor ];
 	blur: [ event: EventInfo, editor: TEditor ];
 	focus: [ event: EventInfo, editor: TEditor ];
 	input: [ data: string, event: EventInfo | null, editor: TEditor ];

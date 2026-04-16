@@ -59,8 +59,6 @@ const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 const emit = defineEmits<
 	& EditorInstanceLifecycleEmitters<TEditor>
 	& {
-		ready: [ editor: TEditor ],
-		destroy: [],
 		error: [ error: EditorErrorDescription<TEditor> ],
 	}
 >();
@@ -74,7 +72,7 @@ const {
 	lastEditorData,
 	assignEditorDataToModel,
 	VueEmitterIntegrationPlugin
-} = useVueEditorLifecycleEmitterPlugin<TEditor>(emit, () => props.disableTwoWayDataBinding);
+} = useVueEditorLifecycleEmitterPlugin<TEditor>(emit, props);
 
 defineExpose( {
 	instance,
@@ -192,12 +190,11 @@ onMounted( async () => {
 			watchdog.on( 'restart', () => {
 				instance.value = markRaw( watchdog.editor! ) as EditorWithAttachedWatchdog<TEditor>;
 
-				afterEditorMount( instance.value );
-				assignEditorDataToModel( instance.value );
+				if ( !props.disableTwoWayDataBinding ) {
+					assignEditorDataToModel( instance.value );
+				}
 			} );
 		}
-
-		afterEditorMount( editor );
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {
 			return;
@@ -209,26 +206,14 @@ onMounted( async () => {
 			error
 		} );
 	}
-
-	function afterEditorMount( editor: TEditor ) {
-		// Set initial disabled state.
-		if ( props.disabled ) {
-			editor.enableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
-		}
-
-		// Let the world know the editor is ready.
-		emit( 'ready', editor );
-	}
 } );
 
 onBeforeUnmount( () => {
-	if ( instance.value ) {
-		destroyEditorWithWatchdog( instance.value );
-		instance.value = undefined;
+	if ( !instance.value ) {
+		return;
 	}
 
-	// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
-	// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
-	emit( 'destroy' );
+	destroyEditorWithWatchdog( instance.value );
+	instance.value = undefined;
 } );
 </script>
