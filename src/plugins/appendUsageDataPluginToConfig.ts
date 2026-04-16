@@ -14,7 +14,7 @@ import { VueIntegrationUsageDataPlugin } from './VueIntegrationUsageDataPlugin.j
  * @param editorConfig The editor configuration.
  * @returns The editor configuration with all integration plugins appended.
  */
-export function appendAllIntegrationPluginsToConfig( editorConfig: EditorConfig ): EditorConfig {
+export function appendUsageDataPluginToConfig( editorConfig: EditorConfig ): EditorConfig {
 	/**
 	 * Do not modify the editor configuration if the editor is using a free license.
 	 */

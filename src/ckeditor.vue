@@ -29,7 +29,7 @@ import {
 	getInstalledCKBaseFeatures
 } from '@ckeditor/ckeditor5-integrations-common';
 
-import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
+import { appendUsageDataPluginToConfig } from './plugins/appendUsageDataPluginToConfig.js';
 import {
 	destroyEditorWithWatchdog,
 	unwrapEditorWatchdog,
@@ -97,7 +97,7 @@ onMounted( async () => {
 
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
-	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig( { ...props.config } );
+	let editorConfig: EditorConfig = appendUsageDataPluginToConfig( { ...props.config } );
 
 	editorConfig = appendExtraPluginsToEditorConfig( editorConfig, [ VueEventsIntegrationPlugin ] );
 

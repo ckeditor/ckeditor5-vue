@@ -530,9 +530,9 @@ describe( 'CKEditor component', () => {
 				disabled: true
 			} );
 
-			await nextTick();
-
-			expect( component.vm.instance!.isReadOnly ).toBeTruthy();
+			await vi.waitFor( () => {
+				expect( component.vm.instance!.isReadOnly ).toBeTruthy();
+			} );
 
 			component.setProps( { disabled: false } );
 
