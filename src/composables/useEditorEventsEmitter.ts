@@ -13,9 +13,7 @@ const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
 
 /**
- * Vue integration for CKEditor that registers handlers through a dedicated plugin.
- * This architecture ensures that handlers are automatically reinitialized if the editor restarts,
- * avoiding the overhead of manual watchers in the Vue component.
+ * Hook that watches editor lifecycle events and maps them to Vue event emitters.
  */
 export function useEditorEventsEmitter<TEditor extends Editor>(
 	emit: EmitFn<EditorEmitterEvents<TEditor>>,
@@ -58,17 +56,19 @@ export function useEditorEventsEmitter<TEditor extends Editor>(
 		}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
 
 		editor.once( 'ready', () => {
+			const { model, editing } = editor;
+
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
 			//
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
-			editor.model.document.on( 'change:data', emitDebouncedInputEvent );
+			model.document.on( 'change:data', emitDebouncedInputEvent );
 
-			editor.editing.view.document.on( 'focus', ( evt: EventInfo ) => {
+			editing.view.document.on( 'focus', ( evt: EventInfo ) => {
 				emit( 'focus', evt, editor );
 			} );
 
-			editor.editing.view.document.on( 'blur', ( evt: EventInfo ) => {
+			editing.view.document.on( 'blur', ( evt: EventInfo ) => {
 				emit( 'blur', evt, editor );
 			} );
 
