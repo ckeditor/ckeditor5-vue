@@ -195,6 +195,10 @@ onMounted( async () => {
 					error
 				} );
 			} );
+
+			watchdog.on( 'restart', () => {
+				instance.value = watchdog.editor! as EditorWithAttachedWatchdog<TEditor>;
+			} );
 		}
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {
