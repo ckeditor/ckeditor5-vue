@@ -96,7 +96,7 @@ function onBlur( event: CKEditor5.EventInfo, editor: CKEditor5.ClassicEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: CKEditor5.EventInfo, editor: CKEditor5.ClassicEditor ) {
+function onInput( data: string, event: CKEditor5.EventInfo | null, editor: CKEditor5.ClassicEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 

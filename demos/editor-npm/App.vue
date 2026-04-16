@@ -94,7 +94,7 @@ function onBlur( event: EventInfo, editor: TestEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: EventInfo, editor: TestEditor ) {
+function onInput( data: string, event: EventInfo | null, editor: TestEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 

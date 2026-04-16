@@ -30,7 +30,7 @@ export interface Props<TEditorConstructor> {
 /**
  * Editor constructor with static watchdog class definition.
  */
-export type EditorWithWatchdogRelaxedConstructor<TEditor extends Editor> = EditorRelaxedConstructor<TEditor> & {
+export type EditorWithWatchdogRelaxedConstructor<TEditor extends Editor = Editor> = EditorRelaxedConstructor<TEditor> & {
 	EditorWatchdog?: typeof EditorWatchdog;
 };
 

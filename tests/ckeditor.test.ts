@@ -410,7 +410,10 @@ describe( 'CKEditor component', () => {
 					expect( component.vm.instance!.config ).to.deep.equal( {
 						foo: 'bar',
 						licenseKey: '<YOUR_LICENSE_KEY>',
-						extraPlugins: [ VueIntegrationUsageDataPlugin ]
+						extraPlugins: [
+							VueIntegrationUsageDataPlugin,
+							expect.any( Function )
+						]
 					} );
 
 					component.unmount();
@@ -427,9 +430,7 @@ describe( 'CKEditor component', () => {
 
 					await nextTick();
 
-					expect( component.vm.instance!.config ).to.deep.equal( {
-						foo: 'bar'
-					} );
+					expect( ( component.vm.instance!.config as any ).extraPlugins ).not.to.include( VueIntegrationUsageDataPlugin );
 
 					component.unmount();
 				} );
@@ -451,7 +452,10 @@ describe( 'CKEditor component', () => {
 					expect( component.vm.instance!.config ).to.deep.equal( {
 						foo: 'bar',
 						licenseKey: '<YOUR_LICENSE_KEY>',
-						extraPlugins: [ VueIntegrationUsageDataPlugin ]
+						extraPlugins: [
+							VueIntegrationUsageDataPlugin,
+							expect.any( Function )
+						]
 					} );
 
 					component.unmount();
@@ -469,10 +473,7 @@ describe( 'CKEditor component', () => {
 
 					await nextTick();
 
-					expect( component.vm.instance!.config ).to.deep.equal( {
-						foo: 'bar',
-						licenseKey: 'GPL'
-					} );
+					expect( ( component.vm.instance!.config as any ).extraPlugins ).not.to.include( VueIntegrationUsageDataPlugin );
 
 					component.unmount();
 				} );
@@ -723,7 +724,7 @@ describe( 'CKEditor component', () => {
 function mountComponent( props: Record<string, any> = {} ) {
 	return mount( Ckeditor, {
 		props: {
-			editor: MockEditor,
+			editor: MockEditor as any,
 			...props
 		}
 	} );

@@ -57,7 +57,7 @@ export function useEditorEvents<TEditor extends Editor>(
 			emit( 'ready', editor );
 		} );
 
-		editor.on( 'destroy', () => {
+		editor.once( 'destroy', () => {
 			emitDebouncedInputEvent.cancel();
 			emit( 'destroy', editor );
 		} );

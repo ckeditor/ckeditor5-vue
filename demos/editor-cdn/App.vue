@@ -103,7 +103,7 @@ function onBlur( event: EventInfo, editor: ClassicEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: EventInfo, editor: ClassicEditor ) {
+function onInput( data: string, event: EventInfo | null, editor: ClassicEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 

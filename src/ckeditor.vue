@@ -8,10 +8,7 @@
 <script
 	setup
 	lang="ts"
-	generic="
-		TEditorConstructor extends EditorWithWatchdogRelaxedConstructor<TEditor>,
-		TEditor extends Editor
-	"
+	generic="TEditorConstructor extends EditorWithWatchdogRelaxedConstructor"
 >
 import {
 	ref,
@@ -21,13 +18,14 @@ import {
 	toRef
 } from 'vue';
 
-import type { Editor, EditorConfig } from 'ckeditor5';
+import type { EditorConfig } from 'ckeditor5';
 import type { EditorErrorDescription, EditorWithWatchdogRelaxedConstructor, Props } from './types.js';
 
 import {
 	appendExtraPluginsToEditorConfig,
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
+	ExtractEditorType,
 	getInstalledCKBaseFeatures
 } from '@ckeditor/ckeditor5-integrations-common';
 
@@ -44,6 +42,8 @@ import { EditorLifecycleEvents, useEditorEvents } from './composables/useEditorE
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
 import { useEditorReadonly } from './composables/useEditorReadonly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
+
+type TEditor = ExtractEditorType<TEditorConstructor>;
 
 defineOptions( {
 	name: 'CKEditor'
