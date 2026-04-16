@@ -148,7 +148,7 @@ onMounted( async () => {
 	let Constructor = props.editor;
 
 	if ( !props.disableWatchdog ) {
-		Constructor = wrapWithWatchdogIfPresent( props.editor ) as TEditorConstructor;
+		Constructor = wrapWithWatchdogIfPresent( props.editor, props.watchdogConfig ) as TEditorConstructor;
 	}
 
 	try {

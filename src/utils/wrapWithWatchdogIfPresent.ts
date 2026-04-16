@@ -5,7 +5,7 @@
 
 import type { EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
 import type { EditorWithWatchdogRelaxedConstructor } from '../types.js';
-import type { Editor, EditorWatchdog } from 'ckeditor5';
+import type { Editor, EditorWatchdog, WatchdogConfig } from 'ckeditor5';
 
 const EDITOR_WATCHDOG_SYMBOL = Symbol.for( 'vue-editor-watchdog' );
 
@@ -21,11 +21,13 @@ export type EditorWithAttachedWatchdog<TEditor extends Editor = Editor> = TEdito
  * It stores watchdog instance in hidden symbol assigned to editor. It simplifies storing both
  * instances in component's state (it's no longer required to store them separately).
  *
- * @param Editor - The Editor creator to wrap.
+ * @param Editor The Editor creator to wrap.
+ * @param watchdogConfig Watchdog configuration.
  * @returns The Editor creator wrapped with a watchdog.
  */
 export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
-	Editor: EditorWithWatchdogRelaxedConstructor<TEditor>
+	Editor: EditorWithWatchdogRelaxedConstructor<TEditor>,
+	watchdogConfig?: WatchdogConfig
 ): EditorRelaxedConstructor<EditorWithAttachedWatchdog<TEditor>> {
 	const { EditorWatchdog } = Editor;
 
@@ -33,7 +35,7 @@ export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
 		return Editor;
 	}
 
-	const watchdog = new EditorWatchdog( Editor );
+	const watchdog = new EditorWatchdog( Editor, watchdogConfig );
 
 	watchdog.setCreator( async ( ...args: Parameters<typeof Editor['create']> ) => {
 		const editor = await Editor.create( ...args );
