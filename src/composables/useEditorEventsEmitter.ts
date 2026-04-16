@@ -18,7 +18,7 @@ const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/cked
 export function useEditorEventsEmitter<TEditor extends Editor>(
 	emit: EmitFn<EditorEmitterEvents<TEditor>>,
 	props: {
-		disableTwoWayBinding?: boolean;
+		disableTwoWayDataBinding?: boolean;
 		disabled?: boolean;
 	}
 ): Result<TEditor> {
@@ -48,7 +48,7 @@ export function useEditorEventsEmitter<TEditor extends Editor>(
 		// is set twice in a time span shorter than the debounce time.
 		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
 		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-			if ( props.disableTwoWayBinding || isUnmounted.value ) {
+			if ( props.disableTwoWayDataBinding || isUnmounted.value ) {
 				return;
 			}
 
