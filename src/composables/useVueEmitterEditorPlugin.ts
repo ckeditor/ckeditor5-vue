@@ -1,0 +1,77 @@
+/**
+ * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
+ */
+
+import type { Editor, EventInfo, PluginConstructor } from 'ckeditor5';
+import { ref, type Ref, type EmitFn } from 'vue';
+
+import { useIsUnmounted } from './useIsUnmounted.js';
+import { debounce } from 'lodash-es';
+
+const INPUT_EVENT_DEBOUNCE_WAIT = 300;
+
+/**
+ * Vue integration for CKEditor that registers handlers through a dedicated plugin.
+ * This architecture ensures that handlers are automatically reinitialized if the editor restarts,
+ * avoiding the overhead of manual watchers in the Vue component.
+ */
+export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
+	emit: EmitFn<EditorInstanceLifecycleEmitters<TEditor>>,
+	isDataBindingDisabled: () => boolean
+): EditorLifecycleEmitterResult {
+	const isUnmounted = useIsUnmounted();
+	const lastEditorData = ref<string>();
+
+	function VueEmitterIntegrationPlugin( editor: TEditor ) {
+		// Use the leading edge so the first event in the series is emitted immediately.
+		// Failing to do so leads to race conditions, for instance, when the component modelValue
+		// is set twice in a time span shorter than the debounce time.
+		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
+		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
+			if ( isDataBindingDisabled() || isUnmounted.value ) {
+				return;
+			}
+
+			// Cache the last editor data. This kind of data is a result of typing,
+			// editor command execution, collaborative changes to the document, etc.
+			// This data is compared when the component modelValue changes in a 2-way binding.
+			const data = lastEditorData.value = editor.data.get();
+
+			// The compatibility with the v-model and general Vue.js concept of input–like components.
+			emit( 'update:modelValue', data, evt, editor );
+			emit( 'input', data, evt, editor );
+		}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
+
+		// Debounce emitting the #input event. When data is huge, instance#getData()
+		// takes a lot of time to execute on every single key press and ruins the UX.
+		//
+		// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+		editor.model.document.on( 'change:data', emitDebouncedInputEvent );
+
+		editor.editing.view.document.on( 'focus', ( evt: EventInfo ) => {
+			emit( 'focus', evt, editor );
+		} );
+
+		editor.editing.view.document.on( 'blur', ( evt: EventInfo ) => {
+			emit( 'blur', evt, editor );
+		} );
+	}
+
+	return {
+		lastEditorData,
+		VueEmitterIntegrationPlugin: VueEmitterIntegrationPlugin as PluginConstructor
+	};
+}
+
+type EditorLifecycleEmitterResult = {
+	lastEditorData: Ref<string | undefined>;
+	VueEmitterIntegrationPlugin: PluginConstructor;
+};
+
+export type EditorInstanceLifecycleEmitters<TEditor extends Editor> = {
+	blur: [ event: EventInfo, editor: TEditor ];
+	focus: [ event: EventInfo, editor: TEditor ];
+	input: [ data: string, event: EventInfo, editor: TEditor ];
+	'update:modelValue': [ data: string, event: EventInfo, editor: TEditor ];
+};
