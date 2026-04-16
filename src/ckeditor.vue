@@ -174,14 +174,6 @@ onMounted( async () => {
 			editor.data.set( model.value );
 		}
 
-		// Set initial disabled state.
-		if ( props.disabled ) {
-			editor.enableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
-		}
-
-		// Let the world know the editor is ready.
-		emit( 'ready', editor );
-
 		// If it's editor watchdog instance, then it attach error handlers.
 		const watchdog = unwrapEditorWatchdog( editor );
 
@@ -197,9 +189,12 @@ onMounted( async () => {
 			} );
 
 			watchdog.on( 'restart', () => {
-				instance.value = watchdog.editor! as EditorWithAttachedWatchdog<TEditor>;
+				instance.value = markRaw( watchdog.editor! ) as EditorWithAttachedWatchdog<TEditor>;
+				afterEditorMount( instance.value );
 			} );
 		}
+
+		afterEditorMount( editor );
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {
 			return;
@@ -210,6 +205,16 @@ onMounted( async () => {
 			phase: 'initialization',
 			error
 		} );
+	}
+
+	function afterEditorMount( editor: TEditor ) {
+		// Set initial disabled state.
+		if ( props.disabled ) {
+			editor.enableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
+		}
+
+		// Let the world know the editor is ready.
+		emit( 'ready', editor );
 	}
 } );
 
