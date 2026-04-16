@@ -34,9 +34,10 @@ import {
 
 import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
 import {
-	type EditorWithAttachedWatchdog,
+	destroyEditorWithWatchdog,
 	unwrapEditorWatchdog,
-	wrapWithWatchdogIfPresent
+	wrapWithWatchdogIfPresent,
+	type EditorWithAttachedWatchdog
 } from './utils/wrapWithWatchdogIfPresent.js';
 
 import { EditorInstanceLifecycleEmitters, useVueEditorLifecycleEmitterPlugin } from './composables/useVueEmitterEditorPlugin.js';
@@ -161,7 +162,7 @@ onMounted( async () => {
 		);
 
 		if ( isUnmounted.value ) {
-			editor.destroy();
+			destroyEditorWithWatchdog( editor );
 			return;
 		}
 
@@ -220,16 +221,7 @@ onMounted( async () => {
 
 onBeforeUnmount( () => {
 	if ( instance.value ) {
-		const watchdog = unwrapEditorWatchdog( instance.value );
-
-		if ( watchdog ) {
-			// If watchdog is present on the editor, then destroy the watchdog. It'll automatically kill assigned editors.
-			watchdog.destroy();
-		} else {
-			// If there is no watchdog, kill the editor.
-			instance.value.destroy();
-		}
-
+		destroyEditorWithWatchdog( instance.value );
 		instance.value = undefined;
 	}
 

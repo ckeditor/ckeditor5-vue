@@ -57,6 +57,8 @@ export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
 
 /**
  * Unwraps the EditorWatchdog from the editor instance.
+ *
+ * @param editor Editor with attached watchdog.
  */
 export function unwrapEditorWatchdog( editor: EditorWithAttachedWatchdog ): EditorWatchdog | null {
 	if ( EDITOR_WATCHDOG_SYMBOL in editor ) {
@@ -64,4 +66,21 @@ export function unwrapEditorWatchdog( editor: EditorWithAttachedWatchdog ): Edit
 	}
 
 	return null;
+}
+
+/**
+ * It destroys the editor watchdog if it is assigned to the editor. If it is not, the editor is destroyed.
+ *
+ * @param editor Editor with attached watchdog.
+ */
+export function destroyEditorWithWatchdog( editor: EditorWithAttachedWatchdog ): void {
+	const watchdog = unwrapEditorWatchdog( editor );
+
+	if ( watchdog ) {
+		// If watchdog is present on the editor, then destroy the watchdog. It'll automatically kill assigned editors.
+		watchdog.destroy();
+	} else {
+		// If there is no watchdog, kill the editor.
+		editor.destroy();
+	}
 }
