@@ -24,37 +24,39 @@ export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 	const lastEditorData = ref<string>();
 
 	function VueEmitterIntegrationPlugin( editor: TEditor ) {
-		// Use the leading edge so the first event in the series is emitted immediately.
-		// Failing to do so leads to race conditions, for instance, when the component modelValue
-		// is set twice in a time span shorter than the debounce time.
-		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
-		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-			if ( isDataBindingDisabled() || isUnmounted.value ) {
-				return;
-			}
+		editor.once( 'ready', () => {
+			// Use the leading edge so the first event in the series is emitted immediately.
+			// Failing to do so leads to race conditions, for instance, when the component modelValue
+			// is set twice in a time span shorter than the debounce time.
+			// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
+			const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
+				if ( isDataBindingDisabled() || isUnmounted.value ) {
+					return;
+				}
 
-			// Cache the last editor data. This kind of data is a result of typing,
-			// editor command execution, collaborative changes to the document, etc.
-			// This data is compared when the component modelValue changes in a 2-way binding.
-			const data = lastEditorData.value = editor.data.get();
+				// Cache the last editor data. This kind of data is a result of typing,
+				// editor command execution, collaborative changes to the document, etc.
+				// This data is compared when the component modelValue changes in a 2-way binding.
+				const data = lastEditorData.value = editor.data.get();
 
-			// The compatibility with the v-model and general Vue.js concept of input–like components.
-			emit( 'update:modelValue', data, evt, editor );
-			emit( 'input', data, evt, editor );
-		}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
+				// The compatibility with the v-model and general Vue.js concept of input–like components.
+				emit( 'update:modelValue', data, evt, editor );
+				emit( 'input', data, evt, editor );
+			}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
 
-		// Debounce emitting the #input event. When data is huge, instance#getData()
-		// takes a lot of time to execute on every single key press and ruins the UX.
-		//
-		// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
-		editor.model.document.on( 'change:data', emitDebouncedInputEvent );
+			// Debounce emitting the #input event. When data is huge, instance#getData()
+			// takes a lot of time to execute on every single key press and ruins the UX.
+			//
+			// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+			editor.model.document.on( 'change:data', emitDebouncedInputEvent );
 
-		editor.editing.view.document.on( 'focus', ( evt: EventInfo ) => {
-			emit( 'focus', evt, editor );
-		} );
+			editor.editing.view.document.on( 'focus', ( evt: EventInfo ) => {
+				emit( 'focus', evt, editor );
+			} );
 
-		editor.editing.view.document.on( 'blur', ( evt: EventInfo ) => {
-			emit( 'blur', evt, editor );
+			editor.editing.view.document.on( 'blur', ( evt: EventInfo ) => {
+				emit( 'blur', evt, editor );
+			} );
 		} );
 	}
 
