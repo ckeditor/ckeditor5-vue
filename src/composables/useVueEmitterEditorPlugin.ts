@@ -19,31 +19,41 @@ const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 	emit: EmitFn<EditorInstanceLifecycleEmitters<TEditor>>,
 	isDataBindingDisabled: () => boolean
-): EditorLifecycleEmitterResult {
+): EditorLifecycleEmitterResult<TEditor> {
 	const isUnmounted = useIsUnmounted();
 	const lastEditorData = ref<string>();
 
+	/**
+	 * Retrieves data from the editor, updates the cache, and emits events for `v-model`.
+	 */
+	function assignEditorDataToModel( editor: TEditor, evt: EventInfo | null = null ) {
+		// Cache the last editor data. This kind of data is a result of typing,
+		// editor command execution, collaborative changes to the document, etc.
+		// This data is compared when the component modelValue changes in a 2-way binding.
+		const data = lastEditorData.value = editor.data.get();
+
+		// The compatibility with the v-model and general Vue.js concept of input–like components.
+		emit( 'update:modelValue', data, evt, editor );
+		emit( 'input', data, evt, editor );
+	}
+
+	/**
+	 * Plugin that registers editor event listeners (focus, blur, data changes).
+	 */
 	function VueEmitterIntegrationPlugin( editor: TEditor ) {
+		// Use the leading edge so the first event in the series is emitted immediately.
+		// Failing to do so leads to race conditions, for instance, when the component modelValue
+		// is set twice in a time span shorter than the debounce time.
+		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
+		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
+			if ( isDataBindingDisabled() || isUnmounted.value ) {
+				return;
+			}
+
+			assignEditorDataToModel( editor, evt );
+		}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
+
 		editor.once( 'ready', () => {
-			// Use the leading edge so the first event in the series is emitted immediately.
-			// Failing to do so leads to race conditions, for instance, when the component modelValue
-			// is set twice in a time span shorter than the debounce time.
-			// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
-			const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-				if ( isDataBindingDisabled() || isUnmounted.value ) {
-					return;
-				}
-
-				// Cache the last editor data. This kind of data is a result of typing,
-				// editor command execution, collaborative changes to the document, etc.
-				// This data is compared when the component modelValue changes in a 2-way binding.
-				const data = lastEditorData.value = editor.data.get();
-
-				// The compatibility with the v-model and general Vue.js concept of input–like components.
-				emit( 'update:modelValue', data, evt, editor );
-				emit( 'input', data, evt, editor );
-			}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
-
 			// Debounce emitting the #input event. When data is huge, instance#getData()
 			// takes a lot of time to execute on every single key press and ruins the UX.
 			//
@@ -58,22 +68,28 @@ export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 				emit( 'blur', evt, editor );
 			} );
 		} );
+
+		editor.on( 'destroy', () => {
+			emitDebouncedInputEvent.cancel();
+		} );
 	}
 
 	return {
 		lastEditorData,
+		assignEditorDataToModel,
 		VueEmitterIntegrationPlugin: VueEmitterIntegrationPlugin as PluginConstructor
 	};
 }
 
-type EditorLifecycleEmitterResult = {
+type EditorLifecycleEmitterResult<TEditor extends Editor> = {
 	lastEditorData: Ref<string | undefined>;
+	assignEditorDataToModel: ( editor: TEditor, evt?: EventInfo | null ) => void;
 	VueEmitterIntegrationPlugin: PluginConstructor;
 };
 
 export type EditorInstanceLifecycleEmitters<TEditor extends Editor> = {
 	blur: [ event: EventInfo, editor: TEditor ];
 	focus: [ event: EventInfo, editor: TEditor ];
-	input: [ data: string, event: EventInfo, editor: TEditor ];
-	'update:modelValue': [ data: string, event: EventInfo, editor: TEditor ];
+	input: [ data: string, event: EventInfo | null, editor: TEditor ];
+	'update:modelValue': [ data: string, event: EventInfo | null, editor: TEditor ];
 };

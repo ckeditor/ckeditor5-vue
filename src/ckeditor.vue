@@ -72,6 +72,7 @@ const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
 const isUnmounted = useIsUnmounted();
 const {
 	lastEditorData,
+	assignEditorDataToModel,
 	VueEmitterIntegrationPlugin
 } = useVueEditorLifecycleEmitterPlugin<TEditor>(emit, () => props.disableTwoWayDataBinding);
 
@@ -190,7 +191,9 @@ onMounted( async () => {
 
 			watchdog.on( 'restart', () => {
 				instance.value = markRaw( watchdog.editor! ) as EditorWithAttachedWatchdog<TEditor>;
+
 				afterEditorMount( instance.value );
+				assignEditorDataToModel( instance.value );
 			} );
 		}
 
