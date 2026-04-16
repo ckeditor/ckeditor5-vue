@@ -18,6 +18,7 @@ export function useEditorEvents<TEditor extends Editor>(
 	{
 		emit,
 		disableTwoWayDataBinding,
+		onBeforeReady,
 		onDataChange
 	}: Attrs<TEditor>
 ): PluginConstructor {
@@ -32,7 +33,7 @@ export function useEditorEvents<TEditor extends Editor>(
 		// is set twice in a time span shorter than the debounce time.
 		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
 		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-			if ( disableTwoWayDataBinding || isUnmounted.value ) {
+			if ( disableTwoWayDataBinding.value || isUnmounted.value ) {
 				return;
 			}
 
@@ -52,6 +53,7 @@ export function useEditorEvents<TEditor extends Editor>(
 			editing.view.document.on( 'blur', ( evt: EventInfo ) => emit( 'blur', evt, editor ) );
 
 			// Let the world know the editor is ready.
+			onBeforeReady( editor );
 			emit( 'ready', editor );
 		} );
 
@@ -67,6 +69,7 @@ export function useEditorEvents<TEditor extends Editor>(
 type Attrs<TEditor extends Editor> = {
 	emit: EmitFn<EditorLifecycleEvents<TEditor>>;
 	disableTwoWayDataBinding: Ref<boolean>;
+	onBeforeReady: ( editor: TEditor ) => void;
 	onDataChange: ( editor: TEditor, evt: EventInfo ) => void;
 };
 

@@ -78,7 +78,10 @@ const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
 const VueEventsIntegrationPlugin = useEditorEvents<TEditor>({
 	emit,
 	disableTwoWayDataBinding: toRef( props, 'disableTwoWayDataBinding' ),
-	onDataChange: assignEditorDataToModel
+	onDataChange: assignEditorDataToModel,
+	onBeforeReady(editor) {
+		instance.value = markRaw( editor );
+	},
 });
 
 useEditorReadonly(instance, toRef( props, 'disabled' ));
@@ -124,9 +127,6 @@ onMounted( async () => {
 			return;
 		}
 
-		// Save the reference to the instance for further use.
-		instance.value = markRaw( editor );
-
 		// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
 		// to be synchronized with these potential changes as soon as it is ready.
 		if ( model.value !== prevModelValue ) {
@@ -148,10 +148,8 @@ onMounted( async () => {
 			} );
 
 			watchdog.on( 'restart', () => {
-				instance.value = markRaw( watchdog.editor! ) as EditorWithAttachedWatchdog<TEditor>;
-
 				if ( !props.disableTwoWayDataBinding ) {
-					assignEditorDataToModel( instance.value );
+					assignEditorDataToModel( instance.value! );
 				}
 			} );
 		}
