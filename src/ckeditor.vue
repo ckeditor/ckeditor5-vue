@@ -15,10 +15,10 @@
 >
 import {
 	ref,
-	watch,
 	markRaw,
 	onMounted,
-	onBeforeUnmount
+	onBeforeUnmount,
+	toRef
 } from 'vue';
 
 import type { Editor, EditorConfig } from 'ckeditor5';
@@ -28,7 +28,6 @@ import {
 	appendExtraPluginsToEditorConfig,
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
-	compareInstalledCKBaseVersion,
 	getInstalledCKBaseFeatures
 } from '@ckeditor/ckeditor5-integrations-common';
 
@@ -40,15 +39,17 @@ import {
 	type EditorWithAttachedWatchdog
 } from './utils/wrapWithWatchdogIfPresent.js';
 
-import { useEditorEventsEmitter, type EditorEmitterEvents } from './composables/useEditorEventsEmitter.js';
 import { useIsUnmounted } from './composables/useIsUnmounted.js';
+import { EditorLifecycleEvents, useEditorEvents } from './composables/useEditorEvents.js';
+import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
+import { useEditorReadonly } from './composables/useEditorReadonly.js';
+import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 
 defineOptions( {
 	name: 'CKEditor'
 } );
 
 const model = defineModel( 'modelValue', { type: String, default: '' } );
-
 const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 	config: () => ( {} ),
 	tagName: 'div',
@@ -57,7 +58,8 @@ const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 } );
 
 const emit = defineEmits<
-	& EditorEmitterEvents<TEditor>
+	& EditorLifecycleEvents<TEditor>
+	& EditorVModelEvents<TEditor>
 	& {
 		error: [ error: EditorErrorDescription<TEditor> ],
 	}
@@ -66,58 +68,26 @@ const emit = defineEmits<
 const element = ref<HTMLElement>();
 const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
 const isUnmounted = useIsUnmounted();
-const {
-	lastEditorData,
-	assignEditorDataToModel,
-	VueEmitterIntegrationPlugin
-} = useEditorEventsEmitter<TEditor>(emit, props);
+
+const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
+	model,
+	emit,
+	instance
+} );
+
+const VueEventsIntegrationPlugin = useEditorEvents<TEditor>({
+	emit,
+	disableTwoWayDataBinding: toRef( props, 'disableTwoWayDataBinding' ),
+	onDataChange: assignEditorDataToModel
+});
+
+useEditorReadonly(instance, toRef( props, 'disabled' ));
+useEditorVersionCheck();
 
 defineExpose( {
 	instance,
 	lastEditorData
 } );
-
-watch( model, newModel => {
-	// Synchronize changes of #modelValue. There are two sources of changes:
-	//
-	//                External modelValue change      ──────╮
-	//                                                      ╰─────> ┏━━━━━━━━━━━┓
-	//                                                              ┃ Component ┃
-	//                                                      ╭─────> ┗━━━━━━━━━━━┛
-	//                   Internal data change         ──────╯
-	//             (typing, commands, collaboration)
-	//
-	// Case 1: If the change was external (via props), the editor data must be synced with
-	// the component using instance#setData() and it is OK to destroy the selection.
-	//
-	// Case 2: If the change is the result of internal data change, the #modelValue is the
-	// same as this.lastEditorData, which has been cached on #change:data. If we called
-	// instance#setData() at this point, that would demolish the selection.
-	//
-	// To limit the number of instance#setData() which is time-consuming when there is a
-	// lot of data we make sure:
-	//    * the new modelValue is at least different than the old modelValue (Case 1.)
-	//    * the new modelValue is different than the last internal instance state (Case 2.)
-	//
-	// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
-	if ( instance.value && newModel !== lastEditorData.value ) {
-		instance.value.data.set( newModel );
-	}
-} );
-
-function checkVersion(): void {
-	switch ( compareInstalledCKBaseVersion( '42.0.0' ) ) {
-		case null:
-			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
-			break;
-
-		case -1:
-			console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
-			break;
-	}
-}
-
-checkVersion();
 
 onMounted( async () => {
 	const supports = getInstalledCKBaseFeatures();
@@ -126,7 +96,7 @@ onMounted( async () => {
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
 	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig( { ...props.config } );
 
-	editorConfig = appendExtraPluginsToEditorConfig( editorConfig, [ VueEmitterIntegrationPlugin ] );
+	editorConfig = appendExtraPluginsToEditorConfig( editorConfig, [ VueEventsIntegrationPlugin ] );
 
 	// Store model value before initialization to verify if it changed in the meantime.
 	let prevModelValue = model.value;
