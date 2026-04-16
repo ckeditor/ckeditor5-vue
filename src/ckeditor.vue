@@ -40,7 +40,7 @@ import {
 	type EditorWithAttachedWatchdog
 } from './utils/wrapWithWatchdogIfPresent.js';
 
-import { EditorInstanceLifecycleEmitters, useVueEditorLifecycleEmitterPlugin } from './composables/useVueEmitterEditorPlugin.js';
+import { useEditorEventsEmitter, type EditorEmitterEvents } from './composables/useEditorEventsEmitter.js';
 import { useIsUnmounted } from './composables/useIsUnmounted.js';
 
 defineOptions( {
@@ -57,7 +57,7 @@ const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 } );
 
 const emit = defineEmits<
-	& EditorInstanceLifecycleEmitters<TEditor>
+	& EditorEmitterEvents<TEditor>
 	& {
 		error: [ error: EditorErrorDescription<TEditor> ],
 	}
@@ -72,7 +72,7 @@ const {
 	lastEditorData,
 	assignEditorDataToModel,
 	VueEmitterIntegrationPlugin
-} = useVueEditorLifecycleEmitterPlugin<TEditor>(emit, props);
+} = useEditorEventsEmitter<TEditor>(emit, props);
 
 defineExpose( {
 	instance,

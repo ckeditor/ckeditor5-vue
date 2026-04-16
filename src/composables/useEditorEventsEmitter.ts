@@ -17,13 +17,13 @@ const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/cked
  * This architecture ensures that handlers are automatically reinitialized if the editor restarts,
  * avoiding the overhead of manual watchers in the Vue component.
  */
-export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
-	emit: EmitFn<EditorInstanceLifecycleEmitters<TEditor>>,
+export function useEditorEventsEmitter<TEditor extends Editor>(
+	emit: EmitFn<EditorEmitterEvents<TEditor>>,
 	props: {
 		disableTwoWayBinding?: boolean;
 		disabled?: boolean;
 	}
-): EditorLifecycleEmitterResult<TEditor> {
+): Result<TEditor> {
 	const isUnmounted = useIsUnmounted();
 	const lastEditorData = ref<string>();
 
@@ -93,13 +93,13 @@ export function useVueEditorLifecycleEmitterPlugin<TEditor extends Editor>(
 	};
 }
 
-type EditorLifecycleEmitterResult<TEditor extends Editor> = {
+type Result<TEditor extends Editor> = {
 	lastEditorData: Ref<string | undefined>;
 	assignEditorDataToModel: ( editor: TEditor, evt?: EventInfo | null ) => void;
 	VueEmitterIntegrationPlugin: PluginConstructor;
 };
 
-export type EditorInstanceLifecycleEmitters<TEditor extends Editor> = {
+export type EditorEmitterEvents<TEditor extends Editor> = {
 	ready: [ editor: TEditor ];
 	destroy: [ editor: TEditor ];
 	blur: [ event: EventInfo, editor: TEditor ];
