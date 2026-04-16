@@ -4,10 +4,11 @@
  */
 
 import type { Editor, EventInfo, PluginConstructor } from 'ckeditor5';
-import { ref, type Ref, type EmitFn } from 'vue';
+import { ref, type Ref, type EmitFn, watch } from 'vue';
 
 import { useIsUnmounted } from './useIsUnmounted.js';
 import { debounce } from 'lodash-es';
+import type { EditorWithAttachedWatchdog } from '../utils/wrapWithWatchdogIfPresent.js';
 
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
@@ -24,6 +25,7 @@ export function useEditorEventsEmitter<TEditor extends Editor>(
 ): Result<TEditor> {
 	const isUnmounted = useIsUnmounted();
 	const lastEditorData = ref<string>();
+	const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
 
 	/**
 	 * Retrieves data from the editor, updates the cache, and emits events for `v-model`.
@@ -77,6 +79,7 @@ export function useEditorEventsEmitter<TEditor extends Editor>(
 			}
 
 			// Let the world know the editor is ready.
+			instance.value = editor;
 			emit( 'ready', editor );
 		} );
 
@@ -85,6 +88,14 @@ export function useEditorEventsEmitter<TEditor extends Editor>(
 			emit( 'destroy', editor );
 		} );
 	}
+
+	watch( () => props.disabled, readOnlyMode => {
+		if ( readOnlyMode ) {
+			instance.value?.enableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
+		} else {
+			instance.value?.disableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
+		}
+	} );
 
 	return {
 		lastEditorData,

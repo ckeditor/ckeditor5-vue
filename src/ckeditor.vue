@@ -63,8 +63,6 @@ const emit = defineEmits<
 	}
 >();
 
-const VUE_INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
-
 const element = ref<HTMLElement>();
 const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
 const isUnmounted = useIsUnmounted();
@@ -104,14 +102,6 @@ watch( model, newModel => {
 	// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
 	if ( instance.value && newModel !== lastEditorData.value ) {
 		instance.value.data.set( newModel );
-	}
-} );
-
-watch( () => props.disabled, readOnlyMode => {
-	if ( readOnlyMode ) {
-		instance.value!.enableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
-	} else {
-		instance.value!.disableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
 	}
 } );
 
