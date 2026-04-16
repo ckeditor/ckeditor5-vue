@@ -135,10 +135,11 @@ onMounted( async () => {
 
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
-	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig(
-		Object.assign( {}, props.config )
-	);
+	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig( { ...props.config } );
 
+	editorConfig = appendExtraPluginsToEditorConfig( editorConfig, [ VueEmitterIntegrationPlugin ] );
+
+	// Store model value before initialization to verify if it changed in the meantime.
 	let prevModelValue = model.value;
 
 	if ( model.value ) {
@@ -153,8 +154,6 @@ onMounted( async () => {
 	}
 
 	try {
-		editorConfig = appendExtraPluginsToEditorConfig( editorConfig, [ VueEmitterIntegrationPlugin ] );
-
 		const editor = await (
 			supports.elementConfigAttachment ?
 				Constructor.create( assignElementToEditorConfig( Constructor, element.value!, editorConfig ) ) :
