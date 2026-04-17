@@ -4,6 +4,8 @@
  */
 
 import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
+import { SimpleEmitter } from './simpleemitter.js';
+import { MockWatchdog } from './mockwatchdog.js';
 
 type EditorConfig = EditorRelaxedConfig & Record<string, unknown>;
 
@@ -28,45 +30,13 @@ class EditorConfigAccessor {
 	}
 }
 
-/**
- * Minimal event emitter used by mock classes.
- * Supports registering (on, once) and triggering (fire) named events.
- */
-class SimpleEmitter {
-	private _listeners: Record<string, Array<Function>> = {};
-
-	public on( event: string, callback: Function ): void {
-		( this._listeners[ event ] ??= [] ).push( callback );
-	}
-
-	public once( event: string, callback: Function ): void {
-		const wrapper = ( ...args: Array<any> ) => {
-			callback( ...args );
-			this.off( event, wrapper );
-		};
-
-		this.on( event, wrapper );
-	}
-
-	public off( event: string, callback: Function ): void {
-		if ( !this._listeners[ event ] ) {
-			return;
-		}
-
-		this._listeners[ event ] = this._listeners[ event ].filter( cb => cb !== callback );
-	}
-
-	public fire( event: string, ...args: Array<any> ): void {
-		if ( !this._listeners[ event ] ) {
-			return;
-		}
-
-		// Copy the array to avoid issues if a listener removes itself during dispatch (e.g. via `once`)
-		[ ...this._listeners[ event ] ].forEach( cb => cb( ...args ) );
-	}
-}
-
 export class MockEditor extends SimpleEmitter {
+	/**
+	 * Set to `MockWatchdog` (or a custom subclass) to activate watchdog wrapping.
+	 * `wrapWithWatchdogIfPresent` reads `Editor.EditorWatchdog` to decide whether to wrap.
+	 */
+	public static EditorWatchdog = MockWatchdog;
+
 	public readonly element: HTMLElement | undefined;
 	public readonly config: EditorConfigAccessor;
 

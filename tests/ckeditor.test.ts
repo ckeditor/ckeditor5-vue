@@ -7,11 +7,13 @@ import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { Ckeditor } from '../src/plugin.js';
 import { VueIntegrationUsageDataPlugin } from '../src/plugins/VueIntegrationUsageDataPlugin.js';
+import { MockWatchdog } from './_utils/mockwatchdog.js';
 import {
 	MockEditor,
 	ModelDocument,
 	ViewDocument
 } from './_utils/mockeditor.js';
+import { unwrapEditorWatchdog } from '../src/utils/wrapWithWatchdogIfPresent.js';
 
 describe( 'CKEditor component', () => {
 	beforeEach( () => {
@@ -717,10 +719,78 @@ describe( 'CKEditor component', () => {
 			await timeout( 0 );
 
 			expect( component.emitted().error.length ).to.equal( 1 );
-			expect( component.emitted().error[ 0 ] ).to.toMatchObject( [ {
+			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
 				phase: 'initialization',
 				error
 			} ] );
+
+			component.unmount();
+		} );
+	} );
+
+	describe( 'watchdog', () => {
+		it( 'should initialize editor without watchdog if `disableWatchdog` flag is passed', async () => {
+			const component = mountComponent( {
+				editor: MockEditor,
+				disableWatchdog: true
+			} );
+
+			await timeout( 0 );
+
+			expect( component.vm.editor ).to.equal( MockEditor );
+			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
+
+			expect( unwrapEditorWatchdog( component.vm.instance! ) ).to.be.null;
+
+			component.unmount();
+		} );
+
+		it( 'should initialize editor with watchdog by default', async () => {
+			const component = mountComponent( {
+				editor: MockEditor
+			} );
+
+			await timeout( 0 );
+
+			expect( component.vm.editor ).to.equal( MockEditor );
+			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
+
+			expect( unwrapEditorWatchdog( component.vm.instance! ) ).to.be.instanceOf( MockWatchdog );
+
+			component.unmount();
+		} );
+
+		it( 'should emit error if watchdog\'s error event occurs', async () => {
+			const component = mountComponent( {
+				editor: MockEditor
+			} );
+
+			await timeout( 0 );
+
+			const firstInstance = component.vm.instance;
+
+			expect( component.vm.editor ).to.equal( MockEditor );
+			expect( firstInstance ).to.be.instanceOf( MockEditor );
+
+			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
+			const error = new Error( 'test' );
+
+			watchdog.simulateError( error, false );
+
+			await timeout( 0 );
+
+			expect( component.emitted().error.length ).to.equal( 1 );
+			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
+				causesRestart: false,
+				phase: 'runtime',
+				editor: firstInstance,
+				watchdog,
+				error
+			} ] );
+
+			await timeout( 0 );
+
+			expect( component.vm.instance ).to.be.equal( firstInstance );
 
 			component.unmount();
 		} );

@@ -52,6 +52,7 @@ const model = defineModel( 'modelValue', { type: String, default: '' } );
 const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 	config: () => ( {} ),
 	tagName: 'div',
+	disableWatchdog: false,
 	disabled: false,
 	disableTwoWayDataBinding: false
 } );
