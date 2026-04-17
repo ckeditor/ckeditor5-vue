@@ -39,7 +39,7 @@ import {
 import { useIsUnmounted } from './composables/useIsUnmounted.js';
 import { EditorLifecycleEvents, useEditorLifecycleEvents } from './composables/useEditorLifecycleEvents.js';
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
-import { toggleEditorReadOnly, useEditorReadOnly } from './composables/useEditorReadOnly.js';
+import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
