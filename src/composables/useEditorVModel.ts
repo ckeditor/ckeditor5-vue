@@ -24,7 +24,7 @@ export function useEditorVModel<TEditor extends Editor>(
 		instance,
 		model
 	}: Attrs<TEditor>
-): Ref<string | undefined> {
+): Result<TEditor> {
 	const lastEditorData = ref<string>();
 	const isUnmounted = useIsUnmounted();
 
@@ -95,7 +95,10 @@ export function useEditorVModel<TEditor extends Editor>(
 		} );
 	} );
 
-	return lastEditorData;
+	return {
+		lastEditorData,
+		assignEditorDataToModel
+	};
 }
 
 type Attrs<TEditor extends Editor> = {
@@ -103,6 +106,11 @@ type Attrs<TEditor extends Editor> = {
 	model: ModelRef<string>;
 	emit: EmitFn<EditorVModelEvents<TEditor>>;
 	instance: Ref<TEditor | undefined>;
+};
+
+type Result<TEditor extends Editor> = {
+	lastEditorData: Ref<string | undefined>;
+	assignEditorDataToModel( editor: TEditor, evt?: EventInfo | null ): void;
 };
 
 export type EditorVModelEvents<TEditor extends Editor> = {

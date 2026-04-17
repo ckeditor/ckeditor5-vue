@@ -69,7 +69,7 @@ const element = ref<HTMLElement>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 
-const lastEditorData = useEditorVModel<TEditor>( {
+const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
 	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
 	model,
 	emit,
@@ -140,6 +140,9 @@ onMounted( async () => {
 
 			watchdog.on( 'restart', () => {
 				instance.value = markRaw( watchdog.editor! as TEditor );
+
+				// Rewind vue model back to old working state.
+				assignEditorDataToModel( instance.value );
 			} );
 		}
 
