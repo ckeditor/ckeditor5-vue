@@ -954,9 +954,8 @@ describe( 'CKEditor component', () => {
 			component.unmount();
 			await timeout( 0 );
 
-			expect( async () => {
+			expect( () => {
 				watchdog.simulateError( new Error( 'test' ), true );
-				await timeout( 0 );
 			} ).not.to.throw();
 		} );
 	} );
