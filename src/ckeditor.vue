@@ -38,7 +38,7 @@ import {
 } from './utils/wrapWithWatchdogIfPresent.js';
 
 import { useIsUnmounted } from './composables/useIsUnmounted.js';
-import { EditorLifecycleEvents, useEditorEvents } from './composables/useEditorEvents.js';
+import { EditorLifecycleEvents, useEditorLifecycleEvents } from './composables/useEditorLifecycleEvents.js';
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
 import { toggleEditorReadOnly, useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
@@ -75,7 +75,7 @@ const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
 	instance
 } );
 
-const VueEventsIntegrationPlugin = useEditorEvents<TEditor>({
+const VueEventsIntegrationPlugin = useEditorLifecycleEvents<TEditor>({
 	emit,
 	disableTwoWayDataBinding: toRef( props, 'disableTwoWayDataBinding' ),
 	onDataChange: assignEditorDataToModel,
@@ -85,7 +85,7 @@ const VueEventsIntegrationPlugin = useEditorEvents<TEditor>({
 	},
 });
 
-useEditorReadOnly(instance, toRef( props, 'disabled' ));
+useEditorReadOnly(instance, () => props.disabled);
 useEditorVersionCheck();
 
 defineExpose( {

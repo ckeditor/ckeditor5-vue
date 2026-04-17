@@ -4,7 +4,7 @@
  */
 
 import type { Editor, EventInfo, PluginConstructor } from 'ckeditor5';
-import type { Ref, EmitFn } from 'vue';
+import { toValue, type EmitFn, type MaybeRefOrGetter } from 'vue';
 
 import { useIsUnmounted } from './useIsUnmounted.js';
 import { debounce } from 'lodash-es';
@@ -14,7 +14,7 @@ const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 /**
  * Hook that watches editor lifecycle events and maps them to Vue event emitters.
  */
-export function useEditorEvents<TEditor extends Editor>(
+export function useEditorLifecycleEvents<TEditor extends Editor>(
 	{
 		emit,
 		disableTwoWayDataBinding,
@@ -33,7 +33,7 @@ export function useEditorEvents<TEditor extends Editor>(
 		// is set twice in a time span shorter than the debounce time.
 		// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
 		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-			if ( disableTwoWayDataBinding.value || isUnmounted.value ) {
+			if ( toValue( disableTwoWayDataBinding ) || isUnmounted.value ) {
 				return;
 			}
 
@@ -68,7 +68,7 @@ export function useEditorEvents<TEditor extends Editor>(
 
 type Attrs<TEditor extends Editor> = {
 	emit: EmitFn<EditorLifecycleEvents<TEditor>>;
-	disableTwoWayDataBinding: Ref<boolean>;
+	disableTwoWayDataBinding: MaybeRefOrGetter<boolean>;
 	onBeforeReady: ( editor: TEditor ) => void;
 	onDataChange: ( editor: TEditor, evt: EventInfo ) => void;
 };

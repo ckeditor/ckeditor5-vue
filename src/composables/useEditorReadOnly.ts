@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { watch, type Ref } from 'vue';
+import { toValue, watchEffect, type MaybeRefOrGetter } from 'vue';
 import type { Editor } from 'ckeditor5';
 
 const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
@@ -12,12 +12,15 @@ const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/cked
  * Hook that toggles readonly state on provided instance.
  */
 export function useEditorReadOnly(
-	instance: Ref<Editor | undefined>,
-	disabled: Ref<boolean | undefined>
+	instance: MaybeRefOrGetter<Editor | undefined>,
+	disabled: MaybeRefOrGetter<boolean | undefined>
 ): void {
-	watch( [ instance, disabled ], ( [ _instance, _disabled ] ) => {
-		if ( _instance ) {
-			toggleEditorReadOnly( _instance, !!_disabled );
+	watchEffect( () => {
+		const editor = toValue( instance );
+		const isDisabled = !!toValue( disabled );
+
+		if ( editor ) {
+			toggleEditorReadOnly( editor, isDisabled );
 		}
 	} );
 }
