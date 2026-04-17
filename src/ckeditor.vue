@@ -29,6 +29,7 @@ import {
 } from '@ckeditor/ckeditor5-integrations-common';
 
 import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageDataPlugin.js';
+import { cleanupOrphanEditorElements } from './utils/cleanupOrphanEditorElements.js';
 import {
 	destroyEditorWithWatchdog,
 	unwrapEditorWatchdog,
@@ -129,6 +130,10 @@ onMounted( async () => {
 
 		if ( watchdog ) {
 			watchdog.on( 'error', ( _, { error, causesRestart } ) => {
+				if ( isUnmounted.value ) {
+					return;
+				}
+
 				emit( 'error', {
 					phase: 'runtime',
 					watchdog,
@@ -139,10 +144,19 @@ onMounted( async () => {
 			} );
 
 			watchdog.on( 'restart', () => {
-				instance.value = markRaw( watchdog.editor! as TEditor );
+				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
+				try {
+					cleanupOrphanEditorElements( instance.value! );
+				} catch ( err ) {
+					console.error( err );
+				}
 
-				// Rewind vue model back to old working state.
-				assignEditorDataToModel( instance.value );
+				if  ( !isUnmounted.value ) {
+					instance.value = markRaw( watchdog.editor! as TEditor );
+
+					// Rewind vue model back to old working state.
+					assignEditorDataToModel( instance.value );
+				}
 			} );
 		}
 
