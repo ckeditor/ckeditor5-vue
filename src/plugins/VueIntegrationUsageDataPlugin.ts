@@ -17,7 +17,7 @@ import type { EditorConfig } from 'ckeditor5';
  * It only runs when a specific license key is provided. If you are uncertain whether
  * this applies to your installation, please contact our support team.
  */
-const VueIntegrationUsageDataPlugin = createIntegrationUsageDataPlugin(
+export const VueIntegrationUsageDataPlugin = createIntegrationUsageDataPlugin(
 	'vue',
 	{
 		version: __VUE_INTEGRATION_VERSION__,
