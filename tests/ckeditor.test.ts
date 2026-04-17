@@ -427,7 +427,7 @@ describe( 'CKEditor component', () => {
 
 					await nextTick();
 
-					expect( ( component.vm.instance!.config as any ).extraPlugins ).not.to.include( VueIntegrationUsageDataPlugin );
+					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).not.to.include( VueIntegrationUsageDataPlugin );
 
 					component.unmount();
 				} );
@@ -463,7 +463,7 @@ describe( 'CKEditor component', () => {
 
 					await nextTick();
 
-					expect( ( component.vm.instance!.config as any ).extraPlugins ).not.to.include( VueIntegrationUsageDataPlugin );
+					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).not.to.include( VueIntegrationUsageDataPlugin );
 
 					component.unmount();
 				} );
