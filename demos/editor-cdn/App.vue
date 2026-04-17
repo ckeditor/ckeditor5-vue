@@ -116,6 +116,7 @@ function onDestroy() {
 body {
 	max-width: 800px;
 	margin: 20px auto;
+	font-family: sans-serif;
 }
 
 textarea {
