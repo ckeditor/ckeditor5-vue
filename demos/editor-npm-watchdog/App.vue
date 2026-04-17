@@ -16,6 +16,9 @@
     Type the word <strong>okoń</strong> in the editor above to trigger a crash!
   </p>
 
+  <h3>Data dump:</h3>
+  <pre class="data-dump">{{ data }}</pre>
+
   <h3>Logs:</h3>
   <ul class="logs">
     <li
@@ -84,11 +87,23 @@ body {
 }
 
 .crash-instruction {
-	margin: 15px 0 40px;
+	margin: 15px 0 20px;
 
 	& > strong {
 		color: #d9534f;
 	}
+}
+
+.data-dump {
+	font-family: monospace;
+	font-size: 0.9em;
+	color: #333;
+	background: #eaf2f8;
+	padding: 10px 20px;
+	border-radius: 4px;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	margin-bottom: 30px;
 }
 
 .logs {
