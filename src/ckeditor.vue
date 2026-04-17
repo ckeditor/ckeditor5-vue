@@ -28,7 +28,7 @@ import {
 	getInstalledCKBaseFeatures
 } from '@ckeditor/ckeditor5-integrations-common';
 
-import { appendUsageDataPluginToConfig } from './plugins/appendUsageDataPluginToConfig.js';
+import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageDataPlugin.js';
 import {
 	destroyEditorWithWatchdog,
 	unwrapEditorWatchdog,
