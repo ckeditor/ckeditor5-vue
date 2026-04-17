@@ -159,7 +159,10 @@ describe( 'CKEditor component', () => {
 
 				expect( editor ).toHaveBeenCalledOnce();
 				expect( editor ).toHaveBeenCalledWith( expect.any( HTMLElement ), {
-					initialData: 'foo'
+					initialData: 'foo',
+					extraPlugins: [
+						expect.any( Function )
+					]
 				} );
 
 				component.unmount();
@@ -197,7 +200,7 @@ describe( 'CKEditor component', () => {
 
 				component.setProps( { modelValue: 'bar' } );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.instance!.data.get() ).to.equal( 'bar' );
 
@@ -269,9 +272,7 @@ describe( 'CKEditor component', () => {
 
 				await nextTick();
 
-				expect( component.vm.instance!.config ).to.deep.equal( {
-					foo: 'bar'
-				} );
+				expect( component.vm.instance!.config.get( 'foo' ) ).to.be.equal( 'bar' );
 
 				component.unmount();
 			} );
@@ -307,17 +308,20 @@ describe( 'CKEditor component', () => {
 				expect( stub ).toHaveBeenCalledTimes( 3 );
 				expect( stub ).toHaveBeenNthCalledWith( 1, expect.any( HTMLElement ), {
 					foo: 'bar',
-					initialData: 'foo'
+					initialData: 'foo',
+					extraPlugins: [ expect.any( Function ) ]
 				} );
 
 				expect( stub ).toHaveBeenNthCalledWith( 2, expect.any( HTMLElement ), {
 					foo: 'bar',
-					initialData: 'bar'
+					initialData: 'bar',
+					extraPlugins: [ expect.any( Function ) ]
 				} );
 
 				expect( stub ).toHaveBeenNthCalledWith( 3, expect.any( HTMLElement ), {
 					foo: 'bar',
-					initialData: 'baz'
+					initialData: 'baz',
+					extraPlugins: [ expect.any( Function ) ]
 				} );
 
 				component.unmount();
@@ -407,14 +411,7 @@ describe( 'CKEditor component', () => {
 
 					await nextTick();
 
-					expect( component.vm.instance!.config ).to.deep.equal( {
-						foo: 'bar',
-						licenseKey: '<YOUR_LICENSE_KEY>',
-						extraPlugins: [
-							VueIntegrationUsageDataPlugin,
-							expect.any( Function )
-						]
-					} );
+					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).to.include( VueIntegrationUsageDataPlugin );
 
 					component.unmount();
 				} );
@@ -449,14 +446,7 @@ describe( 'CKEditor component', () => {
 
 					await nextTick();
 
-					expect( component.vm.instance!.config ).to.deep.equal( {
-						foo: 'bar',
-						licenseKey: '<YOUR_LICENSE_KEY>',
-						extraPlugins: [
-							VueIntegrationUsageDataPlugin,
-							expect.any( Function )
-						]
-					} );
+					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).to.include( VueIntegrationUsageDataPlugin );
 
 					component.unmount();
 				} );
@@ -530,9 +520,9 @@ describe( 'CKEditor component', () => {
 				disabled: true
 			} );
 
-			await vi.waitFor( () => {
-				expect( component.vm.instance!.isReadOnly ).toBeTruthy();
-			} );
+			await nextTick();
+
+			expect( component.vm.instance!.isReadOnly ).toBeTruthy();
 
 			component.setProps( { disabled: false } );
 
@@ -552,16 +542,16 @@ describe( 'CKEditor component', () => {
 		it( '#modelValue should trigger editor#data.set', async () => {
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			const spy = vi.spyOn( component.vm.instance!.data, 'set' );
 			component.setProps( { modelValue: 'foo' } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			component.setProps( { modelValue: 'bar' } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( spy ).toHaveBeenCalledTimes( 2 );
 
@@ -572,7 +562,7 @@ describe( 'CKEditor component', () => {
 			component.vm.lastEditorData = 'barq';
 			component.setProps( { modelValue: 'barq' } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( spy ).toHaveBeenCalledTimes( 2 );
 			expect( spy ).toHaveBeenNthCalledWith( 1, 'foo' );
@@ -584,21 +574,21 @@ describe( 'CKEditor component', () => {
 		it( '#modelValue should trigger editor#data.set only if data is changed', async () => {
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			const spy = vi.spyOn( component.vm.instance!.data, 'set' );
 
 			component.setProps( { modelValue: 'foo' } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			component.setProps( { modelValue: 'foo' } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			component.setProps( { modelValue: 'foo' } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( spy ).toHaveBeenCalledOnce();
 

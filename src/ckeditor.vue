@@ -40,7 +40,7 @@ import {
 import { useIsUnmounted } from './composables/useIsUnmounted.js';
 import { EditorLifecycleEvents, useEditorEvents } from './composables/useEditorEvents.js';
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
-import { useEditorReadonly } from './composables/useEditorReadonly.js';
+import { toggleEditorReadOnly, useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
@@ -80,11 +80,12 @@ const VueEventsIntegrationPlugin = useEditorEvents<TEditor>({
 	disableTwoWayDataBinding: toRef( props, 'disableTwoWayDataBinding' ),
 	onDataChange: assignEditorDataToModel,
 	onBeforeReady(editor) {
+		toggleEditorReadOnly( editor, props.disabled );
 		instance.value = markRaw( editor );
 	},
 });
 
-useEditorReadonly(instance, toRef( props, 'disabled' ));
+useEditorReadOnly(instance, toRef( props, 'disabled' ));
 useEditorVersionCheck();
 
 defineExpose( {

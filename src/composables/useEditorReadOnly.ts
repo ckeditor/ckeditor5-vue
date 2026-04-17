@@ -11,15 +11,24 @@ const INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/cked
 /**
  * Hook that toggles readonly state on provided instance.
  */
-export function useEditorReadonly(
+export function useEditorReadOnly(
 	instance: Ref<Editor | undefined>,
 	disabled: Ref<boolean | undefined>
 ): void {
-	watch( [ instance, disabled ], ( [ instance, readOnlyMode ] ) => {
-		if ( readOnlyMode ) {
-			instance?.enableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
-		} else {
-			instance?.disableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
+	watch( [ instance, disabled ], ( [ _instance, _disabled ] ) => {
+		if ( _instance ) {
+			toggleEditorReadOnly( _instance, !!_disabled );
 		}
 	} );
+}
+
+/**
+ * Toggles editor to readonly state.
+ */
+export function toggleEditorReadOnly( editor: Editor, readOnly: boolean ): void {
+	if ( readOnly ) {
+		editor.enableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
+	} else {
+		editor.disableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
+	}
 }
