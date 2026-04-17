@@ -725,27 +725,71 @@ describe( 'CKEditor component', () => {
 			component.unmount();
 		} );
 
-		it( 'should emit #error when editor fails to initialize', async () => {
-			const error = new Error( 'test' );
-			const component = mountComponent( {
-				config: {
-					extraPlugins: [
-						function CrashPlugin() {
-							throw error;
-						}
-					]
-				}
+		describe( '#error', () => {
+			it( 'should emit #error when editor fails to initialize', async () => {
+				const error = new Error( 'test' );
+				const component = mountComponent( {
+					config: {
+						extraPlugins: [
+							function CrashPlugin() {
+								throw error;
+							}
+						]
+					}
+				} );
+
+				await timeout( 0 );
+
+				expect( component.emitted().error.length ).to.equal( 1 );
+				expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
+					phase: 'initialization',
+					error
+				} ] );
+
+				component.unmount();
 			} );
 
-			await timeout( 0 );
+			it( 'should print error logs when error happens', async () => {
+				const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+				const component = mountComponent( {
+					config: {
+						extraPlugins: [
+							function CrashPlugin() {
+								throw new Error( 'test' );
+							}
+						]
+					}
+				} );
 
-			expect( component.emitted().error.length ).to.equal( 1 );
-			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
-				phase: 'initialization',
-				error
-			} ] );
+				await timeout( 0 );
 
-			component.unmount();
+				component.unmount();
+				expect( consoleError ).to.have.toHaveBeenCalledOnce();
+			} );
+
+			it( 'should not report any errors when error is thrown after unmounting component', async () => {
+				const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+				const error = new Error( 'test' );
+
+				vi.spyOn( MockEditor, 'create' ).mockImplementation( () => {
+					return new Promise( ( _, reject ) => {
+						setTimeout( () => {
+							reject( error );
+						}, 100 );
+					} );
+				} );
+
+				const component = mountComponent();
+
+				await timeout( 0 );
+
+				component.unmount();
+
+				await timeout( 150 );
+
+				expect( component.emitted().error ).to.be.undefined;
+				expect( consoleError ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -881,9 +925,8 @@ describe( 'CKEditor component', () => {
 			expect( firstInstance!.isReadOnly ).to.be.true;
 
 			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-			const error = new Error( 'test' );
 
-			watchdog.simulateError( error, true );
+			watchdog.simulateError( new Error( 'test' ), true );
 
 			await timeout( 0 );
 
@@ -891,6 +934,30 @@ describe( 'CKEditor component', () => {
 			expect( component.vm.instance!.isReadOnly ).to.be.true;
 
 			component.unmount();
+		} );
+
+		it( 'should not crash if `error` occurs after unmounting component', async () => {
+			const component = mountComponent( {
+				editor: MockEditor,
+				disabled: true
+			} );
+
+			await timeout( 0 );
+
+			const firstInstance = component.vm.instance;
+
+			expect( firstInstance ).to.be.instanceOf( MockEditor );
+			expect( firstInstance!.isReadOnly ).to.be.true;
+
+			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
+
+			component.unmount();
+			await timeout( 0 );
+
+			expect( async () => {
+				watchdog.simulateError( new Error( 'test' ), true );
+				await timeout( 0 );
+			} ).not.to.throw();
 		} );
 	} );
 } );
