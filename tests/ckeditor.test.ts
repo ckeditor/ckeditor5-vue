@@ -781,6 +781,23 @@ describe( 'CKEditor component', () => {
 			component.unmount();
 		} );
 
+		it( 'should not crash if editor constructor does not contain `EditorWatchdog` dependency', async () => {
+			vi.spyOn( MockEditor, 'EditorWatchdog', 'get' ).mockReturnValue( undefined as any );
+
+			const component = mountComponent( {
+				editor: MockEditor
+			} );
+
+			await timeout( 0 );
+
+			expect( component.vm.editor ).to.equal( MockEditor );
+			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
+
+			expect( unwrapEditorWatchdog( component.vm.instance! ) ).to.be.null;
+
+			component.unmount();
+		} );
+
 		it( 'should emit error if watchdog\'s error event occurs (causesRestart = false)', async () => {
 			const component = mountComponent( {
 				editor: MockEditor

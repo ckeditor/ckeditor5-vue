@@ -14,7 +14,7 @@ export function useEditorLifecycleEvents<TEditor extends Editor>(
 	emit: EmitFn<EditorLifecycleEvents<TEditor>>
 ): void {
 	watch( instance, newInstance => {
-		/* istanbul ignore if -- @preserve - Defensive check: instance never becomes undefined. */
+		/* istanbul ignore if -- @preserve - Defensive check, instance never becomes undefined. */
 		if ( !newInstance ) {
 			return;
 		}

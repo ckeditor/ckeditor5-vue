@@ -67,6 +67,7 @@ export function useEditorVModel<TEditor extends Editor>(
 	} );
 
 	watch( instance, ( newInstance, _oldInstance, onCleanup ) => {
+		/* istanbul ignore if -- @preserve - Defensive check, instance never becomes undefined. */
 		if ( !newInstance ) {
 			return;
 		}
