@@ -14,6 +14,7 @@ export class CrashOnMagicWordPlugin extends Plugin {
 
 	public init(): void {
 		const editor = this.editor;
+		let timer: ReturnType<typeof setTimeout> | null = null;
 
 		editor.model.document.on( 'change:data', () => {
 			const data = editor.getData();
@@ -22,12 +23,18 @@ export class CrashOnMagicWordPlugin extends Plugin {
 				return;
 			}
 
-			editor.model.change( writer => {
-				const root = editor.model.document.getRoot()!;
-				const illegalNode = writer.createElement( 'unregisteredElement' );
+			if ( timer !== null ) {
+				clearTimeout( timer );
+			}
 
-				writer.insert( illegalNode, root, 0 );
-			} );
+			timer = setTimeout( () => {
+				editor.model.change( writer => {
+					const root = editor.model.document.getRoot()!;
+					const illegalNode = writer.createElement( 'unregisteredElement' );
+
+					writer.insert( illegalNode, root, 0 );
+				} );
+			}, 200 );
 		} );
 	}
 }
