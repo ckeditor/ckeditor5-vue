@@ -123,21 +123,17 @@ export class MockEditor extends SimpleEmitter {
 		];
 
 		for ( const Plugin of plugins ) {
-			try {
-				if ( Plugin.prototype?.constructor ) {
-					// Standard CKEditor-style class plugin
-					const instance = new Plugin( editor );
+			if ( Plugin.prototype?.constructor ) {
+				// Standard CKEditor-style class plugin
+				const instance = new Plugin( editor );
 
-					if ( typeof instance.init === 'function' ) {
-						await instance.init();
-					}
-				} else {
-					// Plain function plugin (e.g. a Vue wrapper)
-					// eslint-disable-next-line new-cap
-					Plugin( editor );
+				if ( typeof instance.init === 'function' ) {
+					await instance.init();
 				}
-			} catch ( e ) {
-				console.warn( 'MockEditor: error during plugin initialization', e );
+			} else {
+				// Plain function plugin (e.g. a Vue wrapper)
+				// eslint-disable-next-line new-cap
+				Plugin( editor );
 			}
 		}
 

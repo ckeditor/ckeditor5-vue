@@ -682,7 +682,7 @@ describe( 'CKEditor component', () => {
 			component.unmount();
 		} );
 
-		it( 'should emits #blur when the editor editable is blurred', async () => {
+		it( 'should emit #blur when the editor editable is blurred', async () => {
 			const on = vi.spyOn( ViewDocument.prototype, 'on' );
 			const component = mountComponent();
 
@@ -698,6 +698,29 @@ describe( 'CKEditor component', () => {
 			expect( component.emitted().blur[ 0 ] ).to.deep.equal( [
 				{}, component.vm.instance
 			] );
+
+			component.unmount();
+		} );
+
+		it( 'should emit #error when editor fails to initialize', async () => {
+			const error = new Error( 'test' );
+			const component = mountComponent( {
+				config: {
+					extraPlugins: [
+						function CrashPlugin() {
+							throw error;
+						}
+					]
+				}
+			} );
+
+			await timeout( 0 );
+
+			expect( component.emitted().error.length ).to.equal( 1 );
+			expect( component.emitted().error[ 0 ] ).to.toMatchObject( [ {
+				phase: 'initialization',
+				error
+			} ] );
 
 			component.unmount();
 		} );
