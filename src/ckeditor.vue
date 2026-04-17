@@ -69,7 +69,7 @@ const element = ref<HTMLElement>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 
-const { lastEditorData } = useEditorVModel<TEditor>( {
+const lastEditorData = useEditorVModel<TEditor>( {
 	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
 	model,
 	emit,
