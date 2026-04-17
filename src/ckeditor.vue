@@ -69,16 +69,16 @@ const element = ref<HTMLElement>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 
-const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
+const { lastEditorData } = useEditorVModel<TEditor>( {
 	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
 	model,
 	emit,
 	instance
 } );
 
+useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
 useEditorReadOnly(instance, () => props.disabled);
-useEditorVersionCheck();
 
 defineExpose( {
 	instance,
@@ -139,13 +139,7 @@ onMounted( async () => {
 			} );
 
 			watchdog.on( 'restart', () => {
-				toggleEditorReadOnly( editor, props.disabled );
-
-				instance.value = markRaw( editor );
-
-				if ( !props.disableTwoWayDataBinding ) {
-					assignEditorDataToModel( instance.value! );
-				}
+				instance.value = markRaw( watchdog.editor! as TEditor );
 			} );
 		}
 

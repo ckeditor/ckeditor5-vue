@@ -22,7 +22,7 @@ export function useEditorReadOnly(
 		if ( editor ) {
 			toggleEditorReadOnly( editor, isDisabled );
 		}
-	} );
+	}, { flush: 'sync' } );
 }
 
 /**

@@ -30,7 +30,7 @@ export function useEditorLifecycleEvents<TEditor extends Editor>(
 		newInstance.once( 'destroy', () => {
 			emit( 'destroy', newInstance );
 		} );
-	} );
+	}, { flush: 'post' } );
 }
 
 export type EditorLifecycleEvents<TEditor extends Editor> = {

@@ -592,15 +592,36 @@ describe( 'CKEditor component', () => {
 	} );
 
 	describe( 'events', () => {
-		it( 'should emit #ready when the editor is created', async () => {
-			const component = mountComponent();
+		describe( '#ready event', () => {
+			it( 'should emit #ready when the editor is created', async () => {
+				const component = mountComponent();
 
-			await timeout( 0 );
+				await timeout( 0 );
 
-			expect( component.emitted().ready.length ).to.equal( 1 );
-			expect( component.emitted().ready[ 0 ] ).to.deep.equal( [ component.vm.instance ] );
+				expect( component.emitted().ready.length ).to.equal( 1 );
+				expect( component.emitted().ready[ 0 ] ).to.deep.equal( [ component.vm.instance ] );
 
-			component.unmount();
+				component.unmount();
+			} );
+
+			it( 'should emit #ready with already disabled editor when `disabled` prop is present', async () => {
+				let isReadOnlyOnReady: boolean | undefined;
+
+				const component = mountComponent( {
+					disabled: true,
+					onReady: ( editor: any ) => {
+						isReadOnlyOnReady = editor.isReadOnly;
+					}
+				} );
+
+				await timeout( 0 );
+
+				expect( component.emitted().ready.length ).to.equal( 1 );
+				expect( component.emitted().ready[ 0 ] ).to.deep.equal( [ component.vm.instance ] );
+				expect( isReadOnlyOnReady ).to.be.true;
+
+				component.unmount();
+			} );
 		} );
 
 		it( 'should emit #destroy when the editor is destroyed', async () => {
@@ -760,7 +781,7 @@ describe( 'CKEditor component', () => {
 			component.unmount();
 		} );
 
-		it( 'should emit error if watchdog\'s error event occurs', async () => {
+		it( 'should emit error if watchdog\'s error event occurs (causesRestart = false)', async () => {
 			const component = mountComponent( {
 				editor: MockEditor
 			} );
@@ -769,7 +790,6 @@ describe( 'CKEditor component', () => {
 
 			const firstInstance = component.vm.instance;
 
-			expect( component.vm.editor ).to.equal( MockEditor );
 			expect( firstInstance ).to.be.instanceOf( MockEditor );
 
 			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
@@ -791,6 +811,67 @@ describe( 'CKEditor component', () => {
 			await timeout( 0 );
 
 			expect( component.vm.instance ).to.be.equal( firstInstance );
+
+			component.unmount();
+		} );
+
+		it( 'should emit error if watchdog\'s error event occurs (causesRestart = true)', async () => {
+			const component = mountComponent( {
+				editor: MockEditor
+			} );
+
+			await timeout( 0 );
+
+			const firstInstance = component.vm.instance;
+
+			expect( firstInstance ).to.be.instanceOf( MockEditor );
+
+			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
+			const error = new Error( 'test' );
+
+			watchdog.simulateError( error, true );
+
+			await timeout( 0 );
+
+			expect( component.emitted().error.length ).to.equal( 1 );
+			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
+				causesRestart: true,
+				phase: 'runtime',
+				editor: firstInstance,
+				watchdog,
+				error
+			} ] );
+
+			await timeout( 0 );
+
+			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
+			expect( component.vm.instance ).not.to.be.equal( firstInstance );
+
+			component.unmount();
+		} );
+
+		it( 'should restore `disabled` state on restarted editor', async () => {
+			const component = mountComponent( {
+				editor: MockEditor,
+				disabled: true
+			} );
+
+			await timeout( 0 );
+
+			const firstInstance = component.vm.instance;
+
+			expect( firstInstance ).to.be.instanceOf( MockEditor );
+			expect( firstInstance!.isReadOnly ).to.be.true;
+
+			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
+			const error = new Error( 'test' );
+
+			watchdog.simulateError( error, true );
+
+			await timeout( 0 );
+
+			expect( component.vm.instance ).not.to.be.equal( firstInstance );
+			expect( component.vm.instance!.isReadOnly ).to.be.true;
 
 			component.unmount();
 		} );

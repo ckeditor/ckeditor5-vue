@@ -92,7 +92,7 @@ export function useEditorVModel<TEditor extends Editor>(
 		onCleanup( () => {
 			emitDebouncedInputEvent.cancel();
 		} );
-	}, { immediate: true } );
+	} );
 
 	return {
 		lastEditorData,
