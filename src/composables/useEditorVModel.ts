@@ -3,21 +3,30 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { ref, watch, type Ref, type EmitFn, type ModelRef } from 'vue';
 import type { Editor, EventInfo } from 'ckeditor5';
-import type { EditorWithAttachedWatchdog } from '../utils/wrapWithWatchdogIfPresent.js';
+import { debounce } from 'lodash-es';
+import {
+	ref, watch, toValue,
+	type Ref, type EmitFn, type ModelRef, type MaybeRefOrGetter
+} from 'vue';
+
+import { useIsUnmounted } from './useIsUnmounted.js';
+
+const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
 /**
  * Hook that synchronizes editor state with currently set vue model.
  */
 export function useEditorVModel<TEditor extends Editor>(
 	{
+		disableTwoWayDataBinding,
 		emit,
 		instance,
 		model
 	}: Attrs<TEditor>
 ): Result<TEditor> {
 	const lastEditorData = ref<string>();
+	const isUnmounted = useIsUnmounted();
 
 	/**
 	 * Updates the internal cache and emits Vue-compatible events.
@@ -57,6 +66,34 @@ export function useEditorVModel<TEditor extends Editor>(
 		}
 	} );
 
+	watch( instance, ( newInstance, _oldInstance, onCleanup ) => {
+		if ( !newInstance ) {
+			return;
+		}
+
+		const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
+			if ( toValue( disableTwoWayDataBinding ) || isUnmounted.value ) {
+				return;
+			}
+
+			assignEditorDataToModel( newInstance, evt );
+		}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
+
+		// Debounce emitting the #input event. When data is huge, instance#getData()
+		// takes a lot of time to execute on every single key press and ruins the UX.
+		//
+		// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
+		newInstance.model.document.on( 'change:data', emitDebouncedInputEvent );
+
+		newInstance.once( 'destroy', () => {
+			emitDebouncedInputEvent.cancel();
+		} );
+
+		onCleanup( () => {
+			emitDebouncedInputEvent.cancel();
+		} );
+	}, { immediate: true } );
+
 	return {
 		lastEditorData,
 		assignEditorDataToModel
@@ -64,9 +101,10 @@ export function useEditorVModel<TEditor extends Editor>(
 }
 
 type Attrs<TEditor extends Editor> = {
+	disableTwoWayDataBinding: MaybeRefOrGetter<boolean>;
 	model: ModelRef<string>;
 	emit: EmitFn<EditorVModelEvents<TEditor>>;
-	instance: Ref<EditorWithAttachedWatchdog<TEditor> | undefined>;
+	instance: Ref<TEditor | undefined>;
 };
 
 type Result<TEditor extends Editor> = {

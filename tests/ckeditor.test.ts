@@ -3,7 +3,6 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { nextTick } from 'vue';
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { Ckeditor } from '../src/plugin.js';
@@ -36,7 +35,7 @@ describe( 'CKEditor component', () => {
 		const consoleWarn = vi.spyOn( console, 'warn' ).mockReturnValue();
 		const component = mountComponent();
 
-		await nextTick();
+		await timeout( 0 );
 		component.unmount();
 
 		expect( consoleWarn ).toHaveBeenCalledOnce();
@@ -51,7 +50,7 @@ describe( 'CKEditor component', () => {
 		const consoleWarn = vi.spyOn( console, 'warn' ).mockReturnValue();
 		const component = mountComponent();
 
-		await nextTick();
+		await timeout( 0 );
 		component.unmount();
 
 		expect( consoleWarn ).toHaveBeenCalledOnce();
@@ -66,7 +65,7 @@ describe( 'CKEditor component', () => {
 		const consoleWarn = vi.spyOn( console, 'warn' );
 		const component = mountComponent();
 
-		await nextTick();
+		await timeout( 0 );
 		component.unmount();
 
 		expect( consoleWarn ).not.toHaveBeenCalledOnce();
@@ -78,7 +77,7 @@ describe( 'CKEditor component', () => {
 		const consoleWarn = vi.spyOn( console, 'warn' );
 		const component = mountComponent();
 
-		await nextTick();
+		await timeout( 0 );
 		component.unmount();
 
 		expect( consoleWarn ).not.toHaveBeenCalledOnce();
@@ -88,7 +87,7 @@ describe( 'CKEditor component', () => {
 		const stub = vi.spyOn( MockEditor, 'create' );
 		const component = mountComponent();
 
-		await nextTick();
+		await timeout( 0 );
 		component.unmount();
 
 		expect( stub ).toHaveBeenCalledOnce();
@@ -98,7 +97,7 @@ describe( 'CKEditor component', () => {
 		const stub = vi.spyOn( MockEditor.prototype, 'destroy' );
 		const component = mountComponent();
 
-		await nextTick();
+		await timeout( 0 );
 		component.unmount();
 
 		expect( stub ).toHaveBeenCalledOnce();
@@ -127,7 +126,7 @@ describe( 'CKEditor component', () => {
 					editor: MockEditor
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.editor ).to.equal( MockEditor );
 				expect( component.vm.instance ).to.be.instanceOf( MockEditor );
@@ -140,7 +139,7 @@ describe( 'CKEditor component', () => {
 			it( 'should be defined', async () => {
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.modelValue ).to.equal( '' );
 
@@ -155,14 +154,11 @@ describe( 'CKEditor component', () => {
 					modelValue: 'foo'
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( editor ).toHaveBeenCalledOnce();
 				expect( editor ).toHaveBeenCalledWith( expect.any( HTMLElement ), {
-					initialData: 'foo',
-					extraPlugins: [
-						expect.any( Function )
-					]
+					initialData: 'foo'
 				} );
 
 				component.unmount();
@@ -176,7 +172,7 @@ describe( 'CKEditor component', () => {
 					modelValue: 'foo'
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( editor ).toHaveBeenCalledOnce();
 				expect( editor ).toHaveBeenCalledWith(
@@ -212,7 +208,7 @@ describe( 'CKEditor component', () => {
 			it( 'should be defined', async () => {
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.tagName ).to.equal( 'div' );
 
@@ -234,7 +230,7 @@ describe( 'CKEditor component', () => {
 			it( 'should be empty when editor is not set to read only mode', async () => {
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.instance!.isReadOnly ).toBeFalsy();
 
@@ -246,7 +242,7 @@ describe( 'CKEditor component', () => {
 					disabled: true
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.instance!.isReadOnly ).toBeTruthy();
 
@@ -258,7 +254,7 @@ describe( 'CKEditor component', () => {
 			it( 'should be empty', async () => {
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.config ).to.deep.equal( {} );
 
@@ -270,7 +266,7 @@ describe( 'CKEditor component', () => {
 					config: { foo: 'bar' }
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.instance!.config.get( 'foo' ) ).to.be.equal( 'bar' );
 
@@ -303,25 +299,22 @@ describe( 'CKEditor component', () => {
 				`
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( stub ).toHaveBeenCalledTimes( 3 );
 				expect( stub ).toHaveBeenNthCalledWith( 1, expect.any( HTMLElement ), {
 					foo: 'bar',
-					initialData: 'foo',
-					extraPlugins: [ expect.any( Function ) ]
+					initialData: 'foo'
 				} );
 
 				expect( stub ).toHaveBeenNthCalledWith( 2, expect.any( HTMLElement ), {
 					foo: 'bar',
-					initialData: 'bar',
-					extraPlugins: [ expect.any( Function ) ]
+					initialData: 'bar'
 				} );
 
 				expect( stub ).toHaveBeenNthCalledWith( 3, expect.any( HTMLElement ), {
 					foo: 'bar',
-					initialData: 'baz',
-					extraPlugins: [ expect.any( Function ) ]
+					initialData: 'baz'
 				} );
 
 				component.unmount();
@@ -353,7 +346,7 @@ describe( 'CKEditor component', () => {
 				`
 				} );
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( stub ).toHaveBeenCalledTimes( 3 );
 				expect( stub ).toHaveBeenNthCalledWith(
@@ -409,7 +402,7 @@ describe( 'CKEditor component', () => {
 						}
 					} );
 
-					await nextTick();
+					await timeout( 0 );
 
 					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).to.include( VueIntegrationUsageDataPlugin );
 
@@ -425,7 +418,7 @@ describe( 'CKEditor component', () => {
 						}
 					} );
 
-					await nextTick();
+					await timeout( 0 );
 
 					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).not.to.include( VueIntegrationUsageDataPlugin );
 
@@ -444,7 +437,7 @@ describe( 'CKEditor component', () => {
 						}
 					} );
 
-					await nextTick();
+					await timeout( 0 );
 
 					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).to.include( VueIntegrationUsageDataPlugin );
 
@@ -461,7 +454,7 @@ describe( 'CKEditor component', () => {
 						}
 					} );
 
-					await nextTick();
+					await timeout( 0 );
 
 					expect( component.vm.instance!.config.get( 'extraPlugins' ) ).not.to.include( VueIntegrationUsageDataPlugin );
 
@@ -474,7 +467,7 @@ describe( 'CKEditor component', () => {
 			it( 'should set disableTwoWayDataBinding to false by default', async () => {
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( component.vm.disableTwoWayDataBinding ).to.equal( false );
 
@@ -485,7 +478,7 @@ describe( 'CKEditor component', () => {
 				const on = vi.spyOn( ModelDocument.prototype, 'on' );
 				const component = mountComponent( { disableTwoWayDataBinding: true } );
 
-				await nextTick();
+				await timeout( 0 );
 
 				vi.spyOn( component.vm.instance!.data, 'get' ).mockReturnValue( 'foo' );
 
@@ -506,7 +499,7 @@ describe( 'CKEditor component', () => {
 		it( '#instance should be defined', async () => {
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
 
@@ -520,19 +513,19 @@ describe( 'CKEditor component', () => {
 				disabled: true
 			} );
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( component.vm.instance!.isReadOnly ).toBeTruthy();
 
 			component.setProps( { disabled: false } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( component.vm.instance!.isReadOnly ).toBeFalsy();
 
 			component.setProps( { disabled: true } );
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( component.vm.instance!.isReadOnly ).toBeTruthy();
 
@@ -600,7 +593,7 @@ describe( 'CKEditor component', () => {
 		it( 'should emit #ready when the editor is created', async () => {
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( component.emitted().ready.length ).to.equal( 1 );
 			expect( component.emitted().ready[ 0 ] ).to.deep.equal( [ component.vm.instance ] );
@@ -611,7 +604,7 @@ describe( 'CKEditor component', () => {
 		it( 'should emit #destroy when the editor is destroyed', async () => {
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			component.unmount();
 
@@ -623,7 +616,7 @@ describe( 'CKEditor component', () => {
 				const on = vi.spyOn( ModelDocument.prototype, 'on' );
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( on ).toHaveBeenCalledOnce();
 				expect( on ).toHaveBeenNthCalledWith( 1, 'change:data', expect.any( Function ) );
@@ -648,7 +641,7 @@ describe( 'CKEditor component', () => {
 				const on = vi.spyOn( ModelDocument.prototype, 'on' );
 				const component = mountComponent();
 
-				await nextTick();
+				await timeout( 0 );
 
 				expect( on ).toHaveBeenCalledOnce();
 				expect( on ).toHaveBeenNthCalledWith( 1, 'change:data', expect.any( Function ) );
@@ -673,7 +666,7 @@ describe( 'CKEditor component', () => {
 			const on = vi.spyOn( ViewDocument.prototype, 'on' );
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( on ).toHaveBeenCalledTimes( 2 );
 			expect( on ).toHaveBeenNthCalledWith( 1, 'focus', expect.any( Function ) );
@@ -693,7 +686,7 @@ describe( 'CKEditor component', () => {
 			const on = vi.spyOn( ViewDocument.prototype, 'on' );
 			const component = mountComponent();
 
-			await nextTick();
+			await timeout( 0 );
 
 			expect( on ).toHaveBeenCalledTimes( 2 );
 			expect( on ).toHaveBeenNthCalledWith( 2, 'blur', expect.any( Function ) );

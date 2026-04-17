@@ -12,17 +12,16 @@
 >
 import {
 	ref,
-	markRaw,
 	onMounted,
 	onBeforeUnmount,
-	toRef
+	markRaw,
+	type Raw,
 } from 'vue';
 
 import type { EditorConfig } from 'ckeditor5';
 import type { EditorErrorDescription, EditorWithWatchdogRelaxedConstructor, Props } from './types.js';
 
 import {
-	appendExtraPluginsToEditorConfig,
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
 	ExtractEditorType,
@@ -66,25 +65,17 @@ const emit = defineEmits<
 >();
 
 const element = ref<HTMLElement>();
-const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
+const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 
 const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
+	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
 	model,
 	emit,
 	instance
 } );
 
-const VueEventsIntegrationPlugin = useEditorLifecycleEvents<TEditor>({
-	emit,
-	disableTwoWayDataBinding: toRef( props, 'disableTwoWayDataBinding' ),
-	onDataChange: assignEditorDataToModel,
-	onBeforeReady(editor) {
-		toggleEditorReadOnly( editor, props.disabled );
-		instance.value = markRaw( editor );
-	},
-});
-
+useEditorLifecycleEvents( instance, emit );
 useEditorReadOnly(instance, () => props.disabled);
 useEditorVersionCheck();
 
@@ -99,8 +90,6 @@ onMounted( async () => {
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
 	let editorConfig: EditorConfig = appendUsageDataPluginToConfig( { ...props.config } );
-
-	editorConfig = appendExtraPluginsToEditorConfig( editorConfig, [ VueEventsIntegrationPlugin ] );
 
 	// Store model value before initialization to verify if it changed in the meantime.
 	let prevModelValue = model.value;
@@ -121,7 +110,7 @@ onMounted( async () => {
 			supports.elementConfigAttachment ?
 				Constructor.create( assignElementToEditorConfig( Constructor, element.value!, editorConfig ) ) :
 				Constructor.create( element.value, editorConfig )
-		);
+		) as unknown as EditorWithAttachedWatchdog<TEditor>;
 
 		if ( isUnmounted.value ) {
 			destroyEditorWithWatchdog( editor );
@@ -149,11 +138,17 @@ onMounted( async () => {
 			} );
 
 			watchdog.on( 'restart', () => {
+				toggleEditorReadOnly( editor, props.disabled );
+
+				instance.value = markRaw( editor );
+
 				if ( !props.disableTwoWayDataBinding ) {
 					assignEditorDataToModel( instance.value! );
 				}
 			} );
 		}
+
+		instance.value = markRaw( editor );
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {
 			return;
