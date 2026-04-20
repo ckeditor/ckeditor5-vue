@@ -91,7 +91,9 @@ function crashEditor() {
 	} );
 }
 
-function onError( payload: EditorErrorDescription<ClassicEditor>  ) {
+function onError( error: Error, payload: EditorErrorDescription<ClassicEditor>  ) {
+	console.error( error );
+
 	if ( payload.phase === 'runtime' && payload.causesRestart ) {
 		addLog( 'CRASH! Watchdog caught the error and is restarting the editor.' );
 	} else {
