@@ -16,8 +16,7 @@ import {
 	onBeforeUnmount,
 	markRaw,
 	type Raw,
-	getCurrentInstance,
-	computed,
+	getCurrentInstance
 } from 'vue';
 
 import type { CKEditorError, EditorConfig } from 'ckeditor5';
