@@ -91,7 +91,7 @@ function crashEditor() {
 	} );
 }
 
-function onError( error: Error, payload: EditorErrorDescription<ClassicEditor>  ) {
+function onError( error: Error, payload: EditorErrorDescription<ClassicEditor> ) {
 	console.error( error, payload );
 
 	if ( payload.phase === 'runtime' && payload.causesRestart ) {
