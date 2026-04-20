@@ -37,9 +37,7 @@ export type EditorWithWatchdogRelaxedConstructor<TEditor extends Editor = Editor
 /**
  * Error thrown during initialization or runtime of the editor.
  */
-export type EditorErrorDescription<TEditor extends Editor> = {
-	error: any;
-} & (
+export type EditorErrorDescription<TEditor extends Editor> = (
 	| {
 		phase: 'initialization';
 	}

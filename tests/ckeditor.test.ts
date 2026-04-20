@@ -741,15 +741,14 @@ describe( 'CKEditor component', () => {
 				await timeout( 0 );
 
 				expect( component.emitted().error.length ).to.equal( 1 );
-				expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
-					phase: 'initialization',
-					error
+				expect( component.emitted().error[ 0 ] ).to.deep.equal( [ error, {
+					phase: 'initialization'
 				} ] );
 
 				component.unmount();
 			} );
 
-			it( 'should print error logs when error happens', async () => {
+			it( 'should print error logs when error happens and no listener is provided', async () => {
 				const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
 				const component = mountComponent( {
 					config: {
@@ -764,7 +763,26 @@ describe( 'CKEditor component', () => {
 				await timeout( 0 );
 
 				component.unmount();
-				expect( consoleError ).to.have.toHaveBeenCalledOnce();
+				expect( consoleError ).toHaveBeenCalledOnce();
+			} );
+
+			it( 'should not print error logs when error happens and onError listener is provided', async () => {
+				const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+				const component = mountComponent( {
+					onError: () => {},
+					config: {
+						extraPlugins: [
+							function CrashPlugin() {
+								throw new Error( 'test' );
+							}
+						]
+					}
+				} );
+
+				await timeout( 0 );
+
+				component.unmount();
+				expect( consoleError ).not.toHaveBeenCalled();
 			} );
 
 			it( 'should not report any errors when error is thrown after unmounting component', async () => {
@@ -861,12 +879,11 @@ describe( 'CKEditor component', () => {
 			await timeout( 0 );
 
 			expect( component.emitted().error.length ).to.equal( 1 );
-			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
+			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ error, {
 				causesRestart: false,
 				phase: 'runtime',
 				editor: firstInstance,
-				watchdog,
-				error
+				watchdog
 			} ] );
 
 			await timeout( 0 );
@@ -895,18 +912,54 @@ describe( 'CKEditor component', () => {
 			await timeout( 0 );
 
 			expect( component.emitted().error.length ).to.equal( 1 );
-			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ {
+			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ error, {
 				causesRestart: true,
 				phase: 'runtime',
 				editor: firstInstance,
-				watchdog,
-				error
+				watchdog
 			} ] );
 
 			await timeout( 0 );
 
 			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
 			expect( component.vm.instance ).not.to.be.equal( firstInstance );
+
+			component.unmount();
+		} );
+
+		it( 'should print error to console if watchdog error occurs and no listener is provided', async () => {
+			const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+			const component = mountComponent( {
+				editor: MockEditor
+			} );
+
+			await timeout( 0 );
+
+			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
+			watchdog.simulateError( new Error( 'test' ), false );
+
+			await timeout( 0 );
+
+			expect( consoleError ).toHaveBeenCalledOnce();
+
+			component.unmount();
+		} );
+
+		it( 'should not print error to console if watchdog error occurs and listener is provided', async () => {
+			const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+			const component = mountComponent( {
+				editor: MockEditor,
+				onError: () => {}
+			} );
+
+			await timeout( 0 );
+
+			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
+			watchdog.simulateError( new Error( 'test' ), false );
+
+			await timeout( 0 );
+
+			expect( consoleError ).not.toHaveBeenCalled();
 
 			component.unmount();
 		} );

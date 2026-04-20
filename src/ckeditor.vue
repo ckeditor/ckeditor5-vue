@@ -16,9 +16,11 @@ import {
 	onBeforeUnmount,
 	markRaw,
 	type Raw,
+	getCurrentInstance,
+	computed,
 } from 'vue';
 
-import type { EditorConfig } from 'ckeditor5';
+import type { CKEditorError, EditorConfig } from 'ckeditor5';
 import type { EditorErrorDescription, EditorWithWatchdogRelaxedConstructor, Props } from './types.js';
 
 import {
@@ -62,9 +64,12 @@ const emit = defineEmits<
 	& EditorLifecycleEvents<TEditor>
 	& EditorVModelEvents<TEditor>
 	& {
-		error: [ error: EditorErrorDescription<TEditor> ],
+		error: [ error: Error | CKEditorError, description: EditorErrorDescription<TEditor> ],
 	}
 >();
+
+const currentInstance = getCurrentInstance();
+const hasErrorHandler = computed( () => !!currentInstance?.vnode.props?.onError );
 
 const element = ref<HTMLElement>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
@@ -134,12 +139,15 @@ onMounted( async () => {
 					return;
 				}
 
-				emit( 'error', {
+				if ( !hasErrorHandler.value ) {
+					console.error( error );
+				}
+
+				emit( 'error', error, {
 					phase: 'runtime',
 					watchdog,
 					editor: watchdog.editor as TEditor,
-					causesRestart,
-					error
+					causesRestart
 				} );
 			} );
 
@@ -166,10 +174,12 @@ onMounted( async () => {
 			return;
 		}
 
-		console.error( error );
-		emit( 'error', {
-			phase: 'initialization',
-			error
+		if ( !hasErrorHandler.value ) {
+			console.error( error );
+		}
+
+		emit( 'error', error, {
+			phase: 'initialization'
 		} );
 	}
 } );
