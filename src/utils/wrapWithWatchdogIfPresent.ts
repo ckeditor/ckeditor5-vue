@@ -61,11 +61,7 @@ export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
  * @param editor Editor with attached watchdog.
  */
 export function unwrapEditorWatchdog( editor: EditorWithAttachedWatchdog ): EditorWatchdog | null {
-	if ( EDITOR_WATCHDOG_SYMBOL in editor ) {
-		return ( editor as EditorWithAttachedWatchdog )[ EDITOR_WATCHDOG_SYMBOL ] as EditorWatchdog;
-	}
-
-	return null;
+	return editor[ EDITOR_WATCHDOG_SYMBOL ] ?? null;
 }
 
 /**
