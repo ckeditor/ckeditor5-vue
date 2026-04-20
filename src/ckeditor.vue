@@ -119,7 +119,7 @@ onMounted( async () => {
 		) as unknown as EditorWithAttachedWatchdog<TEditor>;
 
 		if ( isUnmounted.value ) {
-			destroyEditorWithWatchdog( editor );
+			await destroyEditorWithWatchdog( editor );
 			return;
 		}
 
@@ -185,12 +185,15 @@ onMounted( async () => {
 	}
 } );
 
-onBeforeUnmount( () => {
-	if ( !instance.value ) {
+onBeforeUnmount( async () => {
+	const editor = instance.value;
+
+	if ( !editor ) {
 		return;
 	}
 
-	destroyEditorWithWatchdog( instance.value );
 	instance.value = undefined;
+
+	await destroyEditorWithWatchdog( editor );
 } );
 </script>

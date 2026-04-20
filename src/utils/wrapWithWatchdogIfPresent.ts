@@ -69,14 +69,14 @@ export function unwrapEditorWatchdog( editor: EditorWithAttachedWatchdog ): Edit
  *
  * @param editor Editor with attached watchdog.
  */
-export function destroyEditorWithWatchdog( editor: EditorWithAttachedWatchdog ): void {
+export async function destroyEditorWithWatchdog( editor: EditorWithAttachedWatchdog ): Promise<void> {
 	const watchdog = unwrapEditorWatchdog( editor );
 
 	if ( watchdog ) {
 		// If watchdog is present on the editor, then destroy the watchdog. It'll automatically kill assigned editors.
-		watchdog.destroy();
+		await watchdog.destroy();
 	} else {
 		// If there is no watchdog, kill the editor.
-		editor.destroy();
+		await editor.destroy();
 	}
 }
