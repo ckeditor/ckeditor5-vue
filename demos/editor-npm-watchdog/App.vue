@@ -12,6 +12,14 @@
     @error="onError"
   />
 
+  <button
+    class="crash-btn"
+    :disabled="!editorInstance"
+    @click="crashEditor"
+  >
+    Crash editor
+  </button>
+
   <p class="crash-instruction">
     Type the word <strong>okoń</strong> in the editor above to trigger a crash!
   </p>
@@ -40,6 +48,7 @@ import {
 	Bold,
 	Italic,
 	EditorConfig,
+	Editor,
 } from 'ckeditor5';
 import type { EditorErrorDescription } from '../../src/plugin.js';
 import { CrashOnMagicWordPlugin } from './CrashOnMagicWordPlugin.js';
@@ -60,6 +69,7 @@ const config: EditorConfig = {
 
 const isWatchdogDisabled = ref( false );
 const logs = ref<string[]>( [] );
+const editorInstance = ref<any>( null );
 
 function addLog( message: string ) {
 	const time = new Date().toLocaleTimeString();
@@ -67,11 +77,21 @@ function addLog( message: string ) {
 	logs.value.unshift( `[${ time }] ${ message }` );
 }
 
-function onReady() {
+function onReady( editor: Editor ) {
+	editorInstance.value = editor;
 	addLog( 'Editor is ready.' );
 }
 
-function onError( payload: EditorErrorDescription<ClassicEditor> ) {
+function crashEditor() {
+	setTimeout( () => {
+		const err: any = new Error( 'foo' );
+		err.context = editorInstance.value;
+		err.is = () => true;
+		throw err;
+	} );
+}
+
+function onError( payload: EditorErrorDescription<ClassicEditor>  ) {
 	if ( payload.phase === 'runtime' && payload.causesRestart ) {
 		addLog( 'CRASH! Watchdog caught the error and is restarting the editor.' );
 	} else {
@@ -85,6 +105,10 @@ body {
 	max-width: 800px;
 	margin: 20px auto;
 	font-family: sans-serif;
+}
+
+.crash-btn {
+	margin-top: 12px;
 }
 
 .crash-instruction {
