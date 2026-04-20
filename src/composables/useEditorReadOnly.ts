@@ -28,7 +28,7 @@ export function useEditorReadOnly(
 /**
  * Toggles editor to readonly state.
  */
-export function toggleEditorReadOnly( editor: Editor, readOnly: boolean ): void {
+function toggleEditorReadOnly( editor: Editor, readOnly: boolean ): void {
 	if ( readOnly ) {
 		editor.enableReadOnlyMode( INTEGRATION_READ_ONLY_LOCK_ID );
 	} else {
