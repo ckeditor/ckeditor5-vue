@@ -153,7 +153,9 @@ onMounted( async () => {
 			watchdog.on( 'restart', () => {
 				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
 				try {
-					cleanupOrphanEditorElements( instance.value! );
+					if ( instance.value ) {
+						cleanupOrphanEditorElements( instance.value );
+					}
 				} catch ( err ) {
 					console.error( err );
 				}
