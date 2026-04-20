@@ -69,7 +69,7 @@ const emit = defineEmits<
 >();
 
 const currentInstance = getCurrentInstance();
-const hasErrorHandler = computed( () => !!currentInstance?.vnode.props?.onError );
+const hasErrorHandler = () => !!currentInstance?.vnode.props?.onError;
 
 const element = ref<HTMLElement>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
@@ -139,7 +139,7 @@ onMounted( async () => {
 					return;
 				}
 
-				if ( !hasErrorHandler.value ) {
+				if ( !hasErrorHandler() ) {
 					console.error( error );
 				}
 
@@ -174,7 +174,7 @@ onMounted( async () => {
 			return;
 		}
 
-		if ( !hasErrorHandler.value ) {
+		if ( !hasErrorHandler() ) {
 			console.error( error );
 		}
 
