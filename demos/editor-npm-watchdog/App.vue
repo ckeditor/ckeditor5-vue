@@ -92,12 +92,12 @@ function crashEditor() {
 }
 
 function onError( error: Error, payload: EditorErrorDescription<ClassicEditor>  ) {
-	console.error( error );
+	console.error( error, payload );
 
 	if ( payload.phase === 'runtime' && payload.causesRestart ) {
 		addLog( 'CRASH! Watchdog caught the error and is restarting the editor.' );
 	} else {
-		addLog( 'CRITICAL CRASH! Editor died and will not restart (Watchdog disabled).' );
+		addLog( 'CRITICAL CRASH! Editor died and will not restart.' );
 	}
 }
 </script>
