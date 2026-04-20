@@ -41,6 +41,7 @@ import {
 	Italic,
 	EditorConfig,
 } from 'ckeditor5';
+import type { EditorErrorDescription } from '../../src/plugin.js';
 import { CrashOnMagicWordPlugin } from './CrashOnMagicWordPlugin.js';
 
 const data = ref( '<p>Hello world! Watchdog is ready.</p>' );
@@ -70,8 +71,8 @@ function onReady() {
 	addLog( 'Editor is ready.' );
 }
 
-function onError( payload: any ) {
-	if ( payload.causesRestart ) {
+function onError( payload: EditorErrorDescription<ClassicEditor> ) {
+	if ( payload.phase === 'runtime' && payload.causesRestart ) {
 		addLog( 'CRASH! Watchdog caught the error and is restarting the editor.' );
 	} else {
 		addLog( 'CRITICAL CRASH! Editor died and will not restart (Watchdog disabled).' );

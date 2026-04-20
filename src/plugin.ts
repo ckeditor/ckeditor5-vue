@@ -37,6 +37,8 @@ export {
 	Ckeditor
 };
 
+export type { EditorErrorDescription } from './types.js';
+
 /**
  * CDN related exports.
  */
