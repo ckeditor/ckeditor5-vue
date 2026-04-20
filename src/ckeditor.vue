@@ -79,7 +79,7 @@ const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
 
 useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
-useEditorReadOnly(instance, () => props.disabled);
+useEditorReadOnly( instance, () => props.disabled );
 
 defineExpose( {
 	instance,
