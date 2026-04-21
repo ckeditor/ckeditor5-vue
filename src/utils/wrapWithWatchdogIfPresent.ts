@@ -1,0 +1,82 @@
+/**
+ * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
+ */
+
+import type { EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
+import type { EditorWithWatchdogRelaxedConstructor } from '../types.js';
+import type { Editor, EditorWatchdog, WatchdogConfig } from 'ckeditor5';
+
+const EDITOR_WATCHDOG_SYMBOL = Symbol.for( 'vue-editor-watchdog' );
+
+export type EditorWithAttachedWatchdog<TEditor extends Editor = Editor> = TEditor & {
+	[EDITOR_WATCHDOG_SYMBOL]?: EditorWatchdog;
+};
+
+/**
+ * `EditorWatchdog#create` method does not return editor instance (returns `undefined` instead).
+ * This function wraps editor constructor with EditorWatchdog and returns fake constructor that
+ * returns editor instance assigned to initialized watchdog.
+ *
+ * It stores watchdog instance in hidden symbol assigned to editor. It simplifies storing both
+ * instances in component's state (it's no longer required to store them separately).
+ *
+ * @param Editor The Editor creator to wrap.
+ * @param watchdogConfig Watchdog configuration.
+ * @returns The Editor creator wrapped with a watchdog.
+ */
+export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
+	Editor: EditorWithWatchdogRelaxedConstructor<TEditor>,
+	watchdogConfig?: WatchdogConfig
+): EditorRelaxedConstructor<EditorWithAttachedWatchdog<TEditor>> {
+	const { EditorWatchdog } = Editor;
+
+	if ( !EditorWatchdog ) {
+		return Editor;
+	}
+
+	const watchdog = new EditorWatchdog( Editor, watchdogConfig );
+
+	watchdog.setCreator( async ( ...args: Parameters<typeof Editor['create']> ) => {
+		const editor = await Editor.create( ...args );
+
+		( editor as EditorWithAttachedWatchdog )[ EDITOR_WATCHDOG_SYMBOL ] = watchdog;
+
+		return editor;
+	} );
+
+	return {
+		...Editor,
+		create: async ( ...args: Parameters<typeof watchdog.create> ) => {
+			await watchdog.create( ...args );
+
+			return watchdog.editor!;
+		}
+	};
+}
+
+/**
+ * Unwraps the EditorWatchdog from the editor instance.
+ *
+ * @param editor Editor with attached watchdog.
+ */
+export function unwrapEditorWatchdog( editor: EditorWithAttachedWatchdog ): EditorWatchdog | null {
+	return editor[ EDITOR_WATCHDOG_SYMBOL ] ?? null;
+}
+
+/**
+ * It destroys the editor watchdog if it is assigned to the editor. If it is not, the editor is destroyed.
+ *
+ * @param editor Editor with attached watchdog.
+ */
+export async function destroyEditorWithWatchdog( editor: EditorWithAttachedWatchdog ): Promise<void> {
+	const watchdog = unwrapEditorWatchdog( editor );
+
+	if ( watchdog ) {
+		// If watchdog is present on the editor, then destroy the watchdog. It'll automatically kill assigned editors.
+		await watchdog.destroy();
+	} else {
+		// If there is no watchdog, kill the editor.
+		await editor.destroy();
+	}
+}

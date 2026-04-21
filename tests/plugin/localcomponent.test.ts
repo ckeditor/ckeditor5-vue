@@ -3,7 +3,6 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { nextTick } from 'vue';
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { Ckeditor } from '../../src/plugin.js';
@@ -17,14 +16,18 @@ describe( 'CKEditor plugin', () => {
 
 		const firstComponent = mount( Ckeditor, {
 			props: {
-				editor: FooEditor
+				editor: FooEditor as any
 			}
 		} );
 
-		await nextTick();
+		await timeout( 0 );
 
 		expect( firstComponent.vm.editor ).toBe( FooEditor );
 
 		firstComponent.unmount();
 	} );
 } );
+
+function timeout( delay: number ) {
+	return new Promise( resolve => setTimeout( resolve, delay ) );
+}

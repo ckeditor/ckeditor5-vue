@@ -8,29 +8,41 @@
 <script
 	setup
 	lang="ts"
-	generic="TEditorConstructor extends EditorRelaxedConstructor"
+	generic="TEditorConstructor extends EditorWithWatchdogRelaxedConstructor"
 >
-import { debounce } from 'lodash-es';
 import {
 	ref,
-	watch,
-	markRaw,
 	onMounted,
-	onBeforeUnmount
+	onBeforeUnmount,
+	markRaw,
+	type Raw,
+	getCurrentInstance
 } from 'vue';
-import type { EditorConfig, EventInfo } from 'ckeditor5';
-import type { Props } from './types.js';
+
+import type { CKEditorError, EditorConfig } from 'ckeditor5';
+import type { EditorErrorDescription, EditorWithWatchdogRelaxedConstructor, Props } from './types.js';
 
 import {
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
-	compareInstalledCKBaseVersion,
-	getInstalledCKBaseFeatures,
-	type EditorRelaxedConstructor,
-	type ExtractEditorType
+	ExtractEditorType,
+	getInstalledCKBaseFeatures
 } from '@ckeditor/ckeditor5-integrations-common';
 
-import { appendAllIntegrationPluginsToConfig } from './plugins/appendAllIntegrationPluginsToConfig.js';
+import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageDataPlugin.js';
+import { cleanupOrphanEditorElements } from './utils/cleanupOrphanEditorElements.js';
+import {
+	destroyEditorWithWatchdog,
+	unwrapEditorWatchdog,
+	wrapWithWatchdogIfPresent,
+	type EditorWithAttachedWatchdog
+} from './utils/wrapWithWatchdogIfPresent.js';
+
+import { useIsUnmounted } from './composables/useIsUnmounted.js';
+import { EditorLifecycleEvents, useEditorLifecycleEvents } from './composables/useEditorLifecycleEvents.js';
+import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
+import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
+import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
 
@@ -39,176 +51,149 @@ defineOptions( {
 } );
 
 const model = defineModel( 'modelValue', { type: String, default: '' } );
-
 const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 	config: () => ( {} ),
 	tagName: 'div',
+	disableWatchdog: false,
 	disabled: false,
 	disableTwoWayDataBinding: false
 } );
 
-const emit = defineEmits<{
-	ready: [ editor: TEditor ],
-	destroy: [],
-	blur: [ event: EventInfo, editor: TEditor ],
-	focus: [ event: EventInfo, editor: TEditor ],
-	input: [ data: string, event: EventInfo, editor: TEditor ],
-	'update:modelValue': [ data: string, event: EventInfo, editor: TEditor ],
-}>();
+const emit = defineEmits<
+	& EditorLifecycleEvents<TEditor>
+	& EditorVModelEvents<TEditor>
+	& {
+		error: [ error: Error | CKEditorError, description: EditorErrorDescription<TEditor> ],
+	}
+>();
 
-const VUE_INTEGRATION_READ_ONLY_LOCK_ID = 'Lock from Vue integration (@ckeditor/ckeditor5-vue)';
-const INPUT_EVENT_DEBOUNCE_WAIT = 300;
+const currentInstance = getCurrentInstance();
+const hasErrorHandler = () => !!currentInstance?.vnode.props?.onError;
 
 const element = ref<HTMLElement>();
-const instance = ref<TEditor>();
-const lastEditorData = ref<string>();
+const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
+const isUnmounted = useIsUnmounted();
+
+const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
+	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
+	model,
+	emit,
+	instance
+} );
+
+useEditorVersionCheck();
+useEditorLifecycleEvents( instance, emit );
+useEditorReadOnly( instance, () => props.disabled );
 
 defineExpose( {
 	instance,
 	lastEditorData
 } );
 
-watch( model, newModel => {
-	// Synchronize changes of #modelValue. There are two sources of changes:
-	//
-	//                External modelValue change      ──────╮
-	//                                                      ╰─────> ┏━━━━━━━━━━━┓
-	//                                                              ┃ Component ┃
-	//                                                      ╭─────> ┗━━━━━━━━━━━┛
-	//                   Internal data change         ──────╯
-	//             (typing, commands, collaboration)
-	//
-	// Case 1: If the change was external (via props), the editor data must be synced with
-	// the component using instance#setData() and it is OK to destroy the selection.
-	//
-	// Case 2: If the change is the result of internal data change, the #modelValue is the
-	// same as this.lastEditorData, which has been cached on #change:data. If we called
-	// instance#setData() at this point, that would demolish the selection.
-	//
-	// To limit the number of instance#setData() which is time-consuming when there is a
-	// lot of data we make sure:
-	//    * the new modelValue is at least different than the old modelValue (Case 1.)
-	//    * the new modelValue is different than the last internal instance state (Case 2.)
-	//
-	// See: https://github.com/ckeditor/ckeditor5-vue/issues/42.
-	if ( instance.value && newModel !== lastEditorData.value ) {
-		instance.value.data.set( newModel );
-	}
-} );
-
-watch( () => props.disabled, readOnlyMode => {
-	if ( readOnlyMode ) {
-		instance.value!.enableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
-	} else {
-		instance.value!.disableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
-	}
-} );
-
-function checkVersion(): void {
-	switch ( compareInstalledCKBaseVersion( '42.0.0' ) ) {
-		case null:
-			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
-			break;
-
-		case -1:
-			console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
-			break;
-	}
-}
-
-function setUpEditorEvents( editor: TEditor ) {
-	// Use the leading edge so the first event in the series is emitted immediately.
-	// Failing to do so leads to race conditions, for instance, when the component modelValue
-	// is set twice in a time span shorter than the debounce time.
-	// See https://github.com/ckeditor/ckeditor5-vue/issues/149.
-	const emitDebouncedInputEvent = debounce( ( evt: EventInfo ) => {
-		if ( props.disableTwoWayDataBinding ) {
-			return;
-		}
-
-		// Cache the last editor data. This kind of data is a result of typing,
-		// editor command execution, collaborative changes to the document, etc.
-		// This data is compared when the component modelValue changes in a 2-way binding.
-		const data = lastEditorData.value = editor.data.get();
-
-		// The compatibility with the v-model and general Vue.js concept of input–like components.
-		emit( 'update:modelValue', data, evt, editor );
-		emit( 'input', data, evt, editor );
-	}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
-
-	// Debounce emitting the #input event. When data is huge, instance#getData()
-	// takes a lot of time to execute on every single key press and ruins the UX.
-	//
-	// See: https://github.com/ckeditor/ckeditor5-vue/issues/42
-	editor.model.document.on( 'change:data', emitDebouncedInputEvent );
-
-	editor.editing.view.document.on( 'focus', ( evt: EventInfo ) => {
-		emit( 'focus', evt, editor );
-	} );
-
-	editor.editing.view.document.on( 'blur', ( evt: EventInfo ) => {
-		emit( 'blur', evt, editor );
-	} );
-}
-
-checkVersion();
-
-onMounted( () => {
-	const { editor: Editor } = props;
+onMounted( async () => {
 	const supports = getInstalledCKBaseFeatures();
 
 	// Clone the config first so it never gets mutated (across multiple editor instances).
 	// https://github.com/ckeditor/ckeditor5-vue/issues/101
-	let editorConfig: EditorConfig = appendAllIntegrationPluginsToConfig(
-		Object.assign( {}, props.config )
-	);
+	let editorConfig: EditorConfig = appendUsageDataPluginToConfig( { ...props.config } );
 
+	// Store model value before initialization to verify if it changed in the meantime.
 	let prevModelValue = model.value;
 
 	if ( model.value ) {
 		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value, true );
 	}
 
-	const editorPromise = (
-		supports.elementConfigAttachment ?
-			Editor.create( assignElementToEditorConfig( Editor, element.value!, editorConfig ) ) :
-			Editor.create( element.value, editorConfig )
-	) as unknown as Promise<TEditor>;
+	// Wrap editor with watchdog unless disabled.
+	let Constructor = props.editor;
 
-	editorPromise
-		.then( editor => {
-			// Save the reference to the instance for further use.
-			instance.value = markRaw( editor );
-
-			setUpEditorEvents( editor );
-
-			// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
-			// to be synchronized with these potential changes as soon as it is ready.
-			if ( model.value !== prevModelValue ) {
-				editor.data.set( model.value );
-			}
-
-			// Set initial disabled state.
-			if ( props.disabled ) {
-				editor.enableReadOnlyMode( VUE_INTEGRATION_READ_ONLY_LOCK_ID );
-			}
-
-			// Let the world know the editor is ready.
-			emit( 'ready', editor );
-		} )
-		.catch( error => {
-			console.error( error );
-		} );
-} );
-
-onBeforeUnmount( () => {
-	if ( instance.value ) {
-		instance.value.destroy();
-		instance.value = undefined;
+	if ( !props.disableWatchdog ) {
+		Constructor = wrapWithWatchdogIfPresent( props.editor, props.watchdogConfig ) as TEditorConstructor;
 	}
 
-	// Note: By the time the editor is destroyed (promise resolved, editor#destroy fired)
-	// the Vue component will not be able to emit any longer. So emitting #destroy a bit earlier.
-	emit( 'destroy' );
+	try {
+		const editor = await (
+			supports.elementConfigAttachment ?
+				Constructor.create( assignElementToEditorConfig( Constructor, element.value!, editorConfig ) ) :
+				Constructor.create( element.value, editorConfig )
+		) as unknown as EditorWithAttachedWatchdog<TEditor>;
+
+		if ( isUnmounted.value ) {
+			await destroyEditorWithWatchdog( editor );
+			return;
+		}
+
+		// Synchronize the editor content. The #modelValue may change while the editor is being created, so the editor content has
+		// to be synchronized with these potential changes as soon as it is ready.
+		if ( model.value !== prevModelValue ) {
+			editor.data.set( model.value );
+		}
+
+		// If it's editor watchdog instance, then it attach error handlers.
+		const watchdog = unwrapEditorWatchdog( editor );
+
+		if ( watchdog ) {
+			watchdog.on( 'error', ( _, { error, causesRestart } ) => {
+				if ( isUnmounted.value ) {
+					return;
+				}
+
+				if ( !hasErrorHandler() ) {
+					console.error( error );
+				}
+
+				emit( 'error', error, {
+					phase: 'runtime',
+					watchdog,
+					editor: watchdog.editor as TEditor,
+					causesRestart
+				} );
+			} );
+
+			watchdog.on( 'restart', () => {
+				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
+				try {
+					if ( instance.value ) {
+						cleanupOrphanEditorElements( instance.value );
+					}
+				} catch ( err ) {
+					console.error( err );
+				}
+
+				if  ( !isUnmounted.value ) {
+					instance.value = markRaw( watchdog.editor! as TEditor );
+
+					// Rewind vue model back to old working state.
+					assignEditorDataToModel( instance.value );
+				}
+			} );
+		}
+
+		instance.value = markRaw( editor );
+	} catch ( error: any ) {
+		if ( isUnmounted.value ) {
+			return;
+		}
+
+		if ( !hasErrorHandler() ) {
+			console.error( error );
+		}
+
+		emit( 'error', error, {
+			phase: 'initialization'
+		} );
+	}
+} );
+
+onBeforeUnmount( async () => {
+	const editor = instance.value;
+
+	if ( !editor ) {
+		return;
+	}
+
+	instance.value = undefined;
+
+	await destroyEditorWithWatchdog( editor );
 } );
 </script>

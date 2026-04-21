@@ -103,7 +103,7 @@ function onBlur( event: EventInfo, editor: ClassicEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: EventInfo, editor: ClassicEditor ) {
+function onInput( data: string, event: EventInfo | null, editor: ClassicEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 
@@ -116,6 +116,7 @@ function onDestroy() {
 body {
 	max-width: 800px;
 	margin: 20px auto;
+	font-family: sans-serif;
 }
 
 textarea {

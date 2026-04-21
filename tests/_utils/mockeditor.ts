@@ -4,32 +4,64 @@
  */
 
 import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
+import { SimpleEmitter } from './simpleemitter.js';
+import { MockWatchdog } from './mockwatchdog.js';
 
-export class ModelDocument {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public on( _: string, __: Function ): void {}
+type EditorConfig = EditorRelaxedConfig & Record<string, unknown>;
+
+/**
+ * Wraps the raw editor config object and exposes a `get(path)` method
+ * that supports dot-separated paths, e.g. `config.get('toolbar.items')`.
+ */
+class EditorConfigAccessor {
+	private _config: EditorConfig;
+
+	constructor( config: EditorConfig = {} ) {
+		this._config = config;
+	}
+
+	public get<T = unknown>( path: string ): T | undefined {
+		return path.split( '.' ).reduce<any>( ( node, key ) => node?.[ key ], this._config );
+	}
+
+	/** Returns the underlying raw config object. */
+	public toObject(): EditorConfig {
+		return this._config;
+	}
 }
 
-export class ViewDocument {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public on( _: string, __: Function ): void {}
-}
+export class MockEditor extends SimpleEmitter {
+	/**
+	 * Set to `MockWatchdog` (or a custom subclass) to activate watchdog wrapping.
+	 * `wrapWithWatchdogIfPresent` reads `Editor.EditorWatchdog` to decide whether to wrap.
+	 */
+	public static EditorWatchdog = MockWatchdog;
 
-export class MockEditor {
-	public declare element?: HTMLElement;
-	public declare config?: EditorRelaxedConfig;
-	public declare _data: any;
-	public declare setDataCounter: number;
-	public declare model: any;
-	public declare editing: any;
-	public declare data: any;
-	public declare _readOnlyLocks: Set<any>;
+	public readonly element: HTMLElement | undefined;
+	public readonly config: EditorConfigAccessor;
 
-	constructor( elOrConfig?: EditorRelaxedConfig | HTMLElement, config?: EditorRelaxedConfig ) {
-		this.element = elOrConfig instanceof HTMLElement ? elOrConfig : elOrConfig?.attachTo;
-		this.config = config ?? elOrConfig;
-		this._data = '';
-		this.setDataCounter = 0;
+	public model: { document: ModelDocument };
+	public editing: { view: { document: ViewDocument } };
+	public data: { get: () => any; set: ( data: any ) => void };
+
+	/** Counts `data.set` calls — useful in test assertions. */
+	public setDataCounter = 0;
+
+	private _data: any = '';
+	private _readOnlyLocks = new Set<string>();
+
+	constructor(
+		elOrConfig?: EditorRelaxedConfig | HTMLElement,
+		config?: EditorRelaxedConfig
+	) {
+		super();
+
+		this.element = elOrConfig instanceof HTMLElement ?
+			elOrConfig :
+			( elOrConfig as EditorRelaxedConfig )?.attachTo as HTMLElement | undefined;
+
+		const rawConfig: EditorConfig = ( config ?? ( elOrConfig as EditorRelaxedConfig ) ?? {} ) as EditorConfig;
+		this.config = new EditorConfigAccessor( rawConfig );
 
 		this.model = {
 			document: new ModelDocument()
@@ -42,26 +74,49 @@ export class MockEditor {
 		};
 
 		this.data = {
-			get: () => {
-				return this._data;
-			},
-
+			get: () => this._data,
 			set: ( data: any ) => {
 				this.setDataCounter += 1;
 				this._data = data;
+				this.model.document.fire( 'change:data' );
 			}
 		};
-
-		this._readOnlyLocks = new Set();
 	}
 
-	public static create( ...args: Array<any> ): Promise<any> {
-		const editor = new this( ...args );
+	public static async create( ...args: Array<any> ): Promise<MockEditor> {
+		const editor = new ( this as any )( ...args ) as MockEditor;
+		const rawConfig = editor.config.toObject();
 
-		return Promise.resolve( editor );
+		const plugins = [
+			...( rawConfig.plugins ?? [] ),
+			...( rawConfig.extraPlugins ?? [] )
+		];
+
+		for ( const Plugin of plugins ) {
+			if ( Plugin.prototype?.constructor ) {
+				// Standard CKEditor-style class plugin
+				const instance = new Plugin( editor );
+
+				if ( typeof instance.init === 'function' ) {
+					await instance.init();
+				}
+			} else {
+				// Plain function plugin (e.g. a Vue wrapper)
+				// eslint-disable-next-line new-cap
+				Plugin( editor );
+			}
+		}
+
+		// Simulate the asynchronous editor lifecycle before firing 'ready'
+		await Promise.resolve();
+
+		editor.fire( 'ready' );
+
+		return editor;
 	}
 
 	public destroy(): Promise<void> {
+		this.fire( 'destroy' );
 		return Promise.resolve();
 	}
 
@@ -78,3 +133,6 @@ export class MockEditor {
 	}
 }
 
+export class ModelDocument extends SimpleEmitter {}
+
+export class ViewDocument extends SimpleEmitter {}
