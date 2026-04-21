@@ -31,6 +31,9 @@ After cloning this repository, install necessary dependencies:
 pnpm install
 ```
 
+If you need to run tests or demos with a commercial license, copy `.env.example` to `.env` and fill in the required `CKEDITOR_*` variables.
+Keep `.env` local only. In CI, provide the same value via the `CKEDITOR_LICENSE_KEY` environment variable.
+
 ### Running the development server
 
 To manually test the editor integration, you can start the development server using one of the commands below:

@@ -3,4 +3,4 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-window.CKEDITOR_GLOBAL_LICENSE_KEY = 'GPL';
+window.CKEDITOR_GLOBAL_LICENSE_KEY = import.meta.env.CKEDITOR_LICENSE_KEY || 'GPL';
