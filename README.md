@@ -44,10 +44,29 @@ pnpm run dev
 
 ### Executing tests
 
-To test the editor integration against a set of automated tests, run the following command:
+To run the full automated test suite, use:
 
 ```bash
 pnpm run test
+```
+
+To run only the real-editor integration test used by the CI version matrix, use:
+
+```bash
+pnpm run test:integration
+```
+
+This command runs against the `ckeditor5` packages currently installed in `node_modules`.
+After a regular `pnpm install`, that means the default dependency versions from `package.json`, not the LTS version from the CI matrix.
+
+To reproduce an LTS matrix run locally, copy `.env.example` to `.env`, fill in `CKEDITOR_LICENSE_KEY`, and then install the matching `lts-v*` packages:
+
+```bash
+cp .env.example .env
+# fill in CKEDITOR_LICENSE_KEY in .env
+
+pnpm add -D ckeditor5@lts-v47 ckeditor5-premium-features@lts-v47
+pnpm run test:integration
 ```
 
 If you want to run the tests in watch mode, use the following command:
