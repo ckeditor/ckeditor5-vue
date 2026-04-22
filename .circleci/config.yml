@@ -175,6 +175,7 @@ jobs:
             then
               echo "Skipping duplicated integration run because ${EDITOR_VERSION_TAG} and latest resolve to the same major version."
               circleci-agent step halt
+              exit 0
             fi
       - run:
           name: Verify license key
