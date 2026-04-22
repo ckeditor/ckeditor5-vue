@@ -10,6 +10,8 @@ import { CkeditorPlugin } from '../../src/plugin.js';
 
 describe( 'CKEditor plugin', () => {
 	it( 'should work with an actual editor build', async () => {
+		const consoleErrorSpy = vi.spyOn( console, 'error' );
+
 		class TestEditor extends ClassicEditor {
 			public static builtinPlugins = [
 				Essentials,
@@ -54,6 +56,15 @@ describe( 'CKEditor plugin', () => {
 		expect( instance ).toBeInstanceOf( TestEditor );
 		expect( instance!.getData() ).toBe( '<p>foo</p>' );
 
+		const ckeditorErrors = consoleErrorSpy.mock.calls.filter(
+			args => args.some( arg => String( arg ).includes( 'CKEditorError' ) )
+		);
+
+		const errorMessage = 'CKEditorError was logged — check if the license key is valid for the installed CKEditor packages.';
+
+		expect( ckeditorErrors, errorMessage ).toHaveLength( 0 );
+
+		consoleErrorSpy.mockRestore();
 		wrapper.unmount();
 	} );
 } );
