@@ -17,6 +17,8 @@ export default defineConfig( {
 		vue()
 	],
 
+	envPrefix: 'CKEDITOR_',
+
 	build: {
 		minify: false,
 		sourcemap: true,

@@ -82,6 +82,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build && vue-tsc --emitDeclarationOnly",
     "test": "vitest run --coverage",
+    "test:integration": "vitest run tests/plugin/integration.test.ts",
     "test:watch": "vitest --ui --watch",
     "test:check:types": "tsc --noEmit -p ./tests/tsconfig.json",
     "test:scripts": "vitest --config ./scripts-tests/vitest.config.mjs --run",
