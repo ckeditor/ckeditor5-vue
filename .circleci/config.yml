@@ -186,6 +186,7 @@ jobs:
               if [[ -z ${CODECOV_TOKEN} ]]; then
                 echo "Skipping the << parameters.ckeditorDistTag >> integration run because CKEDITOR_LICENSE_KEY is not available in this community environment."
                 circleci-agent step halt
+                exit 0
               fi
 
               echo "Failing the << parameters.ckeditorDistTag >> integration run because CKEDITOR_LICENSE_KEY is required in this environment."
