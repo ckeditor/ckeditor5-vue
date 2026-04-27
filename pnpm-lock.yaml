@@ -5,9 +5,10 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  serialize-javascript@^6: ^7.0.5
-  minimatch@^9: 9.0.7
   diff@^7: ^8.0.3
+  minimatch@^9: 9.0.7
+  serialize-javascript@^6: ^7.0.5
+  uuid@^9: ^14.0.0
 
 importers:
 
@@ -4464,8 +4465,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+  uuid@14.0.0:
+    resolution: {integrity: sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==}
     hasBin: true
 
   validate-npm-package-name@6.0.2:
@@ -4881,7 +4882,7 @@ snapshots:
       socket.io-client: 4.7.0
       socket.io-parser: 4.2.6
       url-parse: 1.5.10
-      uuid: 9.0.1
+      uuid: 14.0.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -10487,7 +10488,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@9.0.1: {}
+  uuid@14.0.0: {}
 
   validate-npm-package-name@6.0.2: {}
 
