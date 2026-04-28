@@ -24,8 +24,8 @@ Changelog
   <ckeditor
     :watchdog-config="{
       crashNumberLimit: 5,
-      minimumTimeBetweenCrashes: 1000,
-      // any other Watchdog options...
+      minimumNonErrorTimePeriod: 1000,
+      saveInterval: 2000
     }"
     ...
   />
