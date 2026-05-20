@@ -38,14 +38,14 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^55.4.0",
-    "@ckeditor/ckeditor5-dev-changelog": "^55.4.0",
-    "@ckeditor/ckeditor5-dev-ci": "^55.4.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^55.4.0",
-    "@ckeditor/ckeditor5-dev-utils": "^55.4.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^55.6.0",
+    "@ckeditor/ckeditor5-dev-changelog": "^55.6.0",
+    "@ckeditor/ckeditor5-dev-ci": "^55.6.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^55.6.0",
+    "@ckeditor/ckeditor5-dev-utils": "^55.6.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^6.0.5",
-    "@vitest/browser-webdriverio": "^4.1.2",
+    "@vitest/browser-webdriverio": "^4.1.6",
     "@vitest/coverage-istanbul": "^4.1.2",
     "@vitest/coverage-v8": "^4.1.2",
     "@vitest/ui": "^4.1.2",
@@ -70,7 +70,7 @@
     "vue": "^3.4.30",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^2.1.6",
-    "webdriverio": "^9.27.0"
+    "webdriverio": "^9.27.1"
   },
   "engines": {
     "node": ">=24.11.0",
