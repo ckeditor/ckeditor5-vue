@@ -228,6 +228,249 @@ describe( 'CKEditor component', () => {
 			} );
 		} );
 
+		describe( '#editorElement (rendered element definition)', () => {
+			describe( 'using tagName only (no element in config)', () => {
+				it( 'should render a "div" element by default', () => {
+					const component = mountComponent();
+
+					expect( component.vm.$el.tagName ).to.equal( 'DIV' );
+
+					component.unmount();
+				} );
+
+				it( 'should render the element specified by tagName prop', () => {
+					const component = mountComponent( {
+						tagName: 'section'
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'SECTION' );
+
+					component.unmount();
+				} );
+
+				it( 'should ignore config.root.element for ClassicEditor and use tagName instead', () => {
+					vi.spyOn( MockEditor, 'editorName', 'get' ).mockReturnValue( 'ClassicEditor' );
+
+					const component = mountComponent( {
+						tagName: 'section',
+						config: {
+							root: { element: 'article' }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'SECTION' );
+
+					component.unmount();
+				} );
+
+				it( 'should ignore config.roots.main.element for ClassicEditor and use tagName instead', () => {
+					vi.spyOn( MockEditor, 'editorName', 'get' ).mockReturnValue( 'ClassicEditor' );
+
+					const component = mountComponent( {
+						tagName: 'textarea',
+						config: {
+							roots: { main: { element: 'article' } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'TEXTAREA' );
+
+					component.unmount();
+				} );
+			} );
+
+			describe( 'using config.root.element or config.roots.main.element (non-ClassicEditor)', () => {
+				beforeEach( () => {
+					vi.spyOn( MockEditor, 'editorName', 'get' ).mockReturnValue( 'DecoupledEditor' );
+				} );
+
+				it( 'should fall back to tagName when editorName is set but neither config.root.element ' +
+						'nor config.roots.main.element is provided', () => {
+					const component = mountComponent( {
+						tagName: 'section',
+						config: {
+							foo: 'bar'
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'SECTION' );
+
+					component.unmount();
+				} );
+
+				it( 'should fall back to default "div" tagName when editorName is set but config has no element definition', () => {
+					const component = mountComponent();
+
+					expect( component.vm.$el.tagName ).to.equal( 'DIV' );
+
+					component.unmount();
+				} );
+
+				it( 'should render the element specified by config.root.element as a string', () => {
+					const component = mountComponent( {
+						config: {
+							root: { element: 'article' }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'ARTICLE' );
+
+					component.unmount();
+				} );
+
+				it( 'should render the element specified by config.roots.main.element as a string', () => {
+					const component = mountComponent( {
+						config: {
+							roots: { main: { element: 'section' } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'SECTION' );
+
+					component.unmount();
+				} );
+
+				it( 'should render the element specified by config.root.element as an object with name', () => {
+					const component = mountComponent( {
+						config: {
+							root: { element: { name: 'main' } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'MAIN' );
+
+					component.unmount();
+				} );
+
+				it( 'should render the element specified by config.roots.main.element as an object with name', () => {
+					const component = mountComponent( {
+						config: {
+							roots: { main: { element: { name: 'main' } } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'MAIN' );
+
+					component.unmount();
+				} );
+
+				it( 'should prefer config.roots.main.element over config.root.element when both are set', () => {
+					const component = mountComponent( {
+						config: {
+							root: { element: 'section' },
+							roots: { main: { element: 'article' } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'ARTICLE' );
+
+					component.unmount();
+				} );
+
+				it( 'should apply classes from config.root.element object definition', () => {
+					const component = mountComponent( {
+						config: {
+							root: {
+								element: {
+									name: 'div',
+									classes: [ 'my-editor', 'custom-class' ]
+								}
+							}
+						}
+					} );
+
+					expect( component.vm.$el.classList.contains( 'my-editor' ) ).to.be.true;
+					expect( component.vm.$el.classList.contains( 'custom-class' ) ).to.be.true;
+
+					component.unmount();
+				} );
+
+				it( 'should apply inline styles from config.root.element object definition', () => {
+					const component = mountComponent( {
+						config: {
+							root: {
+								element: {
+									name: 'div',
+									styles: { color: 'red', 'font-size': '16px' }
+								}
+							}
+						}
+					} );
+
+					expect( component.vm.$el.style.color ).to.equal( 'red' );
+					expect( component.vm.$el.style.fontSize ).to.equal( '16px' );
+
+					component.unmount();
+				} );
+
+				it( 'should apply additional DOM attributes from config.root.element object definition', () => {
+					const component = mountComponent( {
+						config: {
+							root: {
+								element: {
+									name: 'div',
+									attributes: {
+										'data-testid': 'editor-container',
+										role: 'textbox'
+									}
+								}
+							}
+						}
+					} );
+
+					expect( component.vm.$el.getAttribute( 'data-testid' ) ).to.equal( 'editor-container' );
+					expect( component.vm.$el.getAttribute( 'role' ) ).to.equal( 'textbox' );
+
+					component.unmount();
+				} );
+			} );
+
+			describe( 'when both tagName and config element definition are provided', () => {
+				beforeEach( () => {
+					vi.spyOn( MockEditor, 'editorName', 'get' ).mockReturnValue( 'DecoupledEditor' );
+				} );
+
+				it( 'should use config.root.element string over tagName', () => {
+					const component = mountComponent( {
+						tagName: 'textarea',
+						config: {
+							root: { element: 'section' }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'SECTION' );
+
+					component.unmount();
+				} );
+
+				it( 'should use config.roots.main.element string over tagName', () => {
+					const component = mountComponent( {
+						tagName: 'textarea',
+						config: {
+							roots: { main: { element: 'section' } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'SECTION' );
+
+					component.unmount();
+				} );
+
+				it( 'should use config.root.element object name over tagName', () => {
+					const component = mountComponent( {
+						tagName: 'textarea',
+						config: {
+							root: { element: { name: 'article' } }
+						}
+					} );
+
+					expect( component.vm.$el.tagName ).to.equal( 'ARTICLE' );
+
+					component.unmount();
+				} );
+			} );
+		} );
+
 		describe( 'isReadOnly', () => {
 			it( 'should be empty when editor is not set to read only mode', async () => {
 				const component = mountComponent();
@@ -726,6 +969,56 @@ describe( 'CKEditor component', () => {
 		} );
 
 		describe( '#error', () => {
+			it( 'should emit #error when editor element ref is not available after mount', async () => {
+				const component = mount( Ckeditor, {
+					props: {
+						editor: MockEditor as any
+					},
+					global: {
+						stubs: {
+							EditorElement: {
+								template: '<div></div>'
+							}
+						}
+					}
+				} );
+
+				await timeout( 0 );
+
+				expect( component.emitted().error ).toBeDefined();
+				expect( component.emitted().error.length ).to.equal( 1 );
+				expect( component.emitted().error[ 0 ]![ 0 ] ).to.be.instanceOf( Error );
+				expect( component.emitted().error[ 0 ]![ 0 ].message ).to.include( 'Editor element is not available' );
+				expect( component.emitted().error[ 0 ]![ 1 ] ).to.deep.equal( { phase: 'initialization' } );
+
+				component.unmount();
+			} );
+
+			it( 'should print error to console when editor element ref is not available and no error listener is provided', async () => {
+				const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+
+				const component = mount( Ckeditor, {
+					props: {
+						editor: MockEditor as any
+					},
+					global: {
+						stubs: {
+							EditorElement: {
+								template: '<div></div>'
+							}
+						}
+					}
+				} );
+
+				await timeout( 0 );
+
+				expect( consoleError ).toHaveBeenCalledOnce();
+				expect( consoleError.mock.calls[ 0 ][ 0 ] ).to.be.instanceOf( Error );
+				expect( consoleError.mock.calls[ 0 ][ 0 ].message ).to.include( 'Editor element is not available' );
+
+				component.unmount();
+			} );
+
 			it( 'should emit #error when editor fails to initialize', async () => {
 				const error = new Error( 'test' );
 				const component = mountComponent( {
