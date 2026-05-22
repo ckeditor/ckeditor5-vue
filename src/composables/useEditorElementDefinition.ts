@@ -21,8 +21,9 @@ export function useEditorElementDefinition(
 ): ComputedRef<EditorElementDefinition> {
 	return computed<EditorElementDefinition>( () => {
 		const _config = toValue( config );
+		const _Editor = toValue( Editor );
 
-		if ( Editor.editorName && Editor.editorName !== 'ClassicEditor' ) {
+		if ( _Editor.editorName && _Editor.editorName !== 'ClassicEditor' ) {
 			const customElementDefinition = _config.roots?.main?.element ?? _config.root?.element;
 
 			if ( customElementDefinition ) {
@@ -35,7 +36,7 @@ export function useEditorElementDefinition(
 }
 
 type Options = {
-	Editor: EditorWithWatchdogRelaxedConstructor;
+	Editor: MaybeRefOrGetter<EditorWithWatchdogRelaxedConstructor>;
 	config: MaybeRefOrGetter<EditorRelaxedConfig>;
 	defaultElementName: MaybeRefOrGetter<string>;
 };

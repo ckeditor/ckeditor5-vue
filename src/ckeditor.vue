@@ -84,9 +84,9 @@ const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
 } );
 
 const elementDefinition = useEditorElementDefinition({
-	Editor: props.editor,
-	config: props.config,
-	defaultElementName: props.tagName
+	Editor: () => props.editor,
+	config: () => props.config,
+	defaultElementName: () => props.tagName
 });
 
 useEditorVersionCheck();
