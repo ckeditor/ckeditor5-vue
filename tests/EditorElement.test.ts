@@ -117,6 +117,25 @@ describe( 'EditorElement component', () => {
 				wrapper.unmount();
 			} );
 
+			it( 'should normalize kebab-case styles to camelCase', () => {
+				const definition: EditorElementObjectDefinition = {
+					name: 'div',
+					styles: {
+						'background-color': 'blue',
+						'font-size': '16px',
+						'z-index': '10'
+					}
+				};
+				const wrapper = mount( EditorElement, { props: { definition } } );
+				const el = wrapper.element as HTMLElement;
+
+				expect( el.style.backgroundColor ).to.equal( 'blue' );
+				expect( el.style.fontSize ).to.equal( '16px' );
+				expect( el.style.zIndex ).to.equal( '10' );
+
+				wrapper.unmount();
+			} );
+
 			it( 'should apply no inline styles when `styles` is not provided', () => {
 				const definition: EditorElementObjectDefinition = { name: 'div' };
 				const wrapper = mount( EditorElement, { props: { definition } } );
