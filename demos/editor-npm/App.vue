@@ -67,7 +67,6 @@ const config = reactive( {
 	toolbar: [ 'heading', '|', 'bold', 'italic' ]
 } );
 
-
 // Methods
 function setEditorData() {
 	data.value = editorInstance.value?.getData() ?? '';
