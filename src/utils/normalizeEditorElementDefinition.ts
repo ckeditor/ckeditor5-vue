@@ -13,7 +13,7 @@ export function normalizeEditorElementDefinition( definition: EditorElementDefin
 	if ( typeof HTMLElement !== 'undefined' && definition instanceof HTMLElement ) {
 		throw new Error(
 			'An HTMLElement cannot be used as an editor element definition. ' +
-			'Please pass a string, a Vue component, or an object definition.'
+			'Please pass a string or an object definition.'
 		);
 	}
 
