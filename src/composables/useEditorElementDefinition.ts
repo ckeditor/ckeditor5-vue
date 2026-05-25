@@ -4,10 +4,14 @@
  */
 
 import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue';
-import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
+import { kebabToCamelCase, mapObjectKeys, type EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
 
 import type { EditorWithWatchdogRelaxedConstructor } from '../types.js';
-import type { EditorElementDefinition } from '../utils/normalizeEditorElementDefinition.js';
+import {
+	normalizeEditorElementDefinition,
+	type EditorElementObjectDefinition,
+	type EditorElementDefinition
+} from '../utils/normalizeEditorElementDefinition.js';
 
 /**
  * Picks editor element definition from config if provided.
@@ -18,20 +22,27 @@ export function useEditorElementDefinition(
 		config,
 		defaultElementName
 	}: Options
-): ComputedRef<EditorElementDefinition> {
-	return computed<EditorElementDefinition>( () => {
+): ComputedRef<EditorElementObjectDefinition> {
+	return computed( () => {
 		const _config = toValue( config );
 		const _Editor = toValue( Editor );
+
+		let definition: EditorElementDefinition = toValue( defaultElementName );
 
 		if ( _Editor.editorName && _Editor.editorName !== 'ClassicEditor' ) {
 			const customElementDefinition = _config.roots?.main?.element ?? _config.root?.element;
 
 			if ( customElementDefinition ) {
-				return customElementDefinition;
+				definition = customElementDefinition;
 			}
 		}
 
-		return toValue( defaultElementName );
+		const { styles, ...normalizedDefinition } = normalizeEditorElementDefinition( definition );
+
+		return {
+			...normalizedDefinition,
+			styles: styles && mapObjectKeys( styles, kebabToCamelCase )
+		};
 	} );
 }
 
