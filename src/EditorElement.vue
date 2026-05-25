@@ -5,9 +5,9 @@
 
 <script setup lang="ts">
 import { computed, ref, toValue } from 'vue';
-import { kebabToCamelCase, mapObjectKeys } from '@ckeditor/ckeditor5-integrations-common';
 
 import { type EditorElementDefinition, normalizeEditorElementDefinition } from './utils/normalizeEditorElementDefinition.js';
+import { normalizeStylesMap } from './utils/normalizeStylesMap.js';
 
 const props = withDefaults(
 	defineProps<{
@@ -27,9 +27,9 @@ const definition = computed( () =>
 );
 
 const mappedStyles = computed( () => {
-	const styles = toValue( definition ).styles;
+	const { styles } = toValue( definition );
 
-	return styles && mapObjectKeys( styles, kebabToCamelCase );
+	return normalizeStylesMap( styles ?? {} );
 } );
 </script>
 
