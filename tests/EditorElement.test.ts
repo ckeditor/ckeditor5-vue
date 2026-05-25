@@ -145,6 +145,21 @@ describe( 'EditorElement component', () => {
 
 				wrapper.unmount();
 			} );
+
+			it( 'should support CSS variables', () => {
+				const definition: EditorElementObjectDefinition = {
+					name: 'div',
+					styles: {
+						'--cke-test': 'blue'
+					}
+				};
+				const wrapper = mount( EditorElement, { props: { definition } } );
+				const el = wrapper.element as HTMLElement;
+
+				expect( el.style.cssText ).to.equal( '--cke-test: blue;' );
+
+				wrapper.unmount();
+			} );
 		} );
 
 		describe( '#attributes', () => {
