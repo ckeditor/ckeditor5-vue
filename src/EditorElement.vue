@@ -4,10 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref, toValue } from 'vue';
+import { computed, ref } from 'vue';
 
 import { type EditorElementDefinition, normalizeEditorElementDefinition } from './utils/normalizeEditorElementDefinition.js';
-import { normalizeStylesMap } from './utils/normalizeStylesMap.js';
 
 const props = withDefaults(
 	defineProps<{
@@ -25,12 +24,6 @@ defineExpose( { elementRef } );
 const definition = computed( () =>
 	normalizeEditorElementDefinition( props.definition ?? 'div' )
 );
-
-const mappedStyles = computed( () => {
-	const { styles } = toValue( definition );
-
-	return normalizeStylesMap( styles ?? {} );
-} );
 </script>
 
 <template>
@@ -39,6 +32,6 @@ const mappedStyles = computed( () => {
     ref="elementRef"
     v-bind="definition.attributes"
     :class="definition.classes"
-    :style="mappedStyles"
+    :style="definition.styles"
   />
 </template>
