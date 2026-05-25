@@ -101,7 +101,7 @@ describe( 'normalizeEditorElementDefinition()', () => {
 
 			expect( () => normalizeEditorElementDefinition( element as any ) ).to.throw(
 				'An HTMLElement cannot be used as an editor element definition. ' +
-				'Please pass a string, a Vue component, or an object definition.'
+				'Please pass a string or an object definition.'
 			);
 		} );
 
