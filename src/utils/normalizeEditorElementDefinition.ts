@@ -27,7 +27,7 @@ export function normalizeEditorElementDefinition( definition: EditorElementDefin
 }
 
 /**
- * Defines an editor element. It can be a basic Vue component type or a detailed configuration object.
+ * Defines an editor element. It can be a tag name string or a detailed configuration object.
  */
 export type EditorElementDefinition = string | EditorElementObjectDefinition;
 
@@ -38,7 +38,7 @@ export type EditorElementDefinition = string | EditorElementObjectDefinition;
 export type EditorElementObjectDefinition = {
 
 	/**
-     * The DOM tag name or React component to use.
+     * The DOM tag name to use.
      */
 	name: string;
 
