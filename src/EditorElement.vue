@@ -4,16 +4,33 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type {  EditorElementObjectDefinition } from './utils/normalizeEditorElementDefinition.js';
+import { computed, ref, toValue } from 'vue';
+import { kebabToCamelCase, mapObjectKeys } from '@ckeditor/ckeditor5-integrations-common';
 
-const { definition } = defineProps<{
-	definition: EditorElementObjectDefinition;
-}>();
+import { type EditorElementDefinition, normalizeEditorElementDefinition } from './utils/normalizeEditorElementDefinition.js';
+
+const props = withDefaults(
+	defineProps<{
+		definition?: EditorElementDefinition | null;
+	}>(),
+	{
+		definition: null
+	}
+);
 
 const elementRef = ref<HTMLElement>();
 
 defineExpose( { elementRef } );
+
+const definition = computed( () =>
+	normalizeEditorElementDefinition( props.definition ?? 'div' )
+);
+
+const mappedStyles = computed( () => {
+	const styles = toValue( definition ).styles;
+
+	return styles && mapObjectKeys( styles, kebabToCamelCase );
+} );
 </script>
 
 <template>
@@ -22,6 +39,6 @@ defineExpose( { elementRef } );
     ref="elementRef"
     v-bind="definition.attributes"
     :class="definition.classes"
-    :style="definition.styles"
+    :style="mappedStyles"
   />
 </template>
