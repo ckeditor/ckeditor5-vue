@@ -1,7 +1,7 @@
 <template>
-  <component
-    :is="tagName"
-    ref="element"
+  <editor-element
+    ref="editorElementRef"
+    :definition="elementDefinition"
   />
 </template>
 
@@ -43,6 +43,8 @@ import { EditorLifecycleEvents, useEditorLifecycleEvents } from './composables/u
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
+import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
+import EditorElement from './EditorElement.vue';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
 
@@ -70,7 +72,7 @@ const emit = defineEmits<
 const currentInstance = getCurrentInstance();
 const hasErrorHandler = () => !!currentInstance?.vnode.props?.onError;
 
-const element = ref<HTMLElement>();
+const editorElementRef = ref<InstanceType<typeof EditorElement>>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 
@@ -80,6 +82,12 @@ const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
 	emit,
 	instance
 } );
+
+const elementDefinition = useEditorElementDefinition({
+	Editor: () => props.editor,
+	config: () => props.config,
+	defaultElementName: () => props.tagName
+});
 
 useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
@@ -112,10 +120,16 @@ onMounted( async () => {
 	}
 
 	try {
+		const domElement = editorElementRef.value?.elementRef;
+
+		if ( !domElement ) {
+			throw new Error( 'Editor element is not available. Make sure the component is mounted.' );
+		}
+
 		const editor = await (
 			supports.elementConfigAttachment ?
-				Constructor.create( assignElementToEditorConfig( Constructor, element.value!, editorConfig ) ) :
-				Constructor.create( element.value, editorConfig )
+				Constructor.create( assignElementToEditorConfig( Constructor, domElement, editorConfig ) ) :
+				Constructor.create( domElement, editorConfig )
 		) as unknown as EditorWithAttachedWatchdog<TEditor>;
 
 		if ( isUnmounted.value ) {
@@ -160,7 +174,7 @@ onMounted( async () => {
 					console.error( err );
 				}
 
-				if  ( !isUnmounted.value ) {
+				if ( !isUnmounted.value ) {
 					instance.value = markRaw( watchdog.editor! as TEditor );
 
 					// Rewind vue model back to old working state.

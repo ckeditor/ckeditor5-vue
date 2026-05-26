@@ -20,11 +20,15 @@ import type { Editor, EditorConfig, EditorWatchdog, WatchdogConfig } from 'ckedi
 export interface Props<TEditorConstructor> {
 	editor: TEditorConstructor;
 	config?: EditorConfig;
-	tagName?: string;
 	disabled?: boolean;
 	disableTwoWayDataBinding?: boolean;
 	watchdogConfig?: WatchdogConfig;
 	disableWatchdog?: boolean;
+
+	/**
+	 * @deprecated Use `config.root.element` (or `config.roots.main.element`) instead.
+	 */
+	tagName?: string;
 }
 
 /**

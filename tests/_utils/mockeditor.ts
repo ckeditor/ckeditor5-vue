@@ -37,6 +37,8 @@ export class MockEditor extends SimpleEmitter {
 	 */
 	public static EditorWatchdog = MockWatchdog;
 
+	public static editorName = 'ClassicEditor';
+
 	public readonly element: HTMLElement | undefined;
 	public readonly config: EditorConfigAccessor;
 
