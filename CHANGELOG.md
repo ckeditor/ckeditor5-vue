@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [8.1.1](https://github.com/ckeditor/ckeditor5-vue/compare/v8.1.0...v8.1.1) (June 9, 2026)
+
+### Bug fixes
+
+* Fixed a crash when using `InlineEditor` with the `CKEditor` component and CKEditor 5 `>= 48.0.0`. Closes [#422](https://github.com/ckeditor/ckeditor5-vue/issues/422).
+
+
 ## [8.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v8.0.0...v8.1.0) (June 8, 2026)
 
 ### Features
@@ -127,13 +134,6 @@ Changelog
 ### Bug fixes
 
 * Fixed an issue where the editor's alpha version was being compared incorrectly.
-
-
-## [7.4.1](https://github.com/ckeditor/ckeditor5-vue/compare/v7.4.0...v7.4.1) (April 13, 2026)
-
-### Other changes
-
-* Improved compatibility with the latest CKEditor 48.x. Closes [#400](https://github.com/ckeditor/ckeditor5-vue/issues/400).
 
 ---
 
