@@ -1304,6 +1304,24 @@ describe( 'CKEditor component', () => {
 				watchdog.simulateError( new Error( 'test' ), true );
 			} ).not.to.throw();
 		} );
+
+		it( 'should properly forward `editorName` of the editor used in watchdog', async () => {
+			class NamedEditor extends MockEditor {
+				public static get editorName(): string {
+					return 'CustomEditor';
+				}
+			}
+
+			const component = mountComponent( {
+				editor: NamedEditor
+			} );
+
+			await timeout( 0 );
+
+			const firstInstance = component.vm.instance;
+
+			expect( ( firstInstance?.constructor as typeof NamedEditor ).editorName ).to.equal( 'CustomEditor' );
+		} );
 	} );
 } );
 
