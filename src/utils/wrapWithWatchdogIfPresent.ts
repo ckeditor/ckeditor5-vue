@@ -47,6 +47,7 @@ export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
 
 	return {
 		...Editor,
+		editorName: Editor.editorName,
 		create: async ( ...args: Parameters<typeof watchdog.create> ) => {
 			await watchdog.create( ...args );
 

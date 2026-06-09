@@ -5,6 +5,8 @@
 
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
+
 import { Ckeditor } from '../src/plugin.js';
 import { VueIntegrationUsageDataPlugin } from '../src/plugins/VueIntegrationUsageDataPlugin.js';
 import { MockWatchdog } from './_utils/mockwatchdog.js';
@@ -1303,6 +1305,32 @@ describe( 'CKEditor component', () => {
 			expect( () => {
 				watchdog.simulateError( new Error( 'test' ), true );
 			} ).not.to.throw();
+		} );
+
+		it( 'should properly forward `editorName` of the editor used in watchdog', async () => {
+			vi.stubGlobal( 'CKEDITOR_VERSION', '48.2.0' );
+
+			let passedConfig!: EditorRelaxedConfig;
+
+			class NamedEditor extends MockEditor {
+				public static get editorName(): string {
+					return 'InlineEditor';
+				}
+
+				public static override create( config: EditorRelaxedConfig ): Promise<NamedEditor> {
+					passedConfig = config;
+					return super.create( config ) as Promise<NamedEditor>;
+				}
+			}
+
+			const component = mountComponent( { editor: NamedEditor } );
+
+			await vi.waitFor( () => {
+				const firstInstance = component.vm.instance;
+
+				expect( ( firstInstance?.constructor as typeof NamedEditor ).editorName ).to.equal( 'InlineEditor' );
+				expect( passedConfig.roots?.main?.element ).to.be.instanceOf( HTMLDivElement );
+			} );
 		} );
 	} );
 } );
