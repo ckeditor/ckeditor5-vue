@@ -1,6 +1,57 @@
 Changelog
 =========
 
+## [8.1.0](https://github.com/ckeditor/ckeditor5-vue/compare/v8.0.0...v8.1.0) (June 8, 2026)
+
+### Features
+
+* Added support for the paragraph-like editor feature. It is now possible to customize the editable element's tag name, classes, styles, and attributes by passing `config.root.element` or `config.roots.main.element` through the integration.
+
+  The configuration value can be a plain string (tag name) or an object:
+
+  ```html
+  <template>
+      <ckeditor :editor="BalloonEditor" :config="config" />
+  </template>
+
+  <script setup>
+  import { BalloonEditor } from 'ckeditor5';
+
+  const config = {
+      root: {
+          element: {
+              name: 'article',
+              classes: [ 'my-editor', 'custom-class' ],
+              styles: { color: 'red' },
+              attributes: { role: 'textbox' }
+          }
+      }
+  };
+  </script>
+  ```
+
+  To configure the root as a paragraph-like (inline-content only) editor, also pass `modelElement: '$inlineRoot'`:
+
+  ```js
+  const config = {
+      root: {
+          element: 'h1',
+          modelElement: '$inlineRoot',
+          initialData: 'Document title',
+          placeholder: 'Enter title...'
+      }
+  };
+  ```
+
+  For editors that use the Vue-rendered element as their editable (such as Inline or Balloon editor), the editable falls back to the `tagName` prop (`div` by default) when no element definition is provided in the config. For the Classic editor, which creates its own editable internally, `config.root.element` (or `config.roots.main.element`) should always be provided explicitly.
+
+  The `tagName` property has been deprecated in favor of this new configuration.
+
+### Other changes
+
+* Readme simplification.
+
+
 ## [8.0.0](https://github.com/ckeditor/ckeditor5-vue/compare/v8.0.0-alpha.0...v8.0.0) (May 5, 2026)
 
 ### BREAKING CHANGES
@@ -83,13 +134,6 @@ Changelog
 ### Other changes
 
 * Improved compatibility with the latest CKEditor 48.x. Closes [#400](https://github.com/ckeditor/ckeditor5-vue/issues/400).
-
-
-## [7.4.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.3.1...v7.4.0) (March 24, 2026)
-
-### Features
-
-* Added support for CKEditor 5 `48.0.0` and the new `roots` editor configuration. Closes [#397](https://github.com/ckeditor/ckeditor5-vue/issues/397).
 
 ---
 
