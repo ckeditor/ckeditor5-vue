@@ -8,6 +8,7 @@ import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-commo
 
 import type { EditorWithWatchdogRelaxedConstructor } from '../types.js';
 import type { EditorElementDefinition } from '../utils/normalizeEditorElementDefinition.js';
+import { isClassicEditor } from '../utils/isClassicEditor.js';
 
 /**
  * Picks editor element definition from config if provided.
@@ -23,7 +24,7 @@ export function useEditorElementDefinition(
 		const _config = toValue( config );
 		const _Editor = toValue( Editor );
 
-		if ( _Editor.editorName && _Editor.editorName !== 'ClassicEditor' ) {
+		if ( !isClassicEditor( _Editor ) ) {
 			const customElementDefinition = _config.roots?.main?.element ?? _config.root?.element;
 
 			if ( customElementDefinition ) {

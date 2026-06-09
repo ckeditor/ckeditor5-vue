@@ -45,6 +45,7 @@ import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
 import EditorElement from './EditorElement.vue';
+import { isClassicEditor } from './utils/isClassicEditor.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
 
@@ -167,7 +168,7 @@ onMounted( async () => {
 			watchdog.on( 'restart', () => {
 				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
 				try {
-					if ( instance.value ) {
+					if ( instance.value && isClassicEditor( Constructor ) ) {
 						cleanupOrphanEditorElements( instance.value );
 					}
 				} catch ( err ) {
