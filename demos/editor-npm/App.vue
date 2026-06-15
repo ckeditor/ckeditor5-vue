@@ -34,8 +34,9 @@
 
     <label>
       <input
-        v-model="isInline"
+        :checked="isInline"
         type="checkbox"
+        @change="toggleInlineMode"
       >
       Inline mode
     </label>
@@ -143,6 +144,14 @@ function setEditorData() {
 	data.value = editorInstance.value?.getData() ?? '';
 }
 
+function toggleInlineMode() {
+	if ( isTwoWayDataBindingDisabled.value && editorInstance.value ) {
+		data.value = editorInstance.value.getData();
+	}
+
+	isInline.value = !isInline.value;
+}
+
 function toggleTwoWayBinding() {
 	isTwoWayDataBindingDisabled.value = !isTwoWayDataBindingDisabled.value;
 }
@@ -170,6 +179,7 @@ function onInput( data: string, event: EventInfo | null, editor: ClassicEditor )
 }
 
 function onDestroy() {
+	editorInstance.value = null;
 	console.log( 'Editor destroyed.' );
 }
 </script>
