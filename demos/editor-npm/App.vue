@@ -2,10 +2,11 @@
   <h2>Using CKEditor 5 from NPM in Vue 3</h2>
 
   <ckeditor
+    :key="isInline ? 'inline' : 'block'"
     v-model="data"
     tag-name="textarea"
     :disable-two-way-data-binding="isTwoWayDataBindingDisabled"
-    :editor="TestEditor"
+    :editor="ClassicEditor"
     :config="config"
     :disabled="disabled"
     @ready="onReady"
@@ -15,20 +16,30 @@
     @destroy="onDestroy"
   />
 
-  <button @click="toggleEditorDisabled">
-    {{ disabled ? 'Enable' : 'Disable' }} editor
-  </button>
+  <div class="controls">
+    <button @click="toggleEditorDisabled">
+      {{ disabled ? 'Enable' : 'Disable' }} editor
+    </button>
 
-  <button @click="toggleTwoWayBinding">
-    {{ isTwoWayDataBindingDisabled ? 'Enable' : 'Disable' }} two way binding
-  </button>
+    <button @click="toggleTwoWayBinding">
+      {{ isTwoWayDataBindingDisabled ? 'Enable' : 'Disable' }} two way binding
+    </button>
 
-  <button
-    v-if="isTwoWayDataBindingDisabled"
-    @click="setEditorData"
-  >
-    Set editor data
-  </button>
+    <button
+      v-if="isTwoWayDataBindingDisabled"
+      @click="setEditorData"
+    >
+      Set editor data
+    </button>
+
+    <label>
+      <input
+        v-model="isInline"
+        type="checkbox"
+      >
+      Inline mode
+    </label>
+  </div>
 
   <h2>Live editor data</h2>
 
@@ -36,36 +47,96 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, computed } from 'vue';
 import {
 	ClassicEditor,
-	Essentials,
-	Paragraph,
-	Heading,
+	Autoformat,
+	BlockQuote,
 	Bold,
+	Code,
+	CodeBlock,
+	Essentials,
+	Heading,
+	HorizontalLine,
+	Indent,
+	IndentBlock,
 	Italic,
-	type EventInfo
+	Link,
+	List,
+	ListProperties,
+	Paragraph,
+	PasteFromOffice,
+	Strikethrough,
+	Table,
+	TableColumnResize,
+	TableToolbar,
+	TextTransformation,
+	Underline,
+	type EventInfo,
+	type EditorConfig
 } from 'ckeditor5';
 
-class TestEditor extends ClassicEditor {
-	static builtinPlugins = [
-		Essentials,
-		Paragraph,
-		Heading,
-		Bold,
-		Italic
-	];
-}
-
 // State
-const editorInstance = ref<TestEditor | null>( null );
+const editorInstance = ref<ClassicEditor | null>( null );
 const data = ref( '<p>Hello world!</p>' );
 const disabled = ref( false );
 const isTwoWayDataBindingDisabled = ref( false );
-const config = reactive( {
+const isInline = ref( false );
+
+const config = computed<EditorConfig>( () => ( {
 	licenseKey: 'GPL',
-	toolbar: [ 'heading', '|', 'bold', 'italic' ]
-} );
+	plugins: [
+		Autoformat,
+		BlockQuote,
+		Bold,
+		Code,
+		CodeBlock,
+		Essentials,
+		Heading,
+		HorizontalLine,
+		Indent,
+		IndentBlock,
+		Italic,
+		Link,
+		List,
+		ListProperties,
+		Paragraph,
+		PasteFromOffice,
+		Strikethrough,
+		Table,
+		TableColumnResize,
+		TableToolbar,
+		TextTransformation,
+		Underline
+	],
+	toolbar: {
+		items: [
+			'heading',
+			'|',
+			'bold', 'italic', 'underline', 'strikethrough', 'code',
+			'|',
+			'link', 'blockQuote', 'horizontalLine',
+			'|',
+			'bulletedList', 'numberedList',
+			'|',
+			'outdent', 'indent',
+			'|',
+			'insertTable', 'codeBlock'
+		],
+		shouldNotGroupWhenFull: true
+	},
+	table: {
+		contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells', 'tableColumnResize' ]
+	},
+	list: {
+		properties: {
+			styles: true,
+			startIndex: true,
+			reversed: true
+		}
+	},
+	root: { modelElement: isInline.value ? '$inlineRoot' : '$root' }
+} ) );
 
 // Methods
 function setEditorData() {
@@ -80,21 +151,21 @@ function toggleEditorDisabled() {
 	disabled.value = !disabled.value;
 }
 
-function onReady( editor: TestEditor ) {
+function onReady( editor: ClassicEditor ) {
 	editorInstance.value = editor;
 
 	console.log( 'Editor is ready.', { editor } );
 }
 
-function onFocus( event: EventInfo, editor: TestEditor ) {
+function onFocus( event: EventInfo, editor: ClassicEditor ) {
 	console.log( 'Editor focused.', { event, editor } );
 }
 
-function onBlur( event: EventInfo, editor: TestEditor ) {
+function onBlur( event: EventInfo, editor: ClassicEditor ) {
 	console.log( 'Editor blurred.', { event, editor } );
 }
 
-function onInput( data: string, event: EventInfo | null, editor: TestEditor ) {
+function onInput( data: string, event: EventInfo | null, editor: ClassicEditor ) {
 	console.log( 'Editor data input.', { event, editor, data } );
 }
 
@@ -116,7 +187,11 @@ textarea {
 	font-family: monospace;
 }
 
-button {
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
 	margin-top: 10px;
 }
 </style>
