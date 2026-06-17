@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils';
 import CkeditorMultiRoot from '../src/ckeditor-multiroot.vue';
 import CkeditorMultiRootEditable from '../src/multiroot/MultiRootEditorEditable.vue';
 import CkeditorMultiRootToolbar from '../src/multiroot/MultiRootEditorToolbar.vue';
+import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from '../src/multiroot/constants.js';
 import { CkeditorPlugin } from '../src/plugin.js';
 import { MockModelRootElement, MockMultiRootEditor } from './_utils/mockmultirooteditor.js';
 
@@ -251,7 +252,10 @@ describe( 'CKEditor multi-root component', () => {
 			rootsAttributes: {
 				...rootsAttributes,
 				outro: {
-					order: 30
+					order: 30,
+					[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: {
+						placeholder: 'Synced placeholder'
+					}
 				}
 			}
 		} );
@@ -259,6 +263,7 @@ describe( 'CKEditor multi-root component', () => {
 		await vi.waitFor( () => {
 			expect( addRoot ).toHaveBeenCalledWith( 'outro', expect.objectContaining( {
 				initialData: '<p>Outro</p>',
+				placeholder: 'Synced placeholder',
 				modelAttributes: { order: 30 }
 			} ) );
 			expect( component.vm.roots ).to.deep.equal( [ 'intro', 'content', 'outro' ] );
@@ -269,7 +274,10 @@ describe( 'CKEditor multi-root component', () => {
 				...rootsAttributes,
 				intro: {
 					order: 15,
-					section: 'lead'
+					section: 'lead',
+					[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: {
+						placeholder: 'Ignored placeholder'
+					}
 				},
 				outro: {
 					order: 30
@@ -351,6 +359,10 @@ describe( 'CKEditor multi-root component', () => {
 
 		const firstEditor = getEditor( component );
 		const watchdog = ( firstEditor as any )[ Symbol.for( 'vue-editor-watchdog' ) ];
+		const introElement = firstEditor.ui.getEditableElement( 'intro' )!;
+
+		introElement.setAttribute( 'contenteditable', 'true' );
+		introElement.classList.add( 'ck-focused' );
 
 		await watchdog.simulateError( error, true );
 
@@ -367,6 +379,8 @@ describe( 'CKEditor multi-root component', () => {
 
 		const restartedEditor = component.vm.instance;
 
+		expect( introElement.hasAttribute( 'contenteditable' ) ).to.be.false;
+		expect( introElement.classList.contains( 'ck-focused' ) ).to.be.false;
 		expect( component.emitted()[ 'update:modelValue' ]![ 0 ] ).to.deep.equal( [
 			rootsContent,
 			null,
@@ -444,6 +458,27 @@ describe( 'CKEditor multi-root component', () => {
 				}
 			}
 		} ) );
+
+		await component.setProps( {
+			rootsAttributes: {
+				...rootsAttributes,
+				intro: {
+					order: 15,
+					[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: {
+						placeholder: 'Legacy synced placeholder'
+					}
+				}
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( editor.getRootAttributes( 'intro' ) ).to.deep.equal( {
+				order: 15,
+				[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: {
+					placeholder: 'Legacy synced placeholder'
+				}
+			} );
+		} );
 
 		await component.setProps( {
 			modelValue: {

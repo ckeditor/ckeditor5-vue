@@ -38,6 +38,7 @@ import {
 import { appendUsageDataPluginToConfig } from '../plugins/VueIntegrationUsageDataPlugin.js';
 import { useIsUnmounted } from '../composables/useIsUnmounted.js';
 import { useEditorReadOnly } from '../composables/useEditorReadOnly.js';
+import { cleanupOrphanEditorElements } from '../utils/cleanupOrphanEditorElements.js';
 import {
 	destroyEditorWithWatchdog,
 	unwrapEditorWatchdog,
@@ -200,6 +201,11 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 				} );
 
 				watchdog.on( 'restart', () => {
+					/* istanbul ignore else -- @preserve - Restart is only handled after an editor instance is assigned. */
+					if ( instance.value ) {
+						cleanupOrphanEditorElements( instance.value );
+					}
+
 					/* istanbul ignore if -- @preserve - Restart without an editor or after unmount is a watchdog edge case. */
 					if ( isUnmounted.value || !watchdog.editor ) {
 						return;
@@ -508,8 +514,10 @@ function handleNewRoots(
 	for ( const rootName of rootNames ) {
 		const rootAttributes = rootsAttributes[ rootName ];
 		const rootData = data[ rootName ];
+		const { modelAttributes, editableOptions } = splitRootAttributes( rootAttributes );
+		const attributesToRegister = supports.rootsConfigEntry ? modelAttributes : rootAttributes;
 
-		for ( const key of Object.keys( rootAttributes ) ) {
+		for ( const key of Object.keys( attributesToRegister ) ) {
 			editor.registerRootAttribute( key );
 		}
 
@@ -520,9 +528,9 @@ function handleNewRoots(
 		if ( supports.rootsConfigEntry ) {
 			options = {
 				...options,
-				...rootAttributes[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ] as RootEditableOptionsAttribute | undefined,
+				...editableOptions,
 				initialData: rootData,
-				modelAttributes: rootAttributes
+				modelAttributes
 			};
 		} else {
 			options = {
@@ -557,10 +565,13 @@ function updateEditorAttributes(
 	rootNames: Array<string>,
 	rootsAttributes: MultiRootEditorRootsAttributes
 ) {
+	const supports = getInstalledCKBaseFeatures();
+
 	for ( const rootName of rootNames ) {
 		const rootAttributes = rootsAttributes[ rootName ];
+		const attributesToSet = supports.rootsConfigEntry ? splitRootAttributes( rootAttributes ).modelAttributes : rootAttributes;
 
-		for ( const key of Object.keys( rootAttributes ) ) {
+		for ( const key of Object.keys( attributesToSet ) ) {
 			editor.registerRootAttribute( key );
 		}
 
@@ -575,8 +586,23 @@ function updateEditorAttributes(
 			writer.removeAttribute( key, root );
 		}
 
-		writer.setAttributes( rootAttributes, root );
+		writer.setAttributes( attributesToSet, root );
 	}
+}
+
+function splitRootAttributes( rootAttributes: Record<string, unknown> ): {
+	modelAttributes: Record<string, unknown>;
+	editableOptions?: RootEditableOptionsAttribute;
+} {
+	const {
+		[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: editableOptions,
+		...modelAttributes
+	} = rootAttributes;
+
+	return {
+		modelAttributes,
+		editableOptions: editableOptions as RootEditableOptionsAttribute | undefined
+	};
 }
 
 function forceAssignFakeEditableElements( editor: MultiRootEditor ) {
