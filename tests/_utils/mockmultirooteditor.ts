@@ -313,16 +313,22 @@ function createEditingView() {
 
 function createUi( editor: MockMultiRootEditor ) {
 	const toolbarElement = document.createElement( 'div' );
+	const menuBarElement = document.createElement( 'div' );
 
 	toolbarElement.classList.add( 'ck-toolbar' );
+	menuBarElement.classList.add( 'ck-menu-bar' );
 
 	const view: {
 		toolbar: { element: HTMLElement };
+		menuBarView: { element: HTMLElement };
 		editables: Record<string, any>;
 		createEditable: ( name: string, element: HTMLElement, label?: string ) => Record<string, unknown>;
 	} = {
 		toolbar: {
 			element: toolbarElement
+		},
+		menuBarView: {
+			element: menuBarElement
 		},
 		editables: {},
 		createEditable: ( name: string, element: HTMLElement, label?: string ) => ( {

@@ -13,7 +13,7 @@
     :add-root="addRoot"
     :remove-root="removeRoot"
   >
-    <MultiRootEditorToolbar :editor="instance" />
+    <MultiRootEditorUI :editor="instance" />
     <MultiRootEditorEditable
       v-for="rootName in roots"
       :id="rootName"
@@ -33,7 +33,7 @@ import { getCurrentInstance } from 'vue';
 import type { CKEditorError, MultiRootEditor } from 'ckeditor5';
 import type { ExtractEditorType } from '@ckeditor/ckeditor5-integrations-common';
 
-import MultiRootEditorToolbar from './multiroot/MultiRootEditorToolbar.vue';
+import MultiRootEditorUI from './multiroot/MultiRootEditorUI.vue';
 import MultiRootEditorEditable from './multiroot/MultiRootEditorEditable.vue';
 import { useMultiRootEditor } from './multiroot/useMultiRootEditor.js';
 import type {

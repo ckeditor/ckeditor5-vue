@@ -8,7 +8,7 @@ import { mount } from '@vue/test-utils';
 
 import CkeditorMultiRoot from '../src/ckeditor-multiroot.vue';
 import CkeditorMultiRootEditable from '../src/multiroot/MultiRootEditorEditable.vue';
-import CkeditorMultiRootToolbar from '../src/multiroot/MultiRootEditorToolbar.vue';
+import CkeditorMultiRootUI from '../src/multiroot/MultiRootEditorUI.vue';
 import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from '../src/multiroot/constants.js';
 import { CkeditorPlugin } from '../src/plugin.js';
 import { MockModelRootElement, MockMultiRootEditor } from './_utils/mockmultirooteditor.js';
@@ -36,7 +36,7 @@ describe( 'CKEditor multi-root component', () => {
 		vi.unstubAllGlobals();
 	} );
 
-	it( 'should initialize a multi-root editor and render toolbar and editables', async () => {
+	it( 'should initialize a multi-root editor and render UI and editables', async () => {
 		const create = vi.spyOn( MockMultiRootEditor, 'create' );
 		const component = mountComponent();
 
@@ -45,6 +45,7 @@ describe( 'CKEditor multi-root component', () => {
 		expect( component.vm.instance ).to.be.instanceOf( MockMultiRootEditor );
 		expect( component.emitted().ready![ 0 ] ).to.deep.equal( [ component.vm.instance ] );
 		expect( component.find( '.ck-toolbar' ).exists() ).to.be.true;
+		expect( component.find( '.ck-menu-bar' ).exists() ).to.be.true;
 		expect( component.findAll( '.ck-editor__editable' ).length ).to.equal( 2 );
 		expect( create ).toHaveBeenCalledWith( expect.objectContaining( {
 			roots: {
@@ -831,12 +832,20 @@ describe( 'CKEditor multi-root component', () => {
 		expect( editor.editing.view.getDomRoot( 'intro' ) ).to.be.instanceOf( HTMLElement );
 	} );
 
-	it( 'should tolerate missing toolbar element and detached toolbar on unmount', async () => {
+	it( 'should tolerate missing UI elements and detached UI on unmount', async () => {
 		const toolbarElement = document.createElement( 'div' );
+		const menuBarElement = document.createElement( 'div' );
+
+		toolbarElement.classList.add( 'ck-toolbar' );
+		menuBarElement.classList.add( 'ck-menu-bar' );
+
 		const editorWithoutToolbar = {
 			ui: {
 				view: {
 					toolbar: {
+						element: null
+					},
+					menuBarView: {
 						element: null
 					}
 				}
@@ -847,17 +856,20 @@ describe( 'CKEditor multi-root component', () => {
 				view: {
 					toolbar: {
 						element: toolbarElement
+					},
+					menuBarView: {
+						element: menuBarElement
 					}
 				}
 			}
 		};
 
-		const emptyToolbar = mount( CkeditorMultiRootToolbar, {
+		const emptyUI = mount( CkeditorMultiRootUI, {
 			props: {
 				editor: editorWithoutToolbar as any
 			}
 		} );
-		const toolbar = mount( CkeditorMultiRootToolbar, {
+		const ui = mount( CkeditorMultiRootUI, {
 			props: {
 				editor: editorWithToolbar as any
 			}
@@ -865,9 +877,13 @@ describe( 'CKEditor multi-root component', () => {
 
 		await timeout( 0 );
 
+		expect( ui.find( '.ck-menu-bar' ).exists() ).to.be.true;
+		expect( ui.find( '.ck-toolbar' ).exists() ).to.be.true;
+
 		toolbarElement.remove();
-		expect( () => toolbar.unmount() ).not.to.throw();
-		expect( () => emptyToolbar.unmount() ).not.to.throw();
+		menuBarElement.remove();
+		expect( () => ui.unmount() ).not.to.throw();
+		expect( () => emptyUI.unmount() ).not.to.throw();
 	} );
 
 	it( 'should detach an already attached editable before re-attaching it', async () => {
@@ -916,7 +932,7 @@ describe( 'CKEditor multi-root component', () => {
 		CkeditorPlugin.install( app as any );
 
 		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRoot', expect.any( Object ) );
-		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRootToolbar', expect.any( Object ) );
+		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRootUI', expect.any( Object ) );
 		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRootEditable', expect.any( Object ) );
 	} );
 

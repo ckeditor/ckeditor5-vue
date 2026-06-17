@@ -89,7 +89,7 @@
 
       <br>
 
-      <CkeditorMultiRootToolbar :editor="currentEditor" />
+      <CkeditorMultiRootUI :editor="currentEditor" />
 
       <div
         v-for="[ row, rootNames ] in groupedRootRows"

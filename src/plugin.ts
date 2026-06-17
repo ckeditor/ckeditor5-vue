@@ -6,7 +6,7 @@
 import * as Vue from 'vue';
 import Ckeditor from './ckeditor.vue';
 import CkeditorMultiRoot from './ckeditor-multiroot.vue';
-import CkeditorMultiRootToolbar from './multiroot/MultiRootEditorToolbar.vue';
+import CkeditorMultiRootUI from './multiroot/MultiRootEditorUI.vue';
 import CkeditorMultiRootEditable from './multiroot/MultiRootEditorEditable.vue';
 
 /* istanbul ignore if -- @preserve */
@@ -27,7 +27,7 @@ const CkeditorPlugin = {
 	install( app: Vue.App ): void {
 		app.component( 'Ckeditor', Ckeditor );
 		app.component( 'CkeditorMultiRoot', CkeditorMultiRoot );
-		app.component( 'CkeditorMultiRootToolbar', CkeditorMultiRootToolbar );
+		app.component( 'CkeditorMultiRootUI', CkeditorMultiRootUI );
 		app.component( 'CkeditorMultiRootEditable', CkeditorMultiRootEditable );
 	}
 };
@@ -42,7 +42,7 @@ export {
 	CkeditorPlugin,
 	Ckeditor,
 	CkeditorMultiRoot,
-	CkeditorMultiRootToolbar,
+	CkeditorMultiRootUI,
 	CkeditorMultiRootEditable
 };
 
@@ -84,7 +84,7 @@ declare module 'vue' {
 		Ckeditor: typeof Ckeditor;
 		ckeditor: typeof Ckeditor;
 		CkeditorMultiRoot: typeof CkeditorMultiRoot;
-		CkeditorMultiRootToolbar: typeof CkeditorMultiRootToolbar;
+		CkeditorMultiRootUI: typeof CkeditorMultiRootUI;
 		CkeditorMultiRootEditable: typeof CkeditorMultiRootEditable;
 	}
 }

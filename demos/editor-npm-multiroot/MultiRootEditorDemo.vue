@@ -15,7 +15,7 @@
   >
     <template #default="{ editor, roots }">
       <div>
-        <CkeditorMultiRootToolbar :editor="editor" />
+        <CkeditorMultiRootUI :editor="editor" />
 
         <CkeditorMultiRootEditable
           v-for="rootName in roots"
