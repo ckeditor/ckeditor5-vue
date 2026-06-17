@@ -89,6 +89,40 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
+	it( 'should ignore stale modelValue echoes from debounced editor updates', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+
+		editor.data.set( {
+			intro: '<h2>First change</h2>'
+		} );
+
+		await timeout( 0 );
+
+		editor.data.set( {
+			intro: '<h2>Second change</h2>'
+		} );
+
+		const setData = vi.spyOn( editor.data, 'set' );
+
+		await component.setProps( {
+			modelValue: {
+				...rootsContent,
+				intro: '<h2>First change</h2>'
+			}
+		} );
+
+		await timeout( 0 );
+
+		expect( setData ).not.toHaveBeenCalled();
+		expect( editor.getFullData().intro ).to.equal( '<h2>Second change</h2>' );
+
+		component.unmount();
+	} );
+
 	it( 'should emit rootsAttributes updates when editor root attributes change', async () => {
 		const component = mountComponent();
 
@@ -117,6 +151,46 @@ describe( 'CKEditor multi-root component', () => {
 			{},
 			editor
 		] );
+
+		component.unmount();
+	} );
+
+	it( 'should ignore stale rootsAttributes echoes from debounced editor updates', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+		const root = editor.model.document.getRoot( 'intro' )!;
+
+		editor.model.change( writer => {
+			writer.setAttributes( {
+				order: 15
+			}, root );
+		} );
+
+		await timeout( 0 );
+
+		editor.model.change( writer => {
+			writer.setAttributes( {
+				order: 25
+			}, root );
+		} );
+
+		await component.setProps( {
+			rootsAttributes: {
+				...rootsAttributes,
+				intro: {
+					order: 15
+				}
+			}
+		} );
+
+		await timeout( 0 );
+
+		expect( editor.getRootAttributes( 'intro' ) ).to.deep.equal( {
+			order: 25
+		} );
 
 		component.unmount();
 	} );
@@ -313,6 +387,47 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
+	it( 'should not reset root attributes when editor omits an empty attributes entry', async () => {
+		const component = mountComponent( {
+			rootsAttributes: {
+				intro: rootsAttributes.intro,
+				content: {}
+			}
+		} );
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+		const originalChange = editor.model.change;
+		const setAttributes = vi.fn();
+
+		vi.spyOn( editor, 'getRootsAttributes' ).mockReturnValue( {
+			intro: rootsAttributes.intro
+		} );
+
+		editor.model.change = ( callback: Function ) => originalChange( ( writer: any ) => callback( {
+			...writer,
+			setAttributes: ( ...args: Array<any> ) => {
+				setAttributes( ...args );
+
+				return writer.setAttributes( ...args );
+			}
+		} ) );
+
+		await component.setProps( {
+			rootsAttributes: {
+				intro: rootsAttributes.intro,
+				content: {}
+			}
+		} );
+
+		await timeout( 0 );
+
+		expect( setAttributes ).not.toHaveBeenCalled();
+
+		component.unmount();
+	} );
+
 	it( 'should keep root list in sync when two-way binding is disabled', async () => {
 		const component = mountComponent( {
 			disableTwoWayDataBinding: true
@@ -391,6 +506,33 @@ describe( 'CKEditor multi-root component', () => {
 			null,
 			restartedEditor
 		] );
+
+		component.unmount();
+	} );
+
+	it( 'should continue watchdog restart if orphan cleanup fails', async () => {
+		const error = new Error( 'Runtime error.' );
+		const component = mountComponent( {
+			disableWatchdog: false,
+			onError: () => {}
+		} );
+		const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
+
+		await waitForEditor( component );
+
+		const firstEditor = getEditor( component );
+		const watchdog = ( firstEditor as any )[ Symbol.for( 'vue-editor-watchdog' ) ];
+
+		firstEditor.editing.view.domRoots = undefined;
+
+		await watchdog.simulateError( error, true );
+
+		await vi.waitFor( () => {
+			expect( component.vm.instance ).to.be.instanceOf( MockMultiRootEditor );
+			expect( component.vm.instance ).not.to.equal( firstEditor );
+		} );
+
+		expect( consoleError ).toHaveBeenCalledWith( expect.any( TypeError ) );
 
 		component.unmount();
 	} );

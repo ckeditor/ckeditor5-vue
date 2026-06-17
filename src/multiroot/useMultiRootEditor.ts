@@ -77,17 +77,33 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	);
 	const roots = ref<Array<string>>( Object.keys( data.value ) );
 	const shouldUpdateEditor = ref( false );
+	const lastEditorData = ref<MultiRootEditorData>();
+	const lastEditorRootsAttributes = ref<MultiRootEditorRootsAttributes>();
 
 	let editorReadyCallbacks: Array<EditorReadyCallback<TEditor>> = [];
 
 	useEditorReadOnly( instance, () => toValue( options.disabled ) );
 
 	watch( () => toValue( options.data ), newData => {
+		if ( instance.value && lastEditorData.value && areRecordsEqual( newData, lastEditorData.value ) ) {
+			return;
+		}
+
 		setData( cloneData( newData ) );
 	}, { deep: true } );
 
 	watch( () => toValue( options.rootsAttributes ), newRootsAttributes => {
-		setRootsAttributes( normalizeRootsAttributes( newRootsAttributes, data.value ) );
+		const normalizedRootsAttributes = normalizeRootsAttributes( newRootsAttributes, data.value );
+
+		if (
+			instance.value &&
+			lastEditorRootsAttributes.value &&
+			areRecordsEqual( normalizedRootsAttributes, lastEditorRootsAttributes.value )
+		) {
+			return;
+		}
+
+		setRootsAttributes( normalizedRootsAttributes );
 	}, { deep: true } );
 
 	watch( [ data, rootsAttributes ], () => {
@@ -201,9 +217,13 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 				} );
 
 				watchdog.on( 'restart', () => {
-					/* istanbul ignore else -- @preserve - Restart is only handled after an editor instance is assigned. */
-					if ( instance.value ) {
-						cleanupOrphanEditorElements( instance.value );
+					try {
+						/* istanbul ignore else -- @preserve - Restart is only handled after an editor instance is assigned. */
+						if ( instance.value ) {
+							cleanupOrphanEditorElements( instance.value );
+						}
+					} catch ( err ) {
+						console.error( err );
 					}
 
 					/* istanbul ignore if -- @preserve - Restart without an editor or after unmount is a watchdog edge case. */
@@ -280,7 +300,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		const desiredData = cloneData( data.value );
 		const desiredRootsAttributes = normalizeRootsAttributes( rootsAttributes.value, desiredData );
 		const editorData = editor.getFullData();
-		const editorRootsAttributes = editor.getRootsAttributes();
+		const editorRootsAttributes = normalizeRootsAttributes( editor.getRootsAttributes(), editorData );
 		const newRoots = getRecordDiff( editorData, desiredData ).addedKeys;
 		const removedRoots = getRecordDiff( editorData, desiredData ).removedKeys;
 		const modifiedRoots = Object.keys( desiredData ).filter( rootName =>
@@ -336,6 +356,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		data.value = editorData;
 		rootsAttributes.value = editorRootsAttributes;
 		roots.value = Object.keys( editorData );
+		lastEditorData.value = cloneData( editorData );
+		lastEditorRootsAttributes.value = cloneRootsAttributes( editorRootsAttributes );
 
 		if ( shouldEmitData ) {
 			emitData( event, editor );
@@ -388,10 +410,12 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	}
 
 	function emitData( event: EventInfo | null, editor: TEditor ) {
+		lastEditorData.value = cloneData( data.value );
 		options.onUpdateData?.( cloneData( data.value ), event, editor );
 	}
 
 	function emitRootsAttributes( event: EventInfo | null, editor: TEditor ) {
+		lastEditorRootsAttributes.value = cloneRootsAttributes( rootsAttributes.value );
 		options.onUpdateRootsAttributes?.( cloneRootsAttributes( rootsAttributes.value ), event, editor );
 	}
 
