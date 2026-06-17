@@ -1,12 +1,12 @@
 {
   "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "types": [
-      "../src/plugin.ts",
-      "../vite-env.d.ts"
-    ]
-  },
-  "include": [
-    "**/*"
-  ]
+	"compilerOptions": {
+		"rootDir": "..",
+		"types": [
+			"../vite-env.d.ts"
+		]
+	},
+	"include": [
+		"**/*"
+	]
 }

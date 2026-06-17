@@ -1,0 +1,690 @@
+/**
+ * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
+ */
+
+import {
+	markRaw,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	toValue,
+	watch,
+	type MaybeRefOrGetter,
+	type Ref
+} from 'vue';
+
+import type {
+	AddRootEvent,
+	CKEditorError,
+	DetachRootEvent,
+	EditorConfig,
+	EventInfo,
+	InlineEditableUIView,
+	ModelRootElement,
+	ModelWriter,
+	MultiRootEditor,
+	WatchdogConfig
+} from 'ckeditor5';
+
+import {
+	assignAttributesPropToMultiRootEditorConfig,
+	assignInitialDataToMultirootEditorConfig,
+	getInstalledCKBaseFeatures,
+	type ExtractEditorType
+} from '@ckeditor/ckeditor5-integrations-common';
+
+import { appendUsageDataPluginToConfig } from '../plugins/VueIntegrationUsageDataPlugin.js';
+import { useIsUnmounted } from '../composables/useIsUnmounted.js';
+import { useEditorReadOnly } from '../composables/useEditorReadOnly.js';
+import {
+	destroyEditorWithWatchdog,
+	unwrapEditorWatchdog,
+	wrapWithWatchdogIfPresent,
+	type EditorWithAttachedWatchdog
+} from '../utils/wrapWithWatchdogIfPresent.js';
+
+import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from './constants.js';
+import type {
+	AddRootOptions,
+	MultiRootEditorData,
+	MultiRootEditorErrorDescription,
+	MultiRootEditorRootsAttributes,
+	MultiRootEditorWithWatchdogRelaxedConstructor,
+	RootEditableOptionsAttribute
+} from './types.js';
+
+export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWithWatchdogRelaxedConstructor>(
+	options: UseMultiRootEditorOptions<TEditorConstructor>
+): UseMultiRootEditorResult<ExtractEditorType<TEditorConstructor> & MultiRootEditor> {
+	type TEditor = ExtractEditorType<TEditorConstructor> & MultiRootEditor;
+
+	const isUnmounted = useIsUnmounted();
+	const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
+	const data = ref<MultiRootEditorData>( cloneData( toValue( options.data ) ) );
+	const rootsAttributes = ref<MultiRootEditorRootsAttributes>(
+		normalizeRootsAttributes( toValue( options.rootsAttributes ), data.value )
+	);
+	const roots = ref<Array<string>>( Object.keys( data.value ) );
+	const shouldUpdateEditor = ref( false );
+
+	let resolveEditorReadyCallbacks: Array<( editor: TEditor ) => void> = [];
+
+	useEditorReadOnly( instance, () => toValue( options.disabled ) );
+
+	watch( () => toValue( options.data ), newData => {
+		setData( cloneData( newData ) );
+	}, { deep: true } );
+
+	watch( () => toValue( options.rootsAttributes ), newRootsAttributes => {
+		setRootsAttributes( normalizeRootsAttributes( newRootsAttributes, data.value ) );
+	}, { deep: true } );
+
+	watch( [ data, rootsAttributes ], () => {
+		const editor = instance.value;
+
+		if ( !editor || !shouldUpdateEditor.value ) {
+			return;
+		}
+
+		shouldUpdateEditor.value = false;
+		syncEditorWithState( editor );
+	}, { deep: true, flush: 'post' } );
+
+	watch( instance, ( newInstance, _oldInstance, onCleanup ) => {
+		/* istanbul ignore if -- @preserve - Defensive check, instance can only be set to an editor here. */
+		if ( !newInstance ) {
+			return;
+		}
+
+		const editor = newInstance as TEditor;
+		const modelDocument = editor.model.document;
+		const viewDocument = editor.editing.view.document;
+		const onChangeDataListener = ( event: EventInfo ) => onChangeData( editor, event );
+		const onAddRootListener = ( event: EventInfo, root: ModelRootElement ) => onAddRoot( editor, event, root );
+		const onDetachRootListener = ( event: EventInfo, root: ModelRootElement ) => onDetachRoot( editor, event, root );
+		const onFocusListener = ( event: EventInfo ) => options.onFocus?.( event, editor );
+		const onBlurListener = ( event: EventInfo ) => options.onBlur?.( event, editor );
+		const onDestroyListener = () => options.onDestroy?.( editor );
+
+		modelDocument.on( 'change:data', onChangeDataListener );
+		editor.on<AddRootEvent>( 'addRoot', onAddRootListener );
+		editor.on<DetachRootEvent>( 'detachRoot', onDetachRootListener );
+		viewDocument.on( 'focus', onFocusListener );
+		viewDocument.on( 'blur', onBlurListener );
+		editor.once( 'destroy', onDestroyListener );
+
+		options.onReady?.( editor );
+
+		resolveEditorReadyCallbacks.forEach( resolve => resolve( editor ) );
+		resolveEditorReadyCallbacks = [];
+
+		onCleanup( () => {
+			modelDocument.off( 'change:data', onChangeDataListener );
+			editor.off( 'addRoot', onAddRootListener );
+			editor.off( 'detachRoot', onDetachRootListener );
+			viewDocument.off( 'focus', onFocusListener );
+			viewDocument.off( 'blur', onBlurListener );
+		} );
+	}, { flush: 'post' } );
+
+	onMounted( initializeEditor );
+
+	onBeforeUnmount( async () => {
+		const editor = instance.value;
+
+		if ( !editor ) {
+			return;
+		}
+
+		instance.value = undefined;
+		forceAssignFakeEditableElements( editor );
+
+		await destroyEditorWithWatchdog( editor );
+	} );
+
+	async function initializeEditor() {
+		const creationData = cloneData( data.value );
+		const creationRootsAttributes = cloneRootsAttributes( rootsAttributes.value );
+		let Constructor = toValue( options.editor );
+
+		if ( !toValue( options.disableWatchdog ) ) {
+			Constructor = wrapWithWatchdogIfPresent(
+				Constructor,
+				toValue( options.watchdogConfig )
+			) as TEditorConstructor;
+		}
+
+		try {
+			const editor = await createEditor( Constructor, creationData, creationRootsAttributes );
+
+			if ( isUnmounted.value ) {
+				forceAssignFakeEditableElements( editor );
+				await destroyEditorWithWatchdog( editor );
+				return;
+			}
+
+			const watchdog = unwrapEditorWatchdog( editor );
+
+			if ( watchdog ) {
+				watchdog.on( 'error', ( _, { error, causesRestart } ) => {
+					/* istanbul ignore if -- @preserve - Watchdog errors after unmount are intentionally ignored. */
+					if ( isUnmounted.value ) {
+						return;
+					}
+
+					reportError( error, {
+						phase: 'runtime',
+						watchdog,
+						editor: watchdog.editor as TEditor,
+						causesRestart
+					} );
+				} );
+
+				watchdog.on( 'restart', () => {
+					/* istanbul ignore if -- @preserve - Restart without an editor or after unmount is a watchdog edge case. */
+					if ( isUnmounted.value || !watchdog.editor ) {
+						return;
+					}
+
+					const restartedEditor = watchdog.editor as EditorWithAttachedWatchdog<TEditor>;
+
+					instance.value = markRaw( restartedEditor );
+					syncStateFromEditor( restartedEditor );
+				} );
+			}
+
+			instance.value = markRaw( editor );
+
+			if (
+				areRecordsEqual( data.value, creationData ) &&
+				areRecordsEqual( rootsAttributes.value, creationRootsAttributes )
+			) {
+				syncStateFromEditor( editor );
+			} else {
+				syncEditorWithState( editor );
+				syncStateFromEditor( editor );
+			}
+		} catch ( error: any ) {
+			/* istanbul ignore if -- @preserve - Initialization errors after unmount are intentionally ignored. */
+			if ( isUnmounted.value ) {
+				return;
+			}
+
+			reportError( error, {
+				phase: 'initialization'
+			} );
+		}
+	}
+
+	async function createEditor(
+		Constructor: TEditorConstructor,
+		initialData: MultiRootEditorData,
+		initialRootsAttributes: MultiRootEditorRootsAttributes
+	): Promise<EditorWithAttachedWatchdog<TEditor>> {
+		let editorConfig = assignAttributesPropToMultiRootEditorConfig(
+			initialRootsAttributes,
+			{ ...toValue( options.config ) }
+		);
+
+		editorConfig = appendUsageDataPluginToConfig( editorConfig );
+
+		const {
+			initialData: mergedInitialData,
+			...mergedConfig
+		} = assignInitialDataToMultirootEditorConfig( initialData, editorConfig ) as EditorConfig & {
+			initialData?: MultiRootEditorData;
+		};
+		const supports = getInstalledCKBaseFeatures();
+		const Editor = Constructor as unknown as {
+			create( data: MultiRootEditorData, config: EditorConfig ): Promise<EditorWithAttachedWatchdog<TEditor>>;
+			create( config: EditorConfig ): Promise<EditorWithAttachedWatchdog<TEditor>>;
+		};
+
+		return await (
+			supports.elementConfigAttachment ?
+				Editor.create( { ...mergedConfig, initialData: mergedInitialData } ) :
+				Editor.create( mergedInitialData as MultiRootEditorData, mergedConfig )
+		);
+	}
+
+	function syncEditorWithState( editor: TEditor ) {
+		const desiredData = cloneData( data.value );
+		const desiredRootsAttributes = normalizeRootsAttributes( rootsAttributes.value, desiredData );
+		const editorData = editor.getFullData();
+		const editorRootsAttributes = editor.getRootsAttributes();
+		const newRoots = getRecordDiff( editorData, desiredData ).addedKeys;
+		const removedRoots = getRecordDiff( editorData, desiredData ).removedKeys;
+		const modifiedRoots = Object.keys( desiredData ).filter( rootName =>
+			editorData[ rootName ] !== undefined && editorData[ rootName ] !== desiredData[ rootName ]
+		);
+		const rootsWithChangedAttributes = Object.keys( desiredRootsAttributes ).filter( rootName =>
+			editorData[ rootName ] !== undefined &&
+			!areRecordsEqual( editorRootsAttributes[ rootName ], desiredRootsAttributes[ rootName ] )
+		);
+
+		rootsAttributes.value = desiredRootsAttributes;
+
+		editor.model.change( writer => {
+			handleNewRoots( editor, newRoots, desiredData, desiredRootsAttributes );
+			handleRemovedRoots( editor, removedRoots );
+
+			if ( modifiedRoots.length ) {
+				updateEditorData( editor, modifiedRoots, desiredData );
+			}
+
+			if ( rootsWithChangedAttributes.length ) {
+				updateEditorAttributes( editor, writer, rootsWithChangedAttributes, desiredRootsAttributes );
+			}
+		} );
+	}
+
+	function syncStateFromEditor( editor: TEditor ) {
+		data.value = cloneData( editor.getFullData() );
+		rootsAttributes.value = normalizeRootsAttributes( editor.getRootsAttributes(), data.value );
+		roots.value = Object.keys( data.value );
+	}
+
+	function onChangeData( editor: TEditor, event: EventInfo ) {
+		if ( !toValue( options.disableTwoWayDataBinding ) ) {
+			const changes = getChangedData( editor );
+			const changedRootsAttributes = getChangedRootsAttributes( editor );
+
+			if ( Object.keys( changes ).length ) {
+				data.value = {
+					...data.value,
+					...changes
+				};
+
+				emitData( event, editor );
+			}
+
+			if ( Object.keys( changedRootsAttributes ).length ) {
+				rootsAttributes.value = normalizeRootsAttributes( {
+					...rootsAttributes.value,
+					...changedRootsAttributes
+				}, data.value );
+
+				emitRootsAttributes( event, editor );
+			}
+		}
+
+		options.onChange?.( event, editor );
+	}
+
+	function onAddRoot( editor: TEditor, event: EventInfo, root: ModelRootElement ) {
+		const rootName = root.rootName;
+
+		if ( !toValue( options.disableTwoWayDataBinding ) ) {
+			data.value = {
+				...data.value,
+				[ rootName ]: editor.getData( { rootName } )
+			};
+
+			rootsAttributes.value = normalizeRootsAttributes( {
+				...rootsAttributes.value,
+				[ rootName ]: editor.getRootAttributes( rootName )
+			}, data.value );
+
+			emitData( event, editor );
+			emitRootsAttributes( event, editor );
+		}
+
+		roots.value = unique( [ ...roots.value, rootName ] );
+	}
+
+	function onDetachRoot( editor: TEditor, event: EventInfo, root: ModelRootElement ) {
+		const rootName = root.rootName;
+
+		if ( !toValue( options.disableTwoWayDataBinding ) ) {
+			const newData = { ...data.value };
+			const newRootsAttributes = { ...rootsAttributes.value };
+
+			delete newData[ rootName ];
+			delete newRootsAttributes[ rootName ];
+
+			data.value = newData;
+			rootsAttributes.value = newRootsAttributes;
+
+			emitData( event, editor );
+			emitRootsAttributes( event, editor );
+		}
+
+		roots.value = roots.value.filter( currentRootName => currentRootName !== rootName );
+	}
+
+	function getChangedData( editor: TEditor ): MultiRootEditorData {
+		const differ = editor.model.document.differ;
+		const changedData: MultiRootEditorData = {};
+
+		/* istanbul ignore if -- @preserve - CKEditor model documents always expose a differ. */
+		if ( !differ ) {
+			return cloneData( editor.getFullData() );
+		}
+
+		differ.getChanges().forEach( change => {
+			let root: ModelRootElement;
+
+			if ( change.type === 'insert' || change.type === 'remove' ) {
+				root = change.position.root as ModelRootElement;
+			} else {
+				root = change.range.root as ModelRootElement;
+			}
+
+			if ( !root.isAttached() ) {
+				return;
+			}
+
+			changedData[ root.rootName ] = editor.getData( { rootName: root.rootName } );
+		} );
+
+		return changedData;
+	}
+
+	function getChangedRootsAttributes( editor: TEditor ): MultiRootEditorRootsAttributes {
+		const differ = editor.model.document.differ;
+		const changedRootsAttributes: MultiRootEditorRootsAttributes = {};
+
+		/* istanbul ignore if -- @preserve - CKEditor model documents always expose a differ. */
+		if ( !differ ) {
+			return cloneRootsAttributes( editor.getRootsAttributes() );
+		}
+
+		differ.getChangedRoots().forEach( changedRoot => {
+			if ( changedRoot.state ) {
+				return;
+			}
+
+			changedRootsAttributes[ changedRoot.name ] = editor.getRootAttributes( changedRoot.name );
+		} );
+
+		return changedRootsAttributes;
+	}
+
+	function emitData( event: EventInfo | null, editor: TEditor ) {
+		options.onUpdateData?.( cloneData( data.value ), event, editor );
+	}
+
+	function emitRootsAttributes( event: EventInfo | null, editor: TEditor ) {
+		options.onUpdateRootsAttributes?.( cloneRootsAttributes( rootsAttributes.value ), event, editor );
+	}
+
+	function reportError( error: Error | CKEditorError, description: MultiRootEditorErrorDescription<TEditor> ) {
+		/* istanbul ignore else -- @preserve - The Vue component always provides an error callback. */
+		if ( options.onError ) {
+			options.onError( error, description );
+		} else {
+			console.error( error );
+		}
+	}
+
+	function setData( newData: MultiRootEditorData ) {
+		shouldUpdateEditor.value = true;
+		data.value = cloneData( newData );
+		rootsAttributes.value = normalizeRootsAttributes( rootsAttributes.value, data.value );
+
+		if ( !instance.value ) {
+			roots.value = Object.keys( data.value );
+		}
+	}
+
+	function setRootsAttributes( newRootsAttributes: MultiRootEditorRootsAttributes ) {
+		shouldUpdateEditor.value = true;
+		rootsAttributes.value = normalizeRootsAttributes( newRootsAttributes, data.value );
+	}
+
+	async function addRoot( { name, data: rootData = '', attributes = {}, editableOptions, ...rootOptions }: AddRootOptions ) {
+		const editor = await waitForEditor();
+		const supports = getInstalledCKBaseFeatures();
+
+		editor.model.change( () => {
+			const mappedAttributes = {
+				...attributes,
+				...!supports.rootsConfigEntry && editableOptions && {
+					[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: editableOptions
+				}
+			};
+
+			for ( const key of Object.keys( mappedAttributes ) ) {
+				editor.registerRootAttribute( key );
+			}
+
+			let options: Record<string, unknown> = {
+				isUndoable: true,
+				...rootOptions
+			};
+
+			if ( supports.rootsConfigEntry ) {
+				options = {
+					...options,
+					...editableOptions,
+					initialData: rootData,
+					modelAttributes: mappedAttributes
+				};
+			} else {
+				options = {
+					...options,
+					data: rootData,
+					attributes: mappedAttributes
+				};
+			}
+
+			editor.addRoot( name, options );
+		} );
+	}
+
+	async function removeRoot( name: string ) {
+		const editor = await waitForEditor();
+
+		editor.model.change( () => {
+			editor.detachRoot( name, true );
+		} );
+	}
+
+	function waitForEditor(): Promise<TEditor> {
+		if ( instance.value ) {
+			return Promise.resolve( instance.value as TEditor );
+		}
+
+		return new Promise( resolve => {
+			resolveEditorReadyCallbacks.push( resolve );
+		} );
+	}
+
+	return {
+		instance: instance as Ref<EditorWithAttachedWatchdog<TEditor> | undefined>,
+		roots,
+		data,
+		rootsAttributes,
+		setData,
+		setRootsAttributes,
+		addRoot,
+		removeRoot
+	};
+}
+
+function handleNewRoots(
+	editor: MultiRootEditor,
+	rootNames: Array<string>,
+	data: MultiRootEditorData,
+	rootsAttributes: MultiRootEditorRootsAttributes
+) {
+	const supports = getInstalledCKBaseFeatures();
+
+	for ( const rootName of rootNames ) {
+		const rootAttributes = rootsAttributes[ rootName ];
+		const rootData = data[ rootName ];
+
+		for ( const key of Object.keys( rootAttributes ) ) {
+			editor.registerRootAttribute( key );
+		}
+
+		let options: Record<string, unknown> = {
+			isUndoable: true
+		};
+
+		if ( supports.rootsConfigEntry ) {
+			options = {
+				...options,
+				...rootAttributes[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ] as RootEditableOptionsAttribute | undefined,
+				initialData: rootData,
+				modelAttributes: rootAttributes
+			};
+		} else {
+			options = {
+				...options,
+				data: rootData,
+				attributes: rootAttributes
+			};
+		}
+
+		editor.addRoot( rootName, options );
+	}
+}
+
+function handleRemovedRoots( editor: MultiRootEditor, rootNames: Array<string> ) {
+	for ( const rootName of rootNames ) {
+		editor.detachRoot( rootName, true );
+	}
+}
+
+function updateEditorData( editor: MultiRootEditor, rootNames: Array<string>, data: MultiRootEditorData ) {
+	const dataToUpdate = rootNames.reduce<MultiRootEditorData>(
+		( result, rootName ) => ( { ...result, [ rootName ]: data[ rootName ] } ),
+		Object.create( null )
+	);
+
+	editor.data.set( dataToUpdate, { suppressErrorInCollaboration: true } as any );
+}
+
+function updateEditorAttributes(
+	editor: MultiRootEditor,
+	writer: ModelWriter,
+	rootNames: Array<string>,
+	rootsAttributes: MultiRootEditorRootsAttributes
+) {
+	for ( const rootName of rootNames ) {
+		const rootAttributes = rootsAttributes[ rootName ];
+
+		for ( const key of Object.keys( rootAttributes ) ) {
+			editor.registerRootAttribute( key );
+		}
+
+		const root = editor.model.document.getRoot( rootName );
+
+		/* istanbul ignore if -- @preserve - Attribute updates are only requested for existing roots. */
+		if ( !root ) {
+			continue;
+		}
+
+		for ( const key of Object.keys( editor.getRootAttributes( rootName ) ) ) {
+			writer.removeAttribute( key, root );
+		}
+
+		writer.setAttributes( rootAttributes, root );
+	}
+}
+
+function forceAssignFakeEditableElements( editor: MultiRootEditor ) {
+	const initializeEditableWithFakeElement = ( editable: InlineEditableUIView ) => {
+		if ( editable.name && !editor.editing.view.getDomRoot( editable.name ) ) {
+			editor.editing.view.attachDomRoot( document.createElement( 'div' ), editable.name );
+		}
+	};
+
+	Object
+		.values( editor.ui.view.editables )
+		.forEach( initializeEditableWithFakeElement );
+}
+
+function normalizeRootsAttributes(
+	rootsAttributes: MultiRootEditorRootsAttributes | undefined,
+	data: MultiRootEditorData
+): MultiRootEditorRootsAttributes {
+	/* istanbul ignore next -- @preserve - Direct composable usage may omit roots attributes. */
+	const normalizedRootsAttributes = cloneRootsAttributes( rootsAttributes ?? {} );
+
+	for ( const rootName of Object.keys( data ) ) {
+		normalizedRootsAttributes[ rootName ] ??= {};
+	}
+
+	return normalizedRootsAttributes;
+}
+
+function cloneData( data: MultiRootEditorData | undefined ): MultiRootEditorData {
+	return {
+		...data
+	};
+}
+
+function cloneRootsAttributes(
+	rootsAttributes: MultiRootEditorRootsAttributes | undefined
+): MultiRootEditorRootsAttributes {
+	/* istanbul ignore next -- @preserve - Direct composable usage may omit roots attributes. */
+	return Object.keys( rootsAttributes ?? {} ).reduce<MultiRootEditorRootsAttributes>( ( result, rootName ) => {
+		result[ rootName ] = {
+			...rootsAttributes![ rootName ]
+		};
+
+		return result;
+	}, Object.create( null ) );
+}
+
+function getRecordDiff( previousState: Record<string, unknown>, newState: Record<string, unknown> ) {
+	const previousStateKeys = Object.keys( previousState );
+	const newStateKeys = Object.keys( newState );
+
+	return {
+		addedKeys: newStateKeys.filter( key => !previousStateKeys.includes( key ) ),
+		removedKeys: previousStateKeys.filter( key => !newStateKeys.includes( key ) )
+	};
+}
+
+function areRecordsEqual( first: Record<string, unknown>, second: Record<string, unknown> ): boolean {
+	return JSON.stringify( first ) === JSON.stringify( second );
+}
+
+function unique<TValue>( values: Array<TValue> ): Array<TValue> {
+	return [ ...new Set( values ) ];
+}
+
+export type UseMultiRootEditorOptions<TEditorConstructor extends MultiRootEditorWithWatchdogRelaxedConstructor> = {
+	editor: MaybeRefOrGetter<TEditorConstructor>;
+	data: MaybeRefOrGetter<MultiRootEditorData>;
+	rootsAttributes?: MaybeRefOrGetter<MultiRootEditorRootsAttributes | undefined>;
+	config?: MaybeRefOrGetter<EditorConfig | undefined>;
+	disabled?: MaybeRefOrGetter<boolean | undefined>;
+	watchdogConfig?: MaybeRefOrGetter<WatchdogConfig | undefined>;
+	disableWatchdog?: MaybeRefOrGetter<boolean | undefined>;
+	disableTwoWayDataBinding?: MaybeRefOrGetter<boolean | undefined>;
+	onReady?: ( editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
+	onDestroy?: ( editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
+	onChange?: ( event: EventInfo, editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
+	onFocus?: ( event: EventInfo, editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
+	onBlur?: ( event: EventInfo, editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
+	onUpdateData?: (
+		data: MultiRootEditorData,
+		event: EventInfo | null,
+		editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor
+	) => void;
+	onUpdateRootsAttributes?: (
+		rootsAttributes: MultiRootEditorRootsAttributes,
+		event: EventInfo | null,
+		editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor
+	) => void;
+	onError?: (
+		error: Error | CKEditorError,
+		description: MultiRootEditorErrorDescription<ExtractEditorType<TEditorConstructor> & MultiRootEditor>
+	) => void;
+};
+
+export type UseMultiRootEditorResult<TEditor extends MultiRootEditor> = {
+	instance: Ref<EditorWithAttachedWatchdog<TEditor> | undefined>;
+	roots: Ref<Array<string>>;
+	data: Ref<MultiRootEditorData>;
+	rootsAttributes: Ref<MultiRootEditorRootsAttributes>;
+	setData( data: MultiRootEditorData ): void;
+	setRootsAttributes( rootsAttributes: MultiRootEditorRootsAttributes ): void;
+	addRoot( options: AddRootOptions ): Promise<void>;
+	removeRoot( name: string ): Promise<void>;
+};
