@@ -13,6 +13,7 @@ import {
 	type MaybeRefOrGetter,
 	type Ref
 } from 'vue';
+import { debounce } from 'lodash-es';
 
 import type {
 	AddRootEvent,
@@ -54,6 +55,14 @@ import type {
 	RootEditableOptionsAttribute
 } from './types.js';
 
+const INPUT_EVENT_DEBOUNCE_WAIT = 300;
+const EDITOR_DESTROYED_BEFORE_READY_MESSAGE = 'The editor was destroyed before it became ready.';
+
+type EditorReadyCallback<TEditor extends MultiRootEditor> = {
+	resolve: ( editor: TEditor ) => void;
+	reject: ( error: Error ) => void;
+};
+
 export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWithWatchdogRelaxedConstructor>(
 	options: UseMultiRootEditorOptions<TEditorConstructor>
 ): UseMultiRootEditorResult<ExtractEditorType<TEditorConstructor> & MultiRootEditor> {
@@ -68,7 +77,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	const roots = ref<Array<string>>( Object.keys( data.value ) );
 	const shouldUpdateEditor = ref( false );
 
-	let resolveEditorReadyCallbacks: Array<( editor: TEditor ) => void> = [];
+	let editorReadyCallbacks: Array<EditorReadyCallback<TEditor>> = [];
 
 	useEditorReadOnly( instance, () => toValue( options.disabled ) );
 
@@ -100,12 +109,18 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		const editor = newInstance as TEditor;
 		const modelDocument = editor.model.document;
 		const viewDocument = editor.editing.view.document;
-		const onChangeDataListener = ( event: EventInfo ) => onChangeData( editor, event );
+		const emitDebouncedDataUpdate = debounce( ( event: EventInfo ) => {
+			updateStateFromEditor( editor, event );
+		}, INPUT_EVENT_DEBOUNCE_WAIT, { leading: true } );
+		const onChangeDataListener = ( event: EventInfo ) => onChangeData( editor, event, emitDebouncedDataUpdate );
 		const onAddRootListener = ( event: EventInfo, root: ModelRootElement ) => onAddRoot( editor, event, root );
 		const onDetachRootListener = ( event: EventInfo, root: ModelRootElement ) => onDetachRoot( editor, event, root );
 		const onFocusListener = ( event: EventInfo ) => options.onFocus?.( event, editor );
 		const onBlurListener = ( event: EventInfo ) => options.onBlur?.( event, editor );
-		const onDestroyListener = () => options.onDestroy?.( editor );
+		const onDestroyListener = () => {
+			emitDebouncedDataUpdate.cancel();
+			options.onDestroy?.( editor );
+		};
 
 		modelDocument.on( 'change:data', onChangeDataListener );
 		editor.on<AddRootEvent>( 'addRoot', onAddRootListener );
@@ -116,8 +131,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 
 		options.onReady?.( editor );
 
-		resolveEditorReadyCallbacks.forEach( resolve => resolve( editor ) );
-		resolveEditorReadyCallbacks = [];
+		resolveEditorReadyCallbacks( editor );
 
 		onCleanup( () => {
 			modelDocument.off( 'change:data', onChangeDataListener );
@@ -125,6 +139,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 			editor.off( 'detachRoot', onDetachRootListener );
 			viewDocument.off( 'focus', onFocusListener );
 			viewDocument.off( 'blur', onBlurListener );
+			emitDebouncedDataUpdate.cancel();
 		} );
 	}, { flush: 'post' } );
 
@@ -132,6 +147,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 
 	onBeforeUnmount( async () => {
 		const editor = instance.value;
+
+		rejectEditorReadyCallbacks( new Error( EDITOR_DESTROYED_BEFORE_READY_MESSAGE ) );
 
 		if ( !editor ) {
 			return;
@@ -159,6 +176,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 			const editor = await createEditor( Constructor, creationData, creationRootsAttributes );
 
 			if ( isUnmounted.value ) {
+				rejectEditorReadyCallbacks( new Error( EDITOR_DESTROYED_BEFORE_READY_MESSAGE ) );
 				forceAssignFakeEditableElements( editor );
 				await destroyEditorWithWatchdog( editor );
 				return;
@@ -191,6 +209,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 
 					instance.value = markRaw( restartedEditor );
 					syncStateFromEditor( restartedEditor );
+					emitData( null, restartedEditor );
+					emitRootsAttributes( null, restartedEditor );
 				} );
 			}
 
@@ -206,6 +226,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 				syncStateFromEditor( editor );
 			}
 		} catch ( error: any ) {
+			rejectEditorReadyCallbacks( error );
+
 			/* istanbul ignore if -- @preserve - Initialization errors after unmount are intentionally ignored. */
 			if ( isUnmounted.value ) {
 				return;
@@ -285,31 +307,37 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		roots.value = Object.keys( data.value );
 	}
 
-	function onChangeData( editor: TEditor, event: EventInfo ) {
-		if ( !toValue( options.disableTwoWayDataBinding ) ) {
-			const changes = getChangedData( editor );
-			const changedRootsAttributes = getChangedRootsAttributes( editor );
-
-			if ( Object.keys( changes ).length ) {
-				data.value = {
-					...data.value,
-					...changes
-				};
-
-				emitData( event, editor );
-			}
-
-			if ( Object.keys( changedRootsAttributes ).length ) {
-				rootsAttributes.value = normalizeRootsAttributes( {
-					...rootsAttributes.value,
-					...changedRootsAttributes
-				}, data.value );
-
-				emitRootsAttributes( event, editor );
-			}
-		}
+	function onChangeData(
+		editor: TEditor,
+		event: EventInfo,
+		emitDebouncedDataUpdate: ( event: EventInfo ) => void
+	) {
+		emitDebouncedDataUpdate( event );
 
 		options.onChange?.( event, editor );
+	}
+
+	function updateStateFromEditor( editor: TEditor, event: EventInfo | null ) {
+		if ( toValue( options.disableTwoWayDataBinding ) || isUnmounted.value ) {
+			return;
+		}
+
+		const editorData = cloneData( editor.getFullData() );
+		const editorRootsAttributes = normalizeRootsAttributes( editor.getRootsAttributes(), editorData );
+		const shouldEmitData = !areRecordsEqual( data.value, editorData );
+		const shouldEmitRootsAttributes = !areRecordsEqual( rootsAttributes.value, editorRootsAttributes );
+
+		data.value = editorData;
+		rootsAttributes.value = editorRootsAttributes;
+		roots.value = Object.keys( editorData );
+
+		if ( shouldEmitData ) {
+			emitData( event, editor );
+		}
+
+		if ( shouldEmitRootsAttributes ) {
+			emitRootsAttributes( event, editor );
+		}
 	}
 
 	function onAddRoot( editor: TEditor, event: EventInfo, root: ModelRootElement ) {
@@ -351,54 +379,6 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		}
 
 		roots.value = roots.value.filter( currentRootName => currentRootName !== rootName );
-	}
-
-	function getChangedData( editor: TEditor ): MultiRootEditorData {
-		const differ = editor.model.document.differ;
-		const changedData: MultiRootEditorData = {};
-
-		/* istanbul ignore if -- @preserve - CKEditor model documents always expose a differ. */
-		if ( !differ ) {
-			return cloneData( editor.getFullData() );
-		}
-
-		differ.getChanges().forEach( change => {
-			let root: ModelRootElement;
-
-			if ( change.type === 'insert' || change.type === 'remove' ) {
-				root = change.position.root as ModelRootElement;
-			} else {
-				root = change.range.root as ModelRootElement;
-			}
-
-			if ( !root.isAttached() ) {
-				return;
-			}
-
-			changedData[ root.rootName ] = editor.getData( { rootName: root.rootName } );
-		} );
-
-		return changedData;
-	}
-
-	function getChangedRootsAttributes( editor: TEditor ): MultiRootEditorRootsAttributes {
-		const differ = editor.model.document.differ;
-		const changedRootsAttributes: MultiRootEditorRootsAttributes = {};
-
-		/* istanbul ignore if -- @preserve - CKEditor model documents always expose a differ. */
-		if ( !differ ) {
-			return cloneRootsAttributes( editor.getRootsAttributes() );
-		}
-
-		differ.getChangedRoots().forEach( changedRoot => {
-			if ( changedRoot.state ) {
-				return;
-			}
-
-			changedRootsAttributes[ changedRoot.name ] = editor.getRootAttributes( changedRoot.name );
-		} );
-
-		return changedRootsAttributes;
 	}
 
 	function emitData( event: EventInfo | null, editor: TEditor ) {
@@ -486,9 +466,23 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 			return Promise.resolve( instance.value as TEditor );
 		}
 
-		return new Promise( resolve => {
-			resolveEditorReadyCallbacks.push( resolve );
+		if ( isUnmounted.value ) {
+			return Promise.reject( new Error( EDITOR_DESTROYED_BEFORE_READY_MESSAGE ) );
+		}
+
+		return new Promise( ( resolve, reject ) => {
+			editorReadyCallbacks.push( { resolve, reject } );
 		} );
+	}
+
+	function resolveEditorReadyCallbacks( editor: TEditor ) {
+		editorReadyCallbacks.forEach( ( { resolve } ) => resolve( editor ) );
+		editorReadyCallbacks = [];
+	}
+
+	function rejectEditorReadyCallbacks( error: Error ) {
+		editorReadyCallbacks.forEach( ( { reject } ) => reject( error ) );
+		editorReadyCallbacks = [];
 	}
 
 	return {

@@ -88,6 +88,38 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
+	it( 'should emit rootsAttributes updates when editor root attributes change', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+		const root = editor.model.document.getRoot( 'intro' )!;
+
+		editor.model.change( writer => {
+			writer.setAttributes( {
+				order: 15,
+				section: 'lead'
+			}, root );
+		} );
+
+		await timeout( 0 );
+
+		expect( component.emitted()[ 'update:rootsAttributes' ]![ 0 ] ).to.deep.equal( [
+			{
+				intro: {
+					order: 15,
+					section: 'lead'
+				},
+				content: rootsAttributes.content
+			},
+			{},
+			editor
+		] );
+
+		component.unmount();
+	} );
+
 	it( 'should synchronize external modelValue changes to the editor', async () => {
 		const component = mountComponent();
 
@@ -320,7 +352,7 @@ describe( 'CKEditor multi-root component', () => {
 		const firstEditor = getEditor( component );
 		const watchdog = ( firstEditor as any )[ Symbol.for( 'vue-editor-watchdog' ) ];
 
-		watchdog.simulateError( error, true );
+		await watchdog.simulateError( error, true );
 
 		await vi.waitFor( () => {
 			expect( component.emitted().error![ 0 ] ).to.deep.equal( [ error, {
@@ -332,6 +364,52 @@ describe( 'CKEditor multi-root component', () => {
 			expect( component.vm.instance ).to.be.instanceOf( MockMultiRootEditor );
 			expect( component.vm.instance ).not.to.equal( firstEditor );
 		} );
+
+		const restartedEditor = component.vm.instance;
+
+		expect( component.emitted()[ 'update:modelValue' ]![ 0 ] ).to.deep.equal( [
+			rootsContent,
+			null,
+			restartedEditor
+		] );
+		expect( component.emitted()[ 'update:rootsAttributes' ]![ 0 ] ).to.deep.equal( [
+			rootsAttributes,
+			null,
+			restartedEditor
+		] );
+
+		component.unmount();
+	} );
+
+	it( 'should reject pending root operations when initialization fails', async () => {
+		const error = new Error( 'Initialization failed.' );
+		let rejectCreate!: ( error: Error ) => void;
+
+		class SlowFailingMultiRootEditor extends MockMultiRootEditor {
+			public static override async create( ...args: Array<any> ): Promise<MockMultiRootEditor> {
+				await new Promise<void>( ( _resolve, reject ) => {
+					rejectCreate = reject;
+				} );
+
+				return super.create( ...args );
+			}
+		}
+
+		vi.spyOn( console, 'error' ).mockReturnValue();
+
+		const component = mountComponent( {
+			editor: SlowFailingMultiRootEditor as any
+		} );
+
+		await timeout( 0 );
+
+		const addRootPromise = component.vm.addRoot( {
+			name: 'outro'
+		} );
+
+		rejectCreate( error );
+
+		await expect( addRootPromise ).rejects.to.equal( error );
 
 		component.unmount();
 	} );
@@ -450,8 +528,17 @@ describe( 'CKEditor multi-root component', () => {
 		} );
 
 		await timeout( 0 );
+		const addRootPromise = component.vm.addRoot( {
+			name: 'outro'
+		} );
 
 		component.unmount();
+
+		await expect( addRootPromise ).rejects.toThrow( 'The editor was destroyed before it became ready.' );
+		await expect( component.vm.addRoot( {
+			name: 'late'
+		} ) ).rejects.toThrow( 'The editor was destroyed before it became ready.' );
+
 		resolveCreate();
 
 		await vi.waitFor( () => {
@@ -495,9 +582,7 @@ describe( 'CKEditor multi-root component', () => {
 
 		await timeout( 0 );
 
-		const modelValueUpdates = component.emitted()[ 'update:modelValue' ]! as Array<Array<any>>;
-
-		expect( modelValueUpdates[ modelValueUpdates.length - 1 ][ 0 ] ).to.deep.equal( rootsContent );
+		expect( component.emitted()[ 'update:modelValue' ] ).to.be.undefined;
 
 		component.unmount();
 	} );
