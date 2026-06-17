@@ -162,8 +162,7 @@ export class MockMultiRootEditor extends SimpleEmitter {
 
 	public addRoot( rootName: string, options: Record<string, any> = {} ): void {
 		const attributes = {
-			...( options.attributes ?? options.modelAttributes ?? {} ),
-			...getRootEditableOptionsFromRootOptions( options )
+			...( options.attributes ?? options.modelAttributes ?? {} )
 		};
 
 		this._addRoot( rootName, options.data ?? options.initialData ?? '', attributes );
@@ -378,8 +377,7 @@ function extractRootsAttributesFromConfig( config: MultiRootEditorConfig ): Reco
 
 		return Object.keys( roots ).reduce<Record<string, Record<string, unknown>>>( ( result, rootName ) => {
 			result[ rootName ] = {
-				...( roots[ rootName ].modelAttributes ?? {} ),
-				...getRootEditableOptionsFromRootOptions( roots[ rootName ] )
+				...( roots[ rootName ].modelAttributes ?? {} )
 			};
 
 			return result;
@@ -387,21 +385,4 @@ function extractRootsAttributesFromConfig( config: MultiRootEditorConfig ): Reco
 	}
 
 	return config.rootsAttributes ?? {};
-}
-
-function getRootEditableOptionsFromRootOptions( options: Record<string, any> ): Record<string, unknown> {
-	const {
-		placeholder,
-		label,
-		element
-	} = options;
-	const rootEditableOptions = {
-		...placeholder && { placeholder },
-		...label && { label },
-		...element && { element }
-	};
-
-	return Object.keys( rootEditableOptions ).length ? {
-		$rootEditableOptions: rootEditableOptions
-	} : {};
 }

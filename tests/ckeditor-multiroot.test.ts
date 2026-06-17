@@ -337,10 +337,15 @@ describe( 'CKEditor multi-root component', () => {
 		await vi.waitFor( () => {
 			expect( addRoot ).toHaveBeenCalledWith( 'outro', expect.objectContaining( {
 				initialData: '<p>Outro</p>',
-				placeholder: 'Synced placeholder',
-				modelAttributes: { order: 30 }
+				modelAttributes: {
+					order: 30,
+					[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: { placeholder: 'Synced placeholder' }
+				}
 			} ) );
 			expect( component.vm.roots ).to.deep.equal( [ 'intro', 'content', 'outro' ] );
+
+			// The editable options must reach the rendered editable, so the placeholder is applied to the new root.
+			expect( component.find( '[data-placeholder="Synced placeholder"]' ).exists() ).to.be.true;
 		} );
 
 		await component.setProps( {
@@ -362,9 +367,13 @@ describe( 'CKEditor multi-root component', () => {
 		await vi.waitFor( () => {
 			expect( editor.getRootAttributes( 'intro' ) ).to.deep.equal( {
 				order: 15,
-				section: 'lead'
+				section: 'lead',
+				[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: { placeholder: 'Ignored placeholder' }
 			} );
 		} );
+
+		// Updating editable options of an existing root does not re-create its editable, so the placeholder is not applied.
+		expect( component.find( '[data-placeholder="Ignored placeholder"]' ).exists() ).to.be.false;
 
 		await component.setProps( {
 			modelValue: {
@@ -782,6 +791,28 @@ describe( 'CKEditor multi-root component', () => {
 
 		await vi.waitFor( () => {
 			expect( component.vm.data.empty ).to.equal( '' );
+		} );
+
+		component.unmount();
+	} );
+
+	it( 'should drop rootsAttributes entries for roots that are not present in data', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		await component.setProps( {
+			rootsAttributes: {
+				...rootsAttributes,
+				ghost: {
+					order: 99
+				}
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( component.vm.rootsAttributes.ghost ).to.be.undefined;
+			expect( Object.keys( component.vm.rootsAttributes ) ).to.deep.equal( [ 'intro', 'content' ] );
 		} );
 
 		component.unmount();

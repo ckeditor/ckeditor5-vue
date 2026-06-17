@@ -52,8 +52,7 @@ import type {
 	MultiRootEditorData,
 	MultiRootEditorErrorDescription,
 	MultiRootEditorRootsAttributes,
-	MultiRootEditorWithWatchdogRelaxedConstructor,
-	RootEditableOptionsAttribute
+	MultiRootEditorWithWatchdogRelaxedConstructor
 } from './types.js';
 
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
@@ -301,8 +300,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		const desiredRootsAttributes = normalizeRootsAttributes( rootsAttributes.value, desiredData );
 		const editorData = editor.getFullData();
 		const editorRootsAttributes = normalizeRootsAttributes( editor.getRootsAttributes(), editorData );
-		const newRoots = getRecordDiff( editorData, desiredData ).addedKeys;
-		const removedRoots = getRecordDiff( editorData, desiredData ).removedKeys;
+		const { addedKeys: newRoots, removedKeys: removedRoots } = getRecordDiff( editorData, desiredData );
 		const modifiedRoots = Object.keys( desiredData ).filter( rootName =>
 			editorData[ rootName ] !== undefined && editorData[ rootName ] !== desiredData[ rootName ]
 		);
@@ -450,7 +448,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		editor.model.change( () => {
 			const mappedAttributes = {
 				...attributes,
-				...!supports.rootsConfigEntry && editableOptions && {
+				...editableOptions && {
 					[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: editableOptions
 				}
 			};
@@ -467,7 +465,6 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 			if ( supports.rootsConfigEntry ) {
 				options = {
 					...options,
-					...editableOptions,
 					initialData: rootData,
 					modelAttributes: mappedAttributes
 				};
@@ -538,10 +535,8 @@ function handleNewRoots(
 	for ( const rootName of rootNames ) {
 		const rootAttributes = rootsAttributes[ rootName ];
 		const rootData = data[ rootName ];
-		const { modelAttributes, editableOptions } = splitRootAttributes( rootAttributes );
-		const attributesToRegister = supports.rootsConfigEntry ? modelAttributes : rootAttributes;
 
-		for ( const key of Object.keys( attributesToRegister ) ) {
+		for ( const key of Object.keys( rootAttributes ) ) {
 			editor.registerRootAttribute( key );
 		}
 
@@ -552,9 +547,8 @@ function handleNewRoots(
 		if ( supports.rootsConfigEntry ) {
 			options = {
 				...options,
-				...editableOptions,
 				initialData: rootData,
-				modelAttributes
+				modelAttributes: rootAttributes
 			};
 		} else {
 			options = {
@@ -589,13 +583,10 @@ function updateEditorAttributes(
 	rootNames: Array<string>,
 	rootsAttributes: MultiRootEditorRootsAttributes
 ) {
-	const supports = getInstalledCKBaseFeatures();
-
 	for ( const rootName of rootNames ) {
 		const rootAttributes = rootsAttributes[ rootName ];
-		const attributesToSet = supports.rootsConfigEntry ? splitRootAttributes( rootAttributes ).modelAttributes : rootAttributes;
 
-		for ( const key of Object.keys( attributesToSet ) ) {
+		for ( const key of Object.keys( rootAttributes ) ) {
 			editor.registerRootAttribute( key );
 		}
 
@@ -610,23 +601,8 @@ function updateEditorAttributes(
 			writer.removeAttribute( key, root );
 		}
 
-		writer.setAttributes( attributesToSet, root );
+		writer.setAttributes( rootAttributes, root );
 	}
-}
-
-function splitRootAttributes( rootAttributes: Record<string, unknown> ): {
-	modelAttributes: Record<string, unknown>;
-	editableOptions?: RootEditableOptionsAttribute;
-} {
-	const {
-		[ ROOT_EDITABLE_OPTIONS_ATTRIBUTE ]: editableOptions,
-		...modelAttributes
-	} = rootAttributes;
-
-	return {
-		modelAttributes,
-		editableOptions: editableOptions as RootEditableOptionsAttribute | undefined
-	};
 }
 
 function forceAssignFakeEditableElements( editor: MultiRootEditor ) {
@@ -646,13 +622,13 @@ function normalizeRootsAttributes(
 	data: MultiRootEditorData
 ): MultiRootEditorRootsAttributes {
 	/* istanbul ignore next -- @preserve - Direct composable usage may omit roots attributes. */
-	const normalizedRootsAttributes = cloneRootsAttributes( rootsAttributes ?? {} );
+	const source = rootsAttributes ?? {};
 
-	for ( const rootName of Object.keys( data ) ) {
-		normalizedRootsAttributes[ rootName ] ??= {};
-	}
+	return Object.keys( data ).reduce<MultiRootEditorRootsAttributes>( ( result, rootName ) => {
+		result[ rootName ] = { ...source[ rootName ] };
 
-	return normalizedRootsAttributes;
+		return result;
+	}, Object.create( null ) );
 }
 
 function cloneData( data: MultiRootEditorData | undefined ): MultiRootEditorData {
