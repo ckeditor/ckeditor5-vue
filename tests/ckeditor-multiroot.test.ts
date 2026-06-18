@@ -196,6 +196,51 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
+	it( 'should normalize stale rootsAttributes echoes from debounced editor updates', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+		const root = editor.model.document.getRoot( 'intro' )!;
+
+		editor.model.change( writer => {
+			writer.setAttributes( {
+				order: 15
+			}, root );
+		} );
+
+		await timeout( 0 );
+
+		await component.setProps( {
+			rootsAttributes: {
+				intro: {
+					order: 15
+				},
+				content: rootsAttributes.content,
+				ghost: {
+					order: 99
+				}
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( component.vm.rootsAttributes.ghost ).to.be.undefined;
+		} );
+		expect( component.emitted()[ 'update:rootsAttributes' ]![ 1 ] ).to.deep.equal( [
+			{
+				intro: {
+					order: 15
+				},
+				content: rootsAttributes.content
+			},
+			null,
+			editor
+		] );
+
+		component.unmount();
+	} );
+
 	it( 'should synchronize external modelValue changes to the editor', async () => {
 		const component = mountComponent();
 
@@ -434,6 +479,44 @@ describe( 'CKEditor multi-root component', () => {
 		await timeout( 0 );
 
 		expect( setAttributes ).not.toHaveBeenCalled();
+
+		component.unmount();
+	} );
+
+	it( 'should preserve existing root attributes when external rootsAttributes update is partial', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+
+		await component.setProps( {
+			rootsAttributes: {
+				intro: {
+					section: 'lead'
+				}
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( editor.getRootAttributes( 'intro' ) ).to.deep.equal( {
+				order: 10,
+				section: 'lead'
+			} );
+			expect( editor.getRootAttributes( 'content' ) ).to.deep.equal( rootsAttributes.content );
+		} );
+
+		expect( component.emitted()[ 'update:rootsAttributes' ]![ 0 ] ).to.deep.equal( [
+			{
+				intro: {
+					order: 10,
+					section: 'lead'
+				},
+				content: rootsAttributes.content
+			},
+			null,
+			editor
+		] );
 
 		component.unmount();
 	} );
@@ -815,6 +898,54 @@ describe( 'CKEditor multi-root component', () => {
 			expect( component.vm.rootsAttributes.ghost ).to.be.undefined;
 			expect( Object.keys( component.vm.rootsAttributes ) ).to.deep.equal( [ 'intro', 'content' ] );
 		} );
+		expect( component.emitted()[ 'update:rootsAttributes' ]![ 0 ] ).to.deep.equal( [
+			rootsAttributes,
+			null,
+			getEditor( component )
+		] );
+
+		component.unmount();
+	} );
+
+	it( 'should normalize rootsAttributes before the editor is initialized', async () => {
+		const create = vi.spyOn( MockMultiRootEditor, 'create' );
+		let resolveCreate!: ( editor: MockMultiRootEditor ) => void;
+
+		create.mockImplementationOnce( config => new Promise( resolve => {
+			resolveCreate = resolve;
+
+			setTimeout( () => {
+				resolve( new MockMultiRootEditor( config ) );
+			}, 0 );
+		} ) );
+
+		const component = mountComponent( {
+			rootsAttributes: {
+				...rootsAttributes,
+				ghost: {
+					order: 99
+				}
+			}
+		} );
+
+		await component.setProps( {
+			rootsAttributes: {
+				...rootsAttributes,
+				ghost: {
+					order: 100
+				}
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( component.vm.rootsAttributes.ghost ).to.be.undefined;
+		} );
+
+		resolveCreate( new MockMultiRootEditor( create.mock.calls[ 0 ][ 0 ] ) );
+
+		await waitForEditor( component );
+
+		expect( component.vm.rootsAttributes ).to.deep.equal( rootsAttributes );
 
 		component.unmount();
 	} );

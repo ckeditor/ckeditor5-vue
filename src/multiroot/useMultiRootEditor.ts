@@ -92,17 +92,31 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	}, { deep: true } );
 
 	watch( () => toValue( options.rootsAttributes ), newRootsAttributes => {
+		const sourceRootsAttributes = cloneRootsAttributes( newRootsAttributes );
 		const normalizedRootsAttributes = normalizeRootsAttributes( newRootsAttributes, data.value );
+		const nextRootsAttributes = instance.value ?
+			mergeRootsAttributes( rootsAttributes.value, normalizedRootsAttributes, data.value ) :
+			normalizedRootsAttributes;
+		const shouldEmitNormalizedRootsAttributes = !!instance.value && !areRecordsEqual( nextRootsAttributes, sourceRootsAttributes );
 
 		if (
 			instance.value &&
 			lastEditorRootsAttributes.value &&
-			areRecordsEqual( normalizedRootsAttributes, lastEditorRootsAttributes.value )
+			areRecordsEqual( nextRootsAttributes, lastEditorRootsAttributes.value )
 		) {
+			if ( shouldEmitNormalizedRootsAttributes ) {
+				setRootsAttributes( nextRootsAttributes );
+				emitRootsAttributes( null, instance.value as TEditor );
+			}
+
 			return;
 		}
 
-		setRootsAttributes( normalizedRootsAttributes );
+		setRootsAttributes( nextRootsAttributes );
+
+		if ( shouldEmitNormalizedRootsAttributes ) {
+			emitRootsAttributes( null, instance.value as TEditor );
+		}
 	}, { deep: true } );
 
 	watch( [ data, rootsAttributes ], () => {
@@ -526,7 +540,10 @@ function handleNewRoots(
 	const supports = getInstalledCKBaseFeatures();
 
 	for ( const rootName of rootNames ) {
-		const rootAttributes = rootsAttributes[ rootName ];
+		const rootAttributes = {
+			...editor.getRootAttributes( rootName ),
+			...rootsAttributes[ rootName ]
+		};
 		const rootData = data[ rootName ];
 
 		for ( const key of Object.keys( rootAttributes ) ) {
@@ -590,10 +607,6 @@ function updateEditorAttributes(
 			continue;
 		}
 
-		for ( const key of Object.keys( editor.getRootAttributes( rootName ) ) ) {
-			writer.removeAttribute( key, root );
-		}
-
 		writer.setAttributes( rootAttributes, root );
 	}
 }
@@ -619,6 +632,21 @@ function normalizeRootsAttributes(
 
 	return Object.keys( data ).reduce<MultiRootEditorRootsAttributes>( ( result, rootName ) => {
 		result[ rootName ] = { ...source[ rootName ] };
+
+		return result;
+	}, Object.create( null ) );
+}
+
+function mergeRootsAttributes(
+	previousRootsAttributes: MultiRootEditorRootsAttributes,
+	nextRootsAttributes: MultiRootEditorRootsAttributes,
+	data: MultiRootEditorData
+): MultiRootEditorRootsAttributes {
+	return Object.keys( data ).reduce<MultiRootEditorRootsAttributes>( ( result, rootName ) => {
+		result[ rootName ] = {
+			...previousRootsAttributes[ rootName ],
+			...nextRootsAttributes[ rootName ]
+		};
 
 		return result;
 	}, Object.create( null ) );
