@@ -4,7 +4,7 @@
  */
 
 import * as Vue from 'vue';
-import Ckeditor from './Ckeditor.vue';
+import Ckeditor from './ckeditor.vue';
 import CkeditorElement from './CkeditorElement.vue';
 import CkeditorMultiRoot from './CkeditorMultiRoot.vue';
 import CkeditorMultiRootEditable from './multiroot/MultiRootEditorEditable.vue';
