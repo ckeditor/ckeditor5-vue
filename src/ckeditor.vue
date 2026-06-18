@@ -38,8 +38,8 @@ import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageData
 import { cleanupOrphanEditorElements } from './utils/cleanupOrphanEditorElements.js';
 import {
 	destroyEditorWithWatchdog,
-	unwrapEditorWatchdog,
-	wrapWithWatchdogIfPresent,
+	attachEditorWatchdogErrorHandler,
+	resolveEditorConstructor,
 	type EditorWithAttachedWatchdog
 } from './utils/wrapWithWatchdogIfPresent.js';
 
@@ -118,12 +118,7 @@ onMounted( async () => {
 		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value, true );
 	}
 
-	// Wrap editor with watchdog unless disabled.
-	let Constructor = props.editor;
-
-	if ( !props.disableWatchdog ) {
-		Constructor = wrapWithWatchdogIfPresent( props.editor, props.watchdogConfig ) as TEditorConstructor;
-	}
+	const Constructor = resolveEditorConstructor( props.editor, props.disableWatchdog, props.watchdogConfig );
 
 	try {
 		const domElement = editorElementRef.value?.elementRef;
@@ -149,15 +144,9 @@ onMounted( async () => {
 			editor.data.set( model.value );
 		}
 
-		// If it's editor watchdog instance, then it attach error handlers.
-		const watchdog = unwrapEditorWatchdog( editor );
-
-		if ( watchdog ) {
-			watchdog.on( 'error', ( _, { error, causesRestart } ) => {
-				if ( isUnmounted.value ) {
-					return;
-				}
-
+		const watchdog = attachEditorWatchdogErrorHandler( editor, {
+			isUnmounted: () => isUnmounted.value,
+			onError: ( { error, watchdog, editor, causesRestart } ) => {
 				if ( !hasErrorHandler() ) {
 					console.error( error );
 				}
@@ -165,11 +154,13 @@ onMounted( async () => {
 				emit( 'error', error, {
 					phase: 'runtime',
 					watchdog,
-					editor: watchdog.editor as TEditor,
+					editor,
 					causesRestart
 				} );
-			} );
+			}
+		} );
 
+		if ( watchdog ) {
 			watchdog.on( 'restart', () => {
 				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
 				try {

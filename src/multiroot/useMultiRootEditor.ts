@@ -40,9 +40,9 @@ import { useIsUnmounted } from '../composables/useIsUnmounted.js';
 import { useEditorReadOnly } from '../composables/useEditorReadOnly.js';
 import { cleanupOrphanEditorElements } from '../utils/cleanupOrphanEditorElements.js';
 import {
+	attachEditorWatchdogErrorHandler,
 	destroyEditorWithWatchdog,
-	unwrapEditorWatchdog,
-	wrapWithWatchdogIfPresent,
+	resolveEditorConstructor,
 	type EditorWithAttachedWatchdog
 } from '../utils/wrapWithWatchdogIfPresent.js';
 
@@ -179,14 +179,11 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	async function initializeEditor() {
 		const creationData = cloneData( data.value );
 		const creationRootsAttributes = cloneRootsAttributes( rootsAttributes.value );
-		let Constructor = toValue( options.editor );
-
-		if ( !toValue( options.disableWatchdog ) ) {
-			Constructor = wrapWithWatchdogIfPresent(
-				Constructor,
-				toValue( options.watchdogConfig )
-			) as TEditorConstructor;
-		}
+		const Constructor = resolveEditorConstructor(
+			toValue( options.editor ),
+			!!toValue( options.disableWatchdog ),
+			toValue( options.watchdogConfig )
+		);
 
 		try {
 			const editor = await createEditor( Constructor, creationData, creationRootsAttributes );
@@ -198,23 +195,19 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 				return;
 			}
 
-			const watchdog = unwrapEditorWatchdog( editor );
-
-			if ( watchdog ) {
-				watchdog.on( 'error', ( _, { error, causesRestart } ) => {
-					/* istanbul ignore if -- @preserve - Watchdog errors after unmount are intentionally ignored. */
-					if ( isUnmounted.value ) {
-						return;
-					}
-
+			const watchdog = attachEditorWatchdogErrorHandler( editor, {
+				isUnmounted: () => isUnmounted.value,
+				onError: ( { error, watchdog, editor, causesRestart } ) => {
 					reportError( error, {
 						phase: 'runtime',
 						watchdog,
-						editor: watchdog.editor as TEditor,
+						editor,
 						causesRestart
 					} );
-				} );
+				}
+			} );
 
+			if ( watchdog ) {
 				watchdog.on( 'restart', () => {
 					try {
 						/* istanbul ignore else -- @preserve - Restart is only handled after an editor instance is assigned. */
