@@ -5,6 +5,7 @@
 
 import {
 	markRaw,
+	nextTick,
 	onBeforeUnmount,
 	onMounted,
 	ref,
@@ -130,12 +131,13 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		syncEditorWithState( editor );
 	}, { deep: true, flush: 'post' } );
 
-	watch( instance, ( newInstance, _oldInstance, onCleanup ) => {
+	watch( instance, async ( newInstance, _oldInstance, onCleanup ) => {
 		/* istanbul ignore if -- @preserve - Defensive check, instance can only be set to an editor here. */
 		if ( !newInstance ) {
 			return;
 		}
 
+		let isCurrentInstance = true;
 		const editor = newInstance as TEditor;
 		const modelDocument = editor.model.document;
 		const viewDocument = editor.editing.view.document;
@@ -159,11 +161,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		viewDocument.on( 'blur', onBlurListener );
 		editor.once( 'destroy', onDestroyListener );
 
-		options.onReady?.( editor );
-
-		resolveEditorReadyCallbacks( editor );
-
 		onCleanup( () => {
+			isCurrentInstance = false;
 			modelDocument.off( 'change:data', onChangeDataListener );
 			editor.off( 'addRoot', onAddRootListener );
 			editor.off( 'detachRoot', onDetachRootListener );
@@ -171,6 +170,17 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 			viewDocument.off( 'blur', onBlurListener );
 			emitDebouncedDataUpdate.cancel();
 		} );
+
+		await nextTick();
+
+		/* istanbul ignore if -- @preserve - Instance replacement/unmount before deferred ready is a defensive race guard. */
+		if ( !isCurrentInstance || isUnmounted.value || instance.value !== editor ) {
+			return;
+		}
+
+		options.onReady?.( editor );
+
+		resolveEditorReadyCallbacks( editor );
 	}, { flush: 'post' } );
 
 	onMounted( initializeEditor );

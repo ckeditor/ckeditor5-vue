@@ -63,6 +63,31 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
+	it( 'should emit ready after UI and editable elements are attached', async () => {
+		let readyState: Record<string, boolean> | undefined;
+		const component = mountComponent( {
+			onReady: ( editor: MockMultiRootEditor ) => {
+				readyState = {
+					introEditable: editor.ui.getEditableElement( 'intro' ) instanceof HTMLElement,
+					contentEditable: editor.ui.getEditableElement( 'content' ) instanceof HTMLElement,
+					toolbar: editor.ui.view.toolbar.element.parentElement instanceof HTMLElement,
+					menuBar: editor.ui.view.menuBarView.element.parentElement instanceof HTMLElement
+				};
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( readyState ).to.deep.equal( {
+				introEditable: true,
+				contentEditable: true,
+				toolbar: true,
+				menuBar: true
+			} );
+		} );
+
+		component.unmount();
+	} );
+
 	it( 'should emit data updates when editor data changes', async () => {
 		const component = mountComponent();
 
