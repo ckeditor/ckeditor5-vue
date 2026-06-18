@@ -70,7 +70,6 @@ type Demo = 'editor' | 'rich';
 const demo = ref<Demo>( 'editor' );
 const cloud = useCKEditorCloud( {
 	version: '47.7.2',
-	translations: [ 'de' ],
 	premium: true
 } );
 
