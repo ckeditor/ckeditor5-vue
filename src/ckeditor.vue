@@ -4,7 +4,7 @@
 -->
 
 <template>
-  <editor-element
+  <DynamicElement
     ref="editorElementRef"
     :definition="elementDefinition"
   />
@@ -49,7 +49,7 @@ import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVMod
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
-import EditorElement from './EditorElement.vue';
+import DynamicElement from './DynamicElement.vue';
 import { isClassicEditor } from './utils/isClassicEditor.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
@@ -78,7 +78,7 @@ const emit = defineEmits<
 const currentInstance = getCurrentInstance();
 const hasErrorHandler = () => !!currentInstance?.vnode.props?.onError;
 
-const editorElementRef = ref<InstanceType<typeof EditorElement>>();
+const editorElementRef = ref<InstanceType<typeof DynamicElement>>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 

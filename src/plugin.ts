@@ -4,9 +4,9 @@
  */
 
 import * as Vue from 'vue';
-import Ckeditor from './ckeditor.vue';
-import CkeditorMultiRoot from './ckeditor-multiroot.vue';
-import CkeditorMultiRootUI from './multiroot/MultiRootEditorUI.vue';
+import Ckeditor from './Ckeditor.vue';
+import CkeditorElement from './CkeditorElement.vue';
+import CkeditorMultiRoot from './CkeditorMultiRoot.vue';
 import CkeditorMultiRootEditable from './multiroot/MultiRootEditorEditable.vue';
 
 /* istanbul ignore if -- @preserve */
@@ -26,8 +26,8 @@ const CkeditorPlugin = {
 	 */
 	install( app: Vue.App ): void {
 		app.component( 'Ckeditor', Ckeditor );
+		app.component( 'CkeditorElement', CkeditorElement );
 		app.component( 'CkeditorMultiRoot', CkeditorMultiRoot );
-		app.component( 'CkeditorMultiRootUI', CkeditorMultiRootUI );
 		app.component( 'CkeditorMultiRootEditable', CkeditorMultiRootEditable );
 	}
 };
@@ -41,8 +41,8 @@ const CkeditorPlugin = {
 export {
 	CkeditorPlugin,
 	Ckeditor,
+	CkeditorElement,
 	CkeditorMultiRoot,
-	CkeditorMultiRootUI,
 	CkeditorMultiRootEditable
 };
 
@@ -83,8 +83,8 @@ declare module 'vue' {
 	interface GlobalComponents {
 		Ckeditor: typeof Ckeditor;
 		ckeditor: typeof Ckeditor;
+		CkeditorElement: typeof CkeditorElement;
 		CkeditorMultiRoot: typeof CkeditorMultiRoot;
-		CkeditorMultiRootUI: typeof CkeditorMultiRootUI;
 		CkeditorMultiRootEditable: typeof CkeditorMultiRootEditable;
 	}
 }

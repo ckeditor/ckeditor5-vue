@@ -98,7 +98,11 @@
 
       <br>
 
-      <CkeditorMultiRootUI :editor="editor" />
+      <CkeditorElement
+        :editor="editor"
+        element="menuBar"
+      />
+      <CkeditorElement :editor="editor" />
 
       <div
         v-for="[ row, rootNames ] in groupedRootRows"

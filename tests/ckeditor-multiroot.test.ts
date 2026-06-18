@@ -6,9 +6,9 @@
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 
-import CkeditorMultiRoot from '../src/ckeditor-multiroot.vue';
+import CkeditorElement from '../src/CkeditorElement.vue';
+import CkeditorMultiRoot from '../src/CkeditorMultiRoot.vue';
 import CkeditorMultiRootEditable from '../src/multiroot/MultiRootEditorEditable.vue';
-import CkeditorMultiRootUI from '../src/multiroot/MultiRootEditorUI.vue';
 import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from '../src/multiroot/constants.js';
 import { CkeditorPlugin } from '../src/plugin.js';
 import { MockModelRootElement, MockMultiRootEditor } from './_utils/mockmultirooteditor.js';
@@ -864,12 +864,18 @@ describe( 'CKEditor multi-root component', () => {
 			}
 		};
 
-		const emptyUI = mount( CkeditorMultiRootUI, {
+		const emptyUI = mount( CkeditorElement, {
 			props: {
 				editor: editorWithoutToolbar as any
 			}
 		} );
-		const ui = mount( CkeditorMultiRootUI, {
+		const menuBarUI = mount( CkeditorElement, {
+			props: {
+				editor: editorWithToolbar as any,
+				element: 'menuBar'
+			}
+		} );
+		const toolbarUI = mount( CkeditorElement, {
 			props: {
 				editor: editorWithToolbar as any
 			}
@@ -877,12 +883,13 @@ describe( 'CKEditor multi-root component', () => {
 
 		await timeout( 0 );
 
-		expect( ui.find( '.ck-menu-bar' ).exists() ).to.be.true;
-		expect( ui.find( '.ck-toolbar' ).exists() ).to.be.true;
+		expect( menuBarUI.find( '.ck-menu-bar' ).exists() ).to.be.true;
+		expect( toolbarUI.find( '.ck-toolbar' ).exists() ).to.be.true;
 
 		toolbarElement.remove();
 		menuBarElement.remove();
-		expect( () => ui.unmount() ).not.to.throw();
+		expect( () => menuBarUI.unmount() ).not.to.throw();
+		expect( () => toolbarUI.unmount() ).not.to.throw();
 		expect( () => emptyUI.unmount() ).not.to.throw();
 	} );
 
@@ -931,8 +938,8 @@ describe( 'CKEditor multi-root component', () => {
 
 		CkeditorPlugin.install( app as any );
 
+		expect( app.component ).toHaveBeenCalledWith( 'CkeditorElement', expect.any( Object ) );
 		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRoot', expect.any( Object ) );
-		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRootUI', expect.any( Object ) );
 		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRootEditable', expect.any( Object ) );
 	} );
 

@@ -9,13 +9,21 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
-import type { MultiRootEditor } from 'ckeditor5';
+import type { Editor } from 'ckeditor5';
 
 defineOptions( {
-	name: 'CkeditorMultiRootUI'
+	name: 'CkeditorElement'
 } );
 
-type EditorUIViewWithElements = MultiRootEditor[ 'ui' ][ 'view' ] & {
+type UIElementName = 'menuBar' | 'toolbar';
+
+type EditorWithUIView = Editor & {
+	ui: {
+		view: EditorUIViewWithElements;
+	};
+};
+
+type EditorUIViewWithElements = {
 	menuBarView?: {
 		element?: HTMLElement | null;
 	};
@@ -25,9 +33,11 @@ type EditorUIViewWithElements = MultiRootEditor[ 'ui' ][ 'view' ] & {
 };
 
 const props = withDefaults( defineProps<{
-	editor?: MultiRootEditor | null;
+	editor?: EditorWithUIView | null;
+	element?: UIElementName;
 }>(), {
-	editor: null
+	editor: null,
+	element: 'toolbar'
 } );
 
 const uiRef = ref<HTMLDivElement>();
@@ -40,23 +50,19 @@ watchEffect( onCleanup => {
 		return;
 	}
 
-	const editorUIView = editor.ui.view as EditorUIViewWithElements;
-	const uiElements = [
-		editorUIView.menuBarView?.element,
-		editorUIView.toolbar?.element
-	].filter( ( element ): element is HTMLElement => !!element );
+	const uiElement = props.element === 'menuBar' ?
+		editor.ui.view.menuBarView?.element :
+		editor.ui.view.toolbar?.element;
 
-	if ( !uiElements.length ) {
+	if ( !uiElement ) {
 		return;
 	}
 
-	uiElements.forEach( element => uiContainer.appendChild( element ) );
+	uiContainer.appendChild( uiElement );
 
 	onCleanup( () => {
-		for ( const element of uiElements ) {
-			if ( uiContainer.contains( element ) ) {
-				uiContainer.removeChild( element );
-			}
+		if ( uiContainer.contains( uiElement ) ) {
+			uiContainer.removeChild( uiElement );
 		}
 	} );
 }, { flush: 'post' } );

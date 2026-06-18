@@ -5,13 +5,13 @@
 
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import EditorElement from '../src/EditorElement.vue';
+import DynamicElement from '../src/DynamicElement.vue';
 import type { EditorElementObjectDefinition } from '../src/utils/normalizeEditorElementDefinition.js';
 
-describe( 'EditorElement component', () => {
+describe( 'DynamicElement component', () => {
 	describe( 'default behaviour', () => {
 		it( 'should render a <div> when no definition is provided', () => {
-			const wrapper = mount( EditorElement );
+			const wrapper = mount( DynamicElement );
 
 			expect( wrapper.element.tagName ).to.equal( 'DIV' );
 
@@ -19,7 +19,7 @@ describe( 'EditorElement component', () => {
 		} );
 
 		it( 'should render a <div> when definition is explicitly null', () => {
-			const wrapper = mount( EditorElement, {
+			const wrapper = mount( DynamicElement, {
 				props: { definition: null }
 			} );
 
@@ -31,7 +31,7 @@ describe( 'EditorElement component', () => {
 
 	describe( 'string definition', () => {
 		it( 'should render the correct tag when a string is passed', () => {
-			const wrapper = mount( EditorElement, {
+			const wrapper = mount( DynamicElement, {
 				props: { definition: 'textarea' }
 			} );
 
@@ -41,7 +41,7 @@ describe( 'EditorElement component', () => {
 		} );
 
 		it( 'should update the rendered tag when definition changes', async () => {
-			const wrapper = mount( EditorElement, {
+			const wrapper = mount( DynamicElement, {
 				props: { definition: 'div' }
 			} );
 
@@ -59,7 +59,7 @@ describe( 'EditorElement component', () => {
 		describe( '#name', () => {
 			it( 'should render the tag specified in the `name` field', () => {
 				const definition: EditorElementObjectDefinition = { name: 'article' };
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 
 				expect( wrapper.element.tagName ).to.equal( 'ARTICLE' );
 
@@ -73,7 +73,7 @@ describe( 'EditorElement component', () => {
 					name: 'div',
 					classes: 'ck-editor'
 				};
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 
 				expect( wrapper.classes() ).to.include( 'ck-editor' );
 
@@ -85,7 +85,7 @@ describe( 'EditorElement component', () => {
 					name: 'div',
 					classes: [ 'ck-editor', 'ck-editor--theme-dark' ]
 				};
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 
 				expect( wrapper.classes() ).to.include.members( [ 'ck-editor', 'ck-editor--theme-dark' ] );
 
@@ -94,7 +94,7 @@ describe( 'EditorElement component', () => {
 
 			it( 'should render no extra classes when `classes` is not provided', () => {
 				const definition: EditorElementObjectDefinition = { name: 'div' };
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 
 				expect( wrapper.classes() ).to.deep.equal( [] );
 
@@ -108,7 +108,7 @@ describe( 'EditorElement component', () => {
 					name: 'div',
 					styles: { color: 'red', minHeight: '200px' }
 				};
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 				const el = wrapper.element as HTMLElement;
 
 				expect( el.style.color ).to.equal( 'red' );
@@ -126,7 +126,7 @@ describe( 'EditorElement component', () => {
 						'z-index': '10'
 					}
 				};
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 				const el = wrapper.element as HTMLElement;
 
 				expect( el.style.backgroundColor ).to.equal( 'blue' );
@@ -138,7 +138,7 @@ describe( 'EditorElement component', () => {
 
 			it( 'should apply no inline styles when `styles` is not provided', () => {
 				const definition: EditorElementObjectDefinition = { name: 'div' };
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 				const el = wrapper.element as HTMLElement;
 
 				expect( el.style.cssText ).to.equal( '' );
@@ -153,7 +153,7 @@ describe( 'EditorElement component', () => {
 						'--cke-test': 'blue'
 					}
 				};
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 				const el = wrapper.element as HTMLElement;
 
 				expect( el.style.cssText ).to.equal( '--cke-test: blue;' );
@@ -168,7 +168,7 @@ describe( 'EditorElement component', () => {
 					name: 'div',
 					attributes: { 'data-testid': 'editor', role: 'textbox' }
 				};
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 
 				expect( wrapper.attributes( 'data-testid' ) ).to.equal( 'editor' );
 				expect( wrapper.attributes( 'role' ) ).to.equal( 'textbox' );
@@ -178,7 +178,7 @@ describe( 'EditorElement component', () => {
 
 			it( 'should apply no extra attributes when `attributes` is not provided', () => {
 				const definition: EditorElementObjectDefinition = { name: 'div' };
-				const wrapper = mount( EditorElement, { props: { definition } } );
+				const wrapper = mount( DynamicElement, { props: { definition } } );
 
 				expect( wrapper.attributes( 'data-testid' ) ).to.be.undefined;
 
@@ -193,7 +193,7 @@ describe( 'EditorElement component', () => {
 				styles: { minHeight: '300px' },
 				attributes: { 'aria-label': 'Rich text editor' }
 			};
-			const wrapper = mount( EditorElement, { props: { definition } } );
+			const wrapper = mount( DynamicElement, { props: { definition } } );
 			const el = wrapper.element as HTMLElement;
 
 			expect( el.tagName ).to.equal( 'SECTION' );
@@ -207,7 +207,7 @@ describe( 'EditorElement component', () => {
 
 	describe( '#elementRef', () => {
 		it( 'should expose elementRef pointing to the root DOM element', () => {
-			const wrapper = mount( EditorElement );
+			const wrapper = mount( DynamicElement );
 
 			expect( wrapper.vm.elementRef ).to.equal( wrapper.element );
 
@@ -215,7 +215,7 @@ describe( 'EditorElement component', () => {
 		} );
 
 		it( 'should expose elementRef after definition changes', async () => {
-			const wrapper = mount( EditorElement, {
+			const wrapper = mount( DynamicElement, {
 				props: { definition: 'div' }
 			} );
 
@@ -228,7 +228,7 @@ describe( 'EditorElement component', () => {
 		} );
 
 		it( 'should have elementRef available after mounting', () => {
-			const wrapper = mount( EditorElement );
+			const wrapper = mount( DynamicElement );
 
 			expect( wrapper.vm.elementRef ).to.be.instanceOf( HTMLElement );
 

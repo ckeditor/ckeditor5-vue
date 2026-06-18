@@ -4,7 +4,7 @@
 -->
 
 <template>
-  <EditorElement
+  <DynamicElement
     v-if="elementDefinition"
     ref="editorElementRef"
     :definition="elementDefinition"
@@ -16,7 +16,7 @@
 import { computed, ref, watchEffect } from 'vue';
 import type { MultiRootEditor } from 'ckeditor5';
 
-import EditorElement from '../EditorElement.vue';
+import DynamicElement from '../DynamicElement.vue';
 import { normalizeEditorElementDefinition } from '../utils/normalizeEditorElementDefinition.js';
 import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from './constants.js';
 import type { RootEditableOptionsAttribute } from './types.js';
@@ -36,7 +36,7 @@ const props = withDefaults( defineProps<{
 	editableOptions: null
 } );
 
-const editorElementRef = ref<InstanceType<typeof EditorElement>>();
+const editorElementRef = ref<InstanceType<typeof DynamicElement>>();
 
 const root = computed( () => props.editor?.model.document.getRoot( props.rootName ) ?? null );
 

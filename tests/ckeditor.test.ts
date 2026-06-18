@@ -978,7 +978,7 @@ describe( 'CKEditor component', () => {
 					},
 					global: {
 						stubs: {
-							EditorElement: {
+							DynamicElement: {
 								template: '<div></div>'
 							}
 						}
@@ -1005,7 +1005,7 @@ describe( 'CKEditor component', () => {
 					},
 					global: {
 						stubs: {
-							EditorElement: {
+							DynamicElement: {
 								template: '<div></div>'
 							}
 						}
