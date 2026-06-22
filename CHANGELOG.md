@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [8.2.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v8.1.1...v8.2.0-alpha.0) (June 22, 2026)
+
+### Features
+
+* Added multi-root editor integration with the `CkeditorMultiRoot`, `CkeditorMultiRootToolbar`, and `CkeditorMultiRootEditable` components and the `useMultiRootEditor()` composable.
+
+
 ## [8.1.1](https://github.com/ckeditor/ckeditor5-vue/compare/v8.1.0...v8.1.1) (June 9, 2026)
 
 ### Bug fixes
@@ -127,13 +134,6 @@ Changelog
 ### Bug fixes
 
 * Significantly improved stability during rapid component destruction (e.g. fast route changes, v-if toggling, or Suspense scenarios).
-
-
-## [7.4.2](https://github.com/ckeditor/ckeditor5-vue/compare/v7.4.1...v7.4.2) (April 15, 2026)
-
-### Bug fixes
-
-* Fixed an issue where the editor's alpha version was being compared incorrectly.
 
 ---
 
