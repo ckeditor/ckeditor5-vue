@@ -11,7 +11,8 @@ overrides:
   'minimatch@^9': '9.0.7'
   'serialize-javascript@^6': '^7.0.5'
   'uuid@^9': '^14.0.0'
-  'ws@^8': '^8.20.1'
+  'ws@^8': '^8.21.0'
+  'protobufjs@^7': '^7.6.4'
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
