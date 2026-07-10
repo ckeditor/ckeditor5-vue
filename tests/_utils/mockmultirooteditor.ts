@@ -145,7 +145,14 @@ export class MockMultiRootEditor extends SimpleEmitter {
 	}
 
 	public getRootAttributes( rootName: string ): Record<string, unknown> {
-		return { ...this._roots[ rootName ]?.attributes };
+		const root = this._roots[ rootName ];
+
+		// The real editor throws when the requested root does not exist in the model document.
+		if ( !root ) {
+			throw new Error( 'get-root-attributes-missing-root' );
+		}
+
+		return { ...root.attributes };
 	}
 
 	public getRootsAttributes(): Record<string, Record<string, unknown>> {

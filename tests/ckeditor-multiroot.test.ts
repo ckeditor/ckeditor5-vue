@@ -467,6 +467,37 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
+	it( 'should reuse attributes of a root that still exists in the model when re-adding it through props', async () => {
+		const component = mountComponent();
+
+		await waitForEditor( component );
+
+		const editor = getEditor( component );
+		const addRoot = vi.spyOn( editor, 'addRoot' );
+		const detachedRoot = new MockModelRootElement( 'outro', { order: 30 } );
+
+		detachedRoot.detach();
+		( editor as any )._roots.outro = detachedRoot;
+
+		await component.setProps( {
+			modelValue: {
+				...rootsContent,
+				outro: '<p>Outro</p>'
+			}
+		} );
+
+		await vi.waitFor( () => {
+			expect( addRoot ).toHaveBeenCalledWith( 'outro', expect.objectContaining( {
+				initialData: '<p>Outro</p>',
+				modelAttributes: {
+					order: 30
+				}
+			} ) );
+		} );
+
+		component.unmount();
+	} );
+
 	it( 'should not reset root attributes when editor omits an empty attributes entry', async () => {
 		const component = mountComponent( {
 			rootsAttributes: {

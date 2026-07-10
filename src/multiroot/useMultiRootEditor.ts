@@ -550,8 +550,11 @@ function handleNewRoots(
 	const supports = getInstalledCKBaseFeatures();
 
 	for ( const rootName of rootNames ) {
+		// The root may already exist in the model (e.g. it was detached earlier), but calling
+		// `getRootAttributes()` for a root that is not in the model throws `get-root-attributes-missing-root`.
+		const existingRoot = editor.model.document.getRoot( rootName );
 		const rootAttributes = {
-			...editor.getRootAttributes( rootName ),
+			...existingRoot && editor.getRootAttributes( rootName ),
 			...rootsAttributes[ rootName ]
 		};
 		const rootData = data[ rootName ];
