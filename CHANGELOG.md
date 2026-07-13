@@ -1,6 +1,15 @@
 Changelog
 =========
 
+## [8.2.0](https://github.com/ckeditor/ckeditor5-vue/compare/v8.2.0-alpha.0...v8.2.0) (July 13, 2026)
+
+### Features
+
+* Added experimental multi-root editor integration with the `CkeditorMultiRoot`, `CkeditorMultiRootToolbar`, and `CkeditorMultiRootEditable` components and the `useMultiRootEditor()` composable.
+
+  **This feature is experimental.** Its API is not stable and may change in any release without a major version bump.
+
+
 ## [8.2.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v8.1.1...v8.2.0-alpha.0) (June 22, 2026)
 
 ### Features
@@ -91,41 +100,6 @@ Changelog
       crashNumberLimit: 5,
       minimumTimeBetweenCrashes: 1000,
       // any other Watchdog options...
-    }"
-    ...
-  />
-  ```
-
-### Bug fixes
-
-* Significantly improved stability during rapid component destruction (e.g. fast route changes, v-if toggling, or Suspense scenarios).
-
-
-## [8.0.0-alpha.0](https://github.com/ckeditor/ckeditor5-vue/compare/v7.4.2...v8.0.0-alpha.0) (April 27, 2026)
-
-### BREAKING CHANGES
-
-* The `ready`, `error`, and `destroy` events can now be emitted multiple times during a component's lifetime when the watchdog is active.
-
-  By default, the editor is wrapped with a watchdog that automatically restarts it after a crash. As a result, these events may fire repeatedly — `error` after each crash, `destroy` for each crashed editor, and `ready` after each successful watchdog restart — rather than only once during the component's mount/unmount lifecycle.
-
-  Additionally, `destroy` is no longer emitted when the component unmounts before the editor finishes initializing (it now fires only when an actual editor instance is destroyed). If your handlers relied on `@destroy` to detect component unmount, use Vue's `onBeforeUnmount` lifecycle hook instead
-
-### Features
-
-* You can now listen to the new `@error` event to catch and handle any errors that occur during editor initialization or at runtime (including errors automatically detected and reported by the Watchdog).
-* Full Watchdog support has been added to the `<ckeditor>` component:
-
-  * The editor is now automatically wrapped with CKEditor 5’s Watchdog (unless you explicitly pass `disableWatchdog: true`). This gives you automatic crash recovery, error detection, and editor restarts without breaking your Vue component.
-
-  * New `watchdogConfig` prop for the Watchdog integration. You can now pass a full configuration object to customize its behavior:
-
-  ```vue
-  <ckeditor
-    :watchdog-config="{
-      crashNumberLimit: 5,
-      minimumNonErrorTimePeriod: 1000,
-      saveInterval: 2000
     }"
     ...
   />
