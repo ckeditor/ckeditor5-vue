@@ -4,7 +4,10 @@
  */
 
 import * as Vue from 'vue';
-import Ckeditor from './ckeditor.vue';
+import Ckeditor from './Ckeditor.vue';
+import CkeditorElement from './CkeditorElement.vue';
+import CkeditorMultiRoot from './CkeditorMultiRoot.vue';
+import CkeditorMultiRootEditable from './multiroot/MultiRootEditorEditable.vue';
 
 /* istanbul ignore if -- @preserve */
 if ( !Vue.version || !Vue.version.startsWith( '3.' ) ) {
@@ -23,6 +26,9 @@ const CkeditorPlugin = {
 	 */
 	install( app: Vue.App ): void {
 		app.component( 'Ckeditor', Ckeditor );
+		app.component( 'CkeditorElement', CkeditorElement );
+		app.component( 'CkeditorMultiRoot', CkeditorMultiRoot );
+		app.component( 'CkeditorMultiRootEditable', CkeditorMultiRootEditable );
 	}
 };
 
@@ -34,10 +40,31 @@ const CkeditorPlugin = {
  */
 export {
 	CkeditorPlugin,
-	Ckeditor
+	Ckeditor,
+	CkeditorElement,
+	CkeditorMultiRoot,
+	CkeditorMultiRootEditable
 };
 
 export type { EditorErrorDescription } from './types.js';
+
+export {
+	useMultiRootEditor,
+	type UseMultiRootEditorOptions,
+	type UseMultiRootEditorResult
+} from './multiroot/useMultiRootEditor.js';
+
+export type {
+	AddRootOptions,
+	MultiRootEditorData,
+	MultiRootEditorErrorDescription,
+	MultiRootEditorLifecycleEvents,
+	MultiRootEditorRootAttributes,
+	MultiRootEditorRootsAttributes,
+	MultiRootEditorVModelEvents,
+	MultiRootEditorWithWatchdogRelaxedConstructor,
+	RootEditableOptionsAttribute
+} from './multiroot/types.js';
 
 /**
  * CDN related exports.
@@ -56,5 +83,8 @@ declare module 'vue' {
 	interface GlobalComponents {
 		Ckeditor: typeof Ckeditor;
 		ckeditor: typeof Ckeditor;
+		CkeditorElement: typeof CkeditorElement;
+		CkeditorMultiRoot: typeof CkeditorMultiRoot;
+		CkeditorMultiRootEditable: typeof CkeditorMultiRootEditable;
 	}
 }

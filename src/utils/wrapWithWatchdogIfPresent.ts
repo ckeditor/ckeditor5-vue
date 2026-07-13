@@ -13,6 +13,26 @@ export type EditorWithAttachedWatchdog<TEditor extends Editor = Editor> = TEdito
 	[EDITOR_WATCHDOG_SYMBOL]?: EditorWatchdog;
 };
 
+export type WatchdogErrorEventData<TEditor extends Editor> = {
+	error: Error;
+	causesRestart: boolean;
+	watchdog: EditorWatchdog;
+	editor: TEditor;
+};
+
+/**
+ * Returns an editor constructor optionally wrapped with EditorWatchdog.
+ */
+export function resolveEditorConstructor<TEditor extends Editor, TConstructor extends EditorWithWatchdogRelaxedConstructor<TEditor>>(
+	Editor: TConstructor,
+	disableWatchdog: boolean,
+	watchdogConfig?: WatchdogConfig
+): TConstructor {
+	return disableWatchdog ?
+		Editor :
+		wrapWithWatchdogIfPresent( Editor, watchdogConfig ) as TConstructor;
+}
+
 /**
  * `EditorWatchdog#create` method does not return editor instance (returns `undefined` instead).
  * This function wraps editor constructor with EditorWatchdog and returns fake constructor that
@@ -63,6 +83,41 @@ export function wrapWithWatchdogIfPresent<TEditor extends Editor>(
  */
 export function unwrapEditorWatchdog( editor: EditorWithAttachedWatchdog ): EditorWatchdog | null {
 	return editor[ EDITOR_WATCHDOG_SYMBOL ] ?? null;
+}
+
+/**
+ * Attaches common EditorWatchdog runtime error handling.
+ */
+export function attachEditorWatchdogErrorHandler<TEditor extends Editor>(
+	editor: EditorWithAttachedWatchdog<TEditor>,
+	{
+		isUnmounted,
+		onError
+	}: {
+		isUnmounted: () => boolean;
+		onError: ( data: WatchdogErrorEventData<TEditor> ) => void;
+	}
+): EditorWatchdog | null {
+	const watchdog = unwrapEditorWatchdog( editor );
+
+	if ( !watchdog ) {
+		return null;
+	}
+
+	watchdog.on( 'error', ( _, { error, causesRestart } ) => {
+		if ( isUnmounted() ) {
+			return;
+		}
+
+		onError( {
+			error,
+			causesRestart,
+			watchdog,
+			editor: watchdog.editor as TEditor
+		} );
+	} );
+
+	return watchdog;
 }
 
 /**

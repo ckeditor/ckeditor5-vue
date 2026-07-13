@@ -1,5 +1,10 @@
+<!--
+ * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
+-->
+
 <template>
-  <editor-element
+  <DynamicElement
     ref="editorElementRef"
     :definition="elementDefinition"
   />
@@ -33,8 +38,8 @@ import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageData
 import { cleanupOrphanEditorElements } from './utils/cleanupOrphanEditorElements.js';
 import {
 	destroyEditorWithWatchdog,
-	unwrapEditorWatchdog,
-	wrapWithWatchdogIfPresent,
+	attachEditorWatchdogErrorHandler,
+	resolveEditorConstructor,
 	type EditorWithAttachedWatchdog
 } from './utils/wrapWithWatchdogIfPresent.js';
 
@@ -44,7 +49,7 @@ import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVMod
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
-import EditorElement from './EditorElement.vue';
+import DynamicElement from './DynamicElement.vue';
 import { isClassicEditor } from './utils/isClassicEditor.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
@@ -73,7 +78,7 @@ const emit = defineEmits<
 const currentInstance = getCurrentInstance();
 const hasErrorHandler = () => !!currentInstance?.vnode.props?.onError;
 
-const editorElementRef = ref<InstanceType<typeof EditorElement>>();
+const editorElementRef = ref<InstanceType<typeof DynamicElement>>();
 const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
 const isUnmounted = useIsUnmounted();
 
@@ -113,12 +118,7 @@ onMounted( async () => {
 		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value, true );
 	}
 
-	// Wrap editor with watchdog unless disabled.
-	let Constructor = props.editor;
-
-	if ( !props.disableWatchdog ) {
-		Constructor = wrapWithWatchdogIfPresent( props.editor, props.watchdogConfig ) as TEditorConstructor;
-	}
+	const Constructor = resolveEditorConstructor( props.editor, props.disableWatchdog, props.watchdogConfig );
 
 	try {
 		const domElement = editorElementRef.value?.elementRef;
@@ -144,15 +144,9 @@ onMounted( async () => {
 			editor.data.set( model.value );
 		}
 
-		// If it's editor watchdog instance, then it attach error handlers.
-		const watchdog = unwrapEditorWatchdog( editor );
-
-		if ( watchdog ) {
-			watchdog.on( 'error', ( _, { error, causesRestart } ) => {
-				if ( isUnmounted.value ) {
-					return;
-				}
-
+		const watchdog = attachEditorWatchdogErrorHandler( editor, {
+			isUnmounted: () => isUnmounted.value,
+			onError: ( { error, watchdog, editor, causesRestart } ) => {
 				if ( !hasErrorHandler() ) {
 					console.error( error );
 				}
@@ -160,11 +154,13 @@ onMounted( async () => {
 				emit( 'error', error, {
 					phase: 'runtime',
 					watchdog,
-					editor: watchdog.editor as TEditor,
+					editor,
 					causesRestart
 				} );
-			} );
+			}
+		} );
 
+		if ( watchdog ) {
 			watchdog.on( 'restart', () => {
 				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
 				try {

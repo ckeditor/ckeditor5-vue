@@ -1,6 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
+		"rootDir": "..",
 		"emitDeclarationOnly": false,
 		"noImplicitAny": false,
 		"types": [
@@ -8,7 +9,6 @@
 		]
 	},
 	"include": [
-		"./",
-		"../src"
+		"**/*"
 	]
 }
