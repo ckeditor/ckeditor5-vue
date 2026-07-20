@@ -13,6 +13,8 @@ import ts from 'typescript-eslint';
 export default defineConfig( [
 	{
 		ignores: [
+			// CSS is not linted here (repo predates the stylelint→eslint migration, #4267).
+			'**/*.css',
 			'coverage/**',
 			'dist/**',
 			'release/**'
