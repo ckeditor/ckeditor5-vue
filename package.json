@@ -62,7 +62,7 @@
     "listr2": "^6.5.0",
     "minimist": "^1.2.5",
     "semver": "^7.0.0",
-    "typescript": "~5.4.5",
+    "typescript": "~5.5.4",
     "typescript-eslint": "^8.32.1",
     "upath": "^2.0.1",
     "vite": "^8.1.0",
