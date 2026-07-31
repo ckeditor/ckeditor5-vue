@@ -13,8 +13,6 @@ import ts from 'typescript-eslint';
 export default defineConfig( [
 	{
 		ignores: [
-			// CSS is not linted here (repo predates the stylelint→eslint migration, #4267).
-			'**/*.css',
 			'coverage/**',
 			'dist/**',
 			'release/**'
@@ -56,6 +54,27 @@ export default defineConfig( [
 			],
 			'ckeditor5-rules/prevent-license-key-leak': 'error',
 			'no-unused-vars': 'off'
+		}
+	},
+
+	// Less strict checks for demo page styling. These files are not editor theme styling and are not shipped
+	// to npm - they exist to override editor defaults on a sample page, which is what the rules below forbid.
+	{
+		files: [ 'demos/**/*.css' ],
+
+		rules: {
+			// Demo pages use plain colors. The HSL / custom property requirement targets theme files,
+			// where colors must stay overridable.
+			'ckeditor5-rules/no-disallowed-color-formats': 'off',
+
+			// A demo overriding `.ck-editor__editable` defaults is exactly what `!important` is for here.
+			'css/no-important': 'off',
+
+			// TODO (RTL): off pending a migration of physical properties/values to logical, the same way
+			// the `ckeditor5` repository defers it.
+			'css/prefer-logical-properties': 'off',
+
+			'css/use-baseline': 'off'
 		}
 	},
 
