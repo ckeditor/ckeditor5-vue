@@ -69,11 +69,11 @@ importers:
         specifier: ^10.0.0
         version: 10.7.0(jiti@2.6.1)
       eslint-config-ckeditor5:
-        specifier: ^19.0.0
-        version: 19.0.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4)
+        specifier: ^20.0.0
+        version: 20.0.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4)
       eslint-plugin-ckeditor5-rules:
-        specifier: ^19.0.0
-        version: 19.0.0
+        specifier: ^20.0.0
+        version: 20.0.0
       eslint-plugin-vue:
         specifier: ^10.1.0
         version: 10.9.2(@stylistic/eslint-plugin@4.4.1(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4))(@typescript-eslint/parser@8.62.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4))(eslint@10.7.0(jiti@2.6.1))(vue-eslint-parser@10.4.1(eslint@10.7.0(jiti@2.6.1)))
@@ -2271,21 +2271,16 @@ packages:
     engines: {node: '>=6.0'}
     hasBin: true
 
-  eslint-config-ckeditor5@19.0.0:
-    resolution: {integrity: sha512-LCngFCHjuCmLOOze1BicUieFCbnIFnlnuiQvfjma4Qs0LfnClosWbsfhxjCLuHcgBgvGjU7whf1v80VGShVbKg==}
+  eslint-config-ckeditor5@20.0.0:
+    resolution: {integrity: sha512-ofMfJefVFr10YrrBFzLaq2gbuXKj5DJ7zBesXLok6AQmrS3zlx0jp087+t+mNzTCdIsCeELZU3iYEagqBMyfBA==}
     engines: {node: '>=24.11.0'}
     peerDependencies:
       eslint: ^10.0.0
       typescript: ^5.5.4
 
-  eslint-plugin-ckeditor5-rules@19.0.0:
-    resolution: {integrity: sha512-nbDuphrXCh3rhb0FLZfPZaB9DaJ3mYoZcxT91vqx9+Uvsw3glmRwgIiIgh4k4dsshm77XDhZu8rjVpqP/lAkYg==}
+  eslint-plugin-ckeditor5-rules@20.0.0:
+    resolution: {integrity: sha512-rmY1qVRHufeRE6JZ5oS7MsDsws+EmkYjQoIvWrgdxzmyfPKZowrhELyOKUmDPQb6NmFltgupc6KC+UcHlJRo9Q==}
     engines: {node: '>=24.11.0'}
-
-  eslint-plugin-mocha@11.2.0:
-    resolution: {integrity: sha512-nMdy3tEXZac8AH5Z/9hwUkSfWu8xHf4XqwB5UEQzyTQGKcNlgFeciRAjLjliIKC3dR1Ex/a2/5sqgQzvYRkkkA==}
-    peerDependencies:
-      eslint: '>=9.0.0'
 
   eslint-plugin-vue@10.9.2:
     resolution: {integrity: sha512-4g7ZP3pYcuqd7Zp0pzUKcos0W+RkjBz4EGdhJ92FcYk6v03Ti/GK5NwjgsjxHK+98eXDbHeK7VtX1az7/8doZA==}
@@ -2566,10 +2561,6 @@ packages:
   global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
     engines: {node: '>=10.0'}
-
-  globals@15.15.0:
-    resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
-    engines: {node: '>=18'}
 
   globals@16.5.0:
     resolution: {integrity: sha512-c/c15i26VrJ4IRt5Z89DnIzCGDn9EcebibhAOjw5ibqEHsE1wLUgkPn9RDmNcUKyU87GeaL633nyJ+pplFR2ZQ==}
@@ -7486,22 +7477,20 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-config-ckeditor5@19.0.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4):
+  eslint-config-ckeditor5@20.0.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4):
     dependencies:
       '@eslint/css': 1.4.0
       '@eslint/js': 10.0.1(eslint@10.7.0(jiti@2.6.1))
       '@eslint/markdown': 6.6.0
       '@stylistic/eslint-plugin': 4.4.1(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4)
       eslint: 10.7.0(jiti@2.6.1)
-      eslint-plugin-ckeditor5-rules: 19.0.0
-      eslint-plugin-mocha: 11.2.0(eslint@10.7.0(jiti@2.6.1))
-      globals: 16.5.0
+      eslint-plugin-ckeditor5-rules: 20.0.0
       typescript: 5.5.4
       typescript-eslint: 8.62.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-ckeditor5-rules@19.0.0:
+  eslint-plugin-ckeditor5-rules@20.0.0:
     dependencies:
       '@es-joy/jsdoccomment': 0.50.2
       '@eslint/css-tree': 4.0.4
@@ -7510,12 +7499,6 @@ snapshots:
       upath: 2.0.1
       validate-npm-package-name: 6.0.2
       yaml: 2.8.3
-
-  eslint-plugin-mocha@11.2.0(eslint@10.7.0(jiti@2.6.1)):
-    dependencies:
-      '@eslint-community/eslint-utils': 4.9.1(eslint@10.7.0(jiti@2.6.1))
-      eslint: 10.7.0(jiti@2.6.1)
-      globals: 15.15.0
 
   eslint-plugin-vue@10.9.2(@stylistic/eslint-plugin@4.4.1(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4))(@typescript-eslint/parser@8.62.0(eslint@10.7.0(jiti@2.6.1))(typescript@5.5.4))(eslint@10.7.0(jiti@2.6.1))(vue-eslint-parser@10.4.1(eslint@10.7.0(jiti@2.6.1))):
     dependencies:
@@ -7851,8 +7834,6 @@ snapshots:
       roarr: 2.15.4
       semver: 7.7.4
       serialize-error: 7.0.1
-
-  globals@15.15.0: {}
 
   globals@16.5.0: {}
 
