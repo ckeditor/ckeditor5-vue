@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
-import { webdriverio } from '@vitest/browser-webdriverio';
+import { playwright } from '@vitest/browser-playwright';
 
 const require = createRequire( import.meta.url );
 const pkg = require( './package.json' );
@@ -74,16 +74,15 @@ export default defineConfig( {
 		},
 		browser: {
 			enabled: true,
+			headless: true,
 			screenshotFailures: false,
-			provider: webdriverio( {
-				capabilities: {
-					'goog:chromeOptions': {
-						args: [ '--headless', '--disable-gpu', '--no-sandbox' ]
-					}
+			provider: playwright( {
+				launchOptions: {
+					channel: 'chrome'
 				}
 			} ),
 			instances: [
-				{ browser: 'chrome' }
+				{ browser: 'chromium' }
 			]
 		}
 	},
