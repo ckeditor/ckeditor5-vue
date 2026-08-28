@@ -45,7 +45,7 @@
     "@ckeditor/ckeditor5-dev-utils": "^58.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^6.0.7",
-    "@vitest/browser-webdriverio": "^4.1.10",
+    "@vitest/browser-playwright": "^4.1.10",
     "@vitest/coverage-istanbul": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/ui": "^4.1.10",
@@ -61,6 +61,7 @@
     "lint-staged": "^10.2.11",
     "listr2": "^6.5.0",
     "minimist": "^1.2.5",
+    "playwright": "^1.52.0",
     "semver": "^7.0.0",
     "typescript": "~5.5.4",
     "typescript-eslint": "^8.32.1",
@@ -69,8 +70,7 @@
     "vitest": "^4.1.10",
     "vue": "^3.4.30",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^2.1.6",
-    "webdriverio": "^9.27.1"
+    "vue-tsc": "^2.1.6"
   },
   "engines": {
     "node": ">=24.11.0",
