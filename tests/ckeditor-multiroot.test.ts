@@ -1066,6 +1066,11 @@ describe( 'CKEditor multi-root component', () => {
 	// A real editor, unlike the mock used elsewhere in this file: reporting finds the editor an error
 	// belongs to among the editors that are actually running, and a mock is not one of them.
 	describe( 'error reporting', () => {
+		beforeEach( () => {
+			// These mount real editors, so they should run on a version the integration supports.
+			vi.stubGlobal( 'CKEDITOR_VERSION', '49.0.0' );
+		} );
+
 		function mountReal( props: Record<string, any> = {} ) {
 			return mount( CkeditorMultiRoot, {
 				props: {
@@ -1139,6 +1144,24 @@ describe( 'CKEditor multi-root component', () => {
 
 			component.unmount();
 			other.unmount();
+		} );
+
+		// The guard inside the callback and the unsubscribe hide each other: with either one alone the
+		// component still looks silent after unmounting. Only the unsubscribe stops the page-level
+		// listeners from being retained, so it is asserted on its own.
+		it( 'should unregister the reporting when the component is unmounted', async () => {
+			const off = vi.fn();
+			const register = vi.spyOn( RealMultiRootEditor, 'onEditorError' ).mockReturnValue( off );
+			const component = mountReal();
+
+			await waitForReal( component );
+
+			expect( register ).toHaveBeenCalledOnce();
+			expect( off ).not.toHaveBeenCalled();
+
+			component.unmount();
+
+			expect( off ).toHaveBeenCalledOnce();
 		} );
 
 		it( 'should stop reporting once the component is unmounted', async () => {

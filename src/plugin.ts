@@ -46,7 +46,7 @@ export {
 	CkeditorMultiRootEditable
 };
 
-export type { EditorErrorDescription } from './types.js';
+export type { EditorErrorDescription, WithErrorReporting } from './types.js';
 
 export {
 	useMultiRootEditor,

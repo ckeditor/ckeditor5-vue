@@ -30,9 +30,9 @@ import type { EditorErrorDescription, Props, WithErrorReporting } from './types.
 import {
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
-	EditorRelaxedConstructor,
-	ExtractEditorType,
-	getInstalledCKBaseFeatures
+	getInstalledCKBaseFeatures,
+	type EditorRelaxedConstructor,
+	type ExtractEditorType
 } from '@ckeditor/ckeditor5-integrations-common';
 
 import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageDataPlugin.js';
@@ -137,6 +137,10 @@ onMounted( async () => {
 			editor.data.set( model.value );
 		}
 
+		// Held before anything else runs, so that whatever happens next the editor is still destroyed
+		// when the component goes away.
+		instance.value = markRaw( editor );
+
 		// The runtime half of the `error` event. The other half is the rejected `create()` below, and both
 		// are needed: reporting only covers an editor that is already running.
 		// Off the editor class rather than imported: importing a value from CKEditor loads the npm build,
@@ -158,7 +162,6 @@ onMounted( async () => {
 			} );
 		} );
 
-		instance.value = markRaw( editor );
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {
 			return;

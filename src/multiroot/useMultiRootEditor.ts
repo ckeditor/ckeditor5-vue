@@ -213,6 +213,10 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRel
 				return;
 			}
 
+			// Held before anything else runs, so that whatever happens next the editor is still destroyed
+			// when the component goes away.
+			instance.value = markRaw( editor );
+
 			// The runtime half of the reported error. The other half is the rejected `create()` below, and
 			// both are needed: reporting only covers an editor that is already running.
 			// Off the editor class rather than imported — see the note in `Ckeditor.vue`.
@@ -228,8 +232,6 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRel
 					editor
 				} );
 			} );
-
-			instance.value = markRaw( editor );
 
 			if (
 				areRecordsEqual( data.value, creationData ) &&

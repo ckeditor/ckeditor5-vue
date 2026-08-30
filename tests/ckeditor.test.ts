@@ -1112,6 +1112,11 @@ describe( 'CKEditor component', () => {
 	} );
 
 	describe( 'error reporting', () => {
+		beforeEach( () => {
+			// These mount real editors, so they should run on a version the integration supports.
+			vi.stubGlobal( 'CKEDITOR_VERSION', '49.0.0' );
+		} );
+
 		// A real editor, unlike the mock used elsewhere in this file: reporting finds the editor an error
 		// belongs to among the editors that are actually running, and a mock is not one of them.
 		function mountReal( props: Record<string, any> = {} ) {
@@ -1203,6 +1208,24 @@ describe( 'CKEditor component', () => {
 			} );
 
 			expect( component.emitted().error ).to.be.undefined;
+		} );
+
+		// The guard inside the callback and the unsubscribe hide each other: with either one alone the
+		// component still looks silent after unmounting. Only the unsubscribe stops the page-level
+		// listeners from being retained, so it is asserted on its own.
+		it( 'should unregister the reporting when the component is unmounted', async () => {
+			const off = vi.fn();
+			const register = vi.spyOn( RealClassicEditor, 'onEditorError' ).mockReturnValue( off );
+			const component = mountReal( { onError: () => {} } );
+
+			await waitForReal( component );
+
+			expect( register ).toHaveBeenCalledOnce();
+			expect( off ).not.toHaveBeenCalled();
+
+			component.unmount();
+
+			expect( off ).toHaveBeenCalledOnce();
 		} );
 
 		it( 'should print the error to the console when no listener is attached', async () => {
