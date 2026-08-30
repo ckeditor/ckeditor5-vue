@@ -3,8 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import type { EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
-import type { Editor, EditorConfig, EditorWatchdog, WatchdogConfig } from 'ckeditor5';
+import type { Editor, EditorConfig } from 'ckeditor5';
 
 /**
  * This file contains types for the CKEditor 5 Vue component.
@@ -22,8 +21,6 @@ export interface Props<TEditorConstructor> {
 	config?: EditorConfig;
 	disabled?: boolean;
 	disableTwoWayDataBinding?: boolean;
-	watchdogConfig?: WatchdogConfig;
-	disableWatchdog?: boolean;
 
 	/**
 	 * @deprecated Use `config.root.element` (or `config.roots.main.element`) instead.
@@ -32,14 +29,10 @@ export interface Props<TEditorConstructor> {
 }
 
 /**
- * Editor constructor with static watchdog class definition.
- */
-export type EditorWithWatchdogRelaxedConstructor<TEditor extends Editor = Editor> = EditorRelaxedConstructor<TEditor> & {
-	EditorWatchdog?: typeof EditorWatchdog;
-};
-
-/**
  * Error thrown during initialization or runtime of the editor.
+ *
+ * The two phases differ in what there is to hand over: an editor that failed to start does not exist,
+ * while one that failed later does.
  */
 export type EditorErrorDescription<TEditor extends Editor> = (
 	| {
@@ -47,8 +40,6 @@ export type EditorErrorDescription<TEditor extends Editor> = (
 	}
 	| {
 		phase: 'runtime';
-		causesRestart: boolean;
-		watchdog: EditorWatchdog;
 		editor: TEditor;
 	}
 );

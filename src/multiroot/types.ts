@@ -6,11 +6,12 @@
 import type {
 	EditorConfig,
 	EventInfo,
-	MultiRootEditor,
-	WatchdogConfig
+	MultiRootEditor
 } from 'ckeditor5';
 
-import type { EditorErrorDescription, EditorWithWatchdogRelaxedConstructor } from '../types.js';
+import type { EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
+
+import type { EditorErrorDescription } from '../types.js';
 import type { EditorElementDefinition } from '../utils/normalizeEditorElementDefinition.js';
 
 export type MultiRootEditorData = Record<string, string>;
@@ -19,16 +20,14 @@ export type MultiRootEditorRootAttributes = Record<string, unknown>;
 
 export type MultiRootEditorRootsAttributes = Record<string, MultiRootEditorRootAttributes>;
 
-export type MultiRootEditorWithWatchdogRelaxedConstructor<TEditor extends MultiRootEditor = MultiRootEditor> =
-	EditorWithWatchdogRelaxedConstructor<TEditor>;
+export type MultiRootEditorRelaxedConstructor<TEditor extends MultiRootEditor = MultiRootEditor> =
+	EditorRelaxedConstructor<TEditor>;
 
 export interface MultiRootProps<TEditorConstructor> {
 	editor: TEditorConstructor;
 	config?: EditorConfig;
 	disabled?: boolean;
 	disableTwoWayDataBinding?: boolean;
-	watchdogConfig?: WatchdogConfig;
-	disableWatchdog?: boolean;
 }
 
 export type RootEditableOptionsAttribute = {

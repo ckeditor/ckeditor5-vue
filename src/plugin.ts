@@ -62,7 +62,7 @@ export type {
 	MultiRootEditorRootAttributes,
 	MultiRootEditorRootsAttributes,
 	MultiRootEditorVModelEvents,
-	MultiRootEditorWithWatchdogRelaxedConstructor,
+	MultiRootEditorRelaxedConstructor,
 	RootEditableOptionsAttribute
 } from './multiroot/types.js';
 
