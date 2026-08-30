@@ -12,6 +12,13 @@ import CkeditorMultiRootEditable from '../src/multiroot/MultiRootEditorEditable.
 import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from '../src/multiroot/constants.js';
 import { CkeditorPlugin } from '../src/plugin.js';
 import { MockModelRootElement, MockMultiRootEditor } from './_utils/mockmultirooteditor.js';
+import { turnOffErrors } from './_utils/turnofferrors.js';
+import { CKEditorError, Essentials, MultiRootEditor, Paragraph } from 'ckeditor5';
+
+class RealMultiRootEditor extends MultiRootEditor {
+	public static override builtinPlugins = [ Essentials, Paragraph ];
+	public static override defaultConfig = { licenseKey: 'GPL' };
+}
 
 describe( 'CKEditor multi-root component', () => {
 	const rootsContent = {
@@ -612,80 +619,6 @@ describe( 'CKEditor multi-root component', () => {
 		component.unmount();
 	} );
 
-	it( 'should report watchdog runtime errors and expose restarted editor', async () => {
-		const error = new Error( 'Runtime error.' );
-		const component = mountComponent( {
-			disableWatchdog: false,
-			onError: () => {}
-		} );
-
-		await waitForEditor( component );
-
-		const firstEditor = getEditor( component );
-		const watchdog = ( firstEditor as any )[ Symbol.for( 'vue-editor-watchdog' ) ];
-		const introElement = firstEditor.ui.getEditableElement( 'intro' )!;
-
-		introElement.setAttribute( 'contenteditable', 'true' );
-		introElement.classList.add( 'ck-focused' );
-
-		await watchdog.simulateError( error, true );
-
-		await vi.waitFor( () => {
-			expect( component.emitted().error![ 0 ] ).to.deep.equal( [ error, {
-				phase: 'runtime',
-				watchdog,
-				editor: firstEditor,
-				causesRestart: true
-			} ] );
-			expect( component.vm.instance ).to.be.instanceOf( MockMultiRootEditor );
-			expect( component.vm.instance ).not.to.equal( firstEditor );
-		} );
-
-		const restartedEditor = component.vm.instance;
-
-		expect( introElement.hasAttribute( 'contenteditable' ) ).to.be.false;
-		expect( introElement.classList.contains( 'ck-focused' ) ).to.be.false;
-		expect( component.emitted()[ 'update:modelValue' ]![ 0 ] ).to.deep.equal( [
-			rootsContent,
-			null,
-			restartedEditor
-		] );
-		expect( component.emitted()[ 'update:rootsAttributes' ]![ 0 ] ).to.deep.equal( [
-			rootsAttributes,
-			null,
-			restartedEditor
-		] );
-
-		component.unmount();
-	} );
-
-	it( 'should continue watchdog restart if orphan cleanup fails', async () => {
-		const error = new Error( 'Runtime error.' );
-		const component = mountComponent( {
-			disableWatchdog: false,
-			onError: () => {}
-		} );
-		const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
-
-		await waitForEditor( component );
-
-		const firstEditor = getEditor( component );
-		const watchdog = ( firstEditor as any )[ Symbol.for( 'vue-editor-watchdog' ) ];
-
-		firstEditor.editing.view.domRoots = undefined;
-
-		await watchdog.simulateError( error, true );
-
-		await vi.waitFor( () => {
-			expect( component.vm.instance ).to.be.instanceOf( MockMultiRootEditor );
-			expect( component.vm.instance ).not.to.equal( firstEditor );
-		} );
-
-		expect( consoleError ).toHaveBeenCalledWith( expect.any( TypeError ) );
-
-		component.unmount();
-	} );
-
 	it( 'should reject pending root operations when initialization fails', async () => {
 		const error = new Error( 'Initialization failed.' );
 		let rejectCreate!: ( error: Error ) => void;
@@ -1130,13 +1063,106 @@ describe( 'CKEditor multi-root component', () => {
 		expect( app.component ).toHaveBeenCalledWith( 'CkeditorMultiRootEditable', expect.any( Object ) );
 	} );
 
+	// A real editor, unlike the mock used elsewhere in this file: reporting finds the editor an error
+	// belongs to among the editors that are actually running, and a mock is not one of them.
+	describe( 'error reporting', () => {
+		function mountReal( props: Record<string, any> = {} ) {
+			return mount( CkeditorMultiRoot, {
+				props: {
+					editor: RealMultiRootEditor as any,
+					modelValue: { intro: '<p>Foo</p>' },
+					onError: () => {},
+					...props
+				}
+			} );
+		}
+
+		async function waitForReal( component: any ): Promise<MultiRootEditor> {
+			await vi.waitFor( () => {
+				expect( component.vm.instance ).to.be.instanceOf( RealMultiRootEditor );
+			} );
+
+			return component.vm.instance as MultiRootEditor;
+		}
+
+		it( 'should report a runtime error and keep the same editor', async () => {
+			const component = mountReal();
+			const editor = await waitForReal( component );
+			const error = new CKEditorError( 'a-custom-error', editor );
+
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw error;
+				} );
+			} );
+
+			await vi.waitFor( () => {
+				expect( component.emitted().error![ 0 ] ).to.deep.equal( [ error, {
+					phase: 'runtime',
+					editor
+				} ] );
+			} );
+
+			// Nothing restarts, so the editor the component holds is the one that threw.
+			expect( component.vm.instance ).to.equal( editor );
+
+			component.unmount();
+		} );
+
+		// One registration serves the whole page, so every component hears about every editor. This is
+		// what keeps an error with the editor it came from.
+		it( 'should not report an error that came from another editor', async () => {
+			const component = mountReal();
+			const other = mountReal();
+
+			await waitForReal( component );
+
+			const otherEditor = await waitForReal( other );
+			const error = new CKEditorError( 'a-custom-error', otherEditor );
+
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw error;
+				} );
+			} );
+
+			// The editor the error came from heard about it. Without this, the assertion below would hold
+			// just as well for an error that was never reported to anyone.
+			await vi.waitFor( () => {
+				expect( other.emitted().error![ 0 ] ).to.deep.equal( [ error, {
+					phase: 'runtime',
+					editor: otherEditor
+				} ] );
+			} );
+
+			expect( component.emitted().error ).to.be.undefined;
+
+			component.unmount();
+			other.unmount();
+		} );
+
+		it( 'should stop reporting once the component is unmounted', async () => {
+			const component = mountReal();
+			const editor = await waitForReal( component );
+
+			component.unmount();
+
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw new CKEditorError( 'a-custom-error', editor );
+				} );
+			} );
+
+			expect( component.emitted().error ).to.be.undefined;
+		} );
+	} );
+
 	function mountComponent( props: Record<string, any> = {} ) {
 		return mount( CkeditorMultiRoot, {
 			props: {
 				editor: MockMultiRootEditor as any,
 				modelValue: rootsContent,
 				rootsAttributes,
-				disableWatchdog: true,
 				...props
 			}
 		} );

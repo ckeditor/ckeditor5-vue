@@ -8,14 +8,19 @@ import { mount } from '@vue/test-utils';
 import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
 
 import { Ckeditor } from '../src/plugin.js';
+import { turnOffErrors } from './_utils/turnofferrors.js';
+import { CKEditorError, ClassicEditor, Essentials, Paragraph } from 'ckeditor5';
+
+class RealClassicEditor extends ClassicEditor {
+	public static override builtinPlugins = [ Essentials, Paragraph ];
+	public static override defaultConfig = { licenseKey: 'GPL' };
+}
 import { VueIntegrationUsageDataPlugin } from '../src/plugins/VueIntegrationUsageDataPlugin.js';
-import { MockWatchdog } from './_utils/mockwatchdog.js';
 import {
 	MockEditor,
 	ModelDocument,
 	ViewDocument
 } from './_utils/mockeditor.js';
-import { unwrapEditorWatchdog } from '../src/utils/wrapWithWatchdogIfPresent.js';
 
 describe( 'CKEditor component', () => {
 	beforeEach( () => {
@@ -48,7 +53,7 @@ describe( 'CKEditor component', () => {
 		);
 	} );
 
-	it( 'should print a warning if using CKEditor 5 in version lower than 42', async () => {
+	it( 'should print a warning if using CKEditor 5 in version lower than 49', async () => {
 		vi.stubGlobal( 'CKEDITOR_VERSION', '30.0.0' );
 
 		const consoleWarn = vi.spyOn( console, 'warn' ).mockReturnValue();
@@ -59,12 +64,12 @@ describe( 'CKEditor component', () => {
 
 		expect( consoleWarn ).toHaveBeenCalledOnce();
 		expect( consoleWarn ).toHaveBeenNthCalledWith( 1,
-			'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.'
+			'The <CKEditor> component requires using CKEditor 5 in version 49+ or nightly build.'
 		);
 	} );
 
-	it( 'should not print any warning if using CKEditor 5 in version 42 or higher', async () => {
-		vi.stubGlobal( 'CKEDITOR_VERSION', '42.0.0' );
+	it( 'should not print any warning if using CKEditor 5 in version 49 or higher', async () => {
+		vi.stubGlobal( 'CKEDITOR_VERSION', '49.0.0' );
 
 		const consoleWarn = vi.spyOn( console, 'warn' );
 		const component = mountComponent();
@@ -1106,208 +1111,120 @@ describe( 'CKEditor component', () => {
 		} );
 	} );
 
-	describe( 'watchdog', () => {
-		it( 'should initialize editor without watchdog if `disableWatchdog` flag is passed', async () => {
-			const component = mountComponent( {
-				editor: MockEditor,
-				disableWatchdog: true
+	describe( 'error reporting', () => {
+		// A real editor, unlike the mock used elsewhere in this file: reporting finds the editor an error
+		// belongs to among the editors that are actually running, and a mock is not one of them.
+		function mountReal( props: Record<string, any> = {} ) {
+			return mount( Ckeditor, {
+				props: {
+					editor: RealClassicEditor as any,
+					...props
+				},
+
+				// A real editor needs its element in the document.
+				attachTo: document.body
+			} );
+		}
+
+		async function waitForReal( component: any ): Promise<ClassicEditor> {
+			await vi.waitFor( () => {
+				expect( component.vm.instance ).to.be.instanceOf( RealClassicEditor );
 			} );
 
-			await timeout( 0 );
+			return component.vm.instance as ClassicEditor;
+		}
 
-			expect( component.vm.editor ).to.equal( MockEditor );
-			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
+		it( 'should emit an error that escaped a running editor, and keep the editor', async () => {
+			const component = mountReal( { onError: () => {} } );
+			const editor = await waitForReal( component );
+			const error = new CKEditorError( 'a-custom-error', editor );
 
-			expect( unwrapEditorWatchdog( component.vm.instance! ) ).to.be.null;
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw error;
+				} );
+			} );
+
+			await vi.waitFor( () => {
+				expect( component.emitted().error![ 0 ] ).to.deep.equal( [ error, {
+					phase: 'runtime',
+					editor
+				} ] );
+			} );
+
+			// Nothing restarts, so the editor the component holds is the one that threw.
+			expect( component.vm.instance ).to.equal( editor );
 
 			component.unmount();
 		} );
 
-		it( 'should initialize editor with watchdog by default', async () => {
-			const component = mountComponent( {
-				editor: MockEditor
+		// One registration serves the whole page, so every component hears about every editor. This is
+		// what keeps an error with the component whose editor it came from.
+		it( 'should not emit an error that came from another editor', async () => {
+			const component = mountReal( { onError: () => {} } );
+			const other = mountReal( { onError: () => {} } );
+
+			await waitForReal( component );
+
+			const otherEditor = await waitForReal( other );
+			const error = new CKEditorError( 'a-custom-error', otherEditor );
+
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw error;
+				} );
 			} );
 
-			await timeout( 0 );
-
-			expect( component.vm.editor ).to.equal( MockEditor );
-			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
-
-			expect( unwrapEditorWatchdog( component.vm.instance! ) ).to.be.instanceOf( MockWatchdog );
-
-			component.unmount();
-		} );
-
-		it( 'should not crash if editor constructor does not contain `EditorWatchdog` dependency', async () => {
-			vi.spyOn( MockEditor, 'EditorWatchdog', 'get' ).mockReturnValue( undefined as any );
-
-			const component = mountComponent( {
-				editor: MockEditor
+			// The editor the error came from heard about it. Without this, the assertion below would hold
+			// just as well for an error that was never reported to anyone.
+			await vi.waitFor( () => {
+				expect( other.emitted().error![ 0 ] ).to.deep.equal( [ error, {
+					phase: 'runtime',
+					editor: otherEditor
+				} ] );
 			} );
 
-			await timeout( 0 );
-
-			expect( component.vm.editor ).to.equal( MockEditor );
-			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
-
-			expect( unwrapEditorWatchdog( component.vm.instance! ) ).to.be.null;
+			expect( component.emitted().error ).to.be.undefined;
 
 			component.unmount();
+			other.unmount();
 		} );
 
-		it( 'should emit error if watchdog\'s error event occurs (causesRestart = false)', async () => {
-			const component = mountComponent( {
-				editor: MockEditor
+		it( 'should stop emitting once the component is unmounted', async () => {
+			const component = mountReal( { onError: () => {} } );
+			const editor = await waitForReal( component );
+
+			component.unmount();
+
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw new CKEditorError( 'a-custom-error', editor );
+				} );
 			} );
 
-			await timeout( 0 );
-
-			const firstInstance = component.vm.instance;
-
-			expect( firstInstance ).to.be.instanceOf( MockEditor );
-
-			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-			const error = new Error( 'test' );
-
-			watchdog.simulateError( error, false );
-
-			await timeout( 0 );
-
-			expect( component.emitted().error.length ).to.equal( 1 );
-			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ error, {
-				causesRestart: false,
-				phase: 'runtime',
-				editor: firstInstance,
-				watchdog
-			} ] );
-
-			await timeout( 0 );
-
-			expect( component.vm.instance ).to.be.equal( firstInstance );
-
-			component.unmount();
+			expect( component.emitted().error ).to.be.undefined;
 		} );
 
-		it( 'should emit error if watchdog\'s error event occurs (causesRestart = true)', async () => {
-			const component = mountComponent( {
-				editor: MockEditor
-			} );
-
-			await timeout( 0 );
-
-			const firstInstance = component.vm.instance;
-
-			expect( firstInstance ).to.be.instanceOf( MockEditor );
-
-			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-			const error = new Error( 'test' );
-
-			watchdog.simulateError( error, true );
-
-			await timeout( 0 );
-
-			expect( component.emitted().error.length ).to.equal( 1 );
-			expect( component.emitted().error[ 0 ] ).to.deep.equal( [ error, {
-				causesRestart: true,
-				phase: 'runtime',
-				editor: firstInstance,
-				watchdog
-			} ] );
-
-			await timeout( 0 );
-
-			expect( component.vm.instance ).to.be.instanceOf( MockEditor );
-			expect( component.vm.instance ).not.to.be.equal( firstInstance );
-
-			component.unmount();
-		} );
-
-		it( 'should print error to console if watchdog error occurs and no listener is provided', async () => {
+		it( 'should print the error to the console when no listener is attached', async () => {
 			const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
-			const component = mountComponent( {
-				editor: MockEditor
+			const component = mountReal();
+			const editor = await waitForReal( component );
+			const error = new CKEditorError( 'a-custom-error', editor );
+
+			await turnOffErrors( () => {
+				setTimeout( () => {
+					throw error;
+				} );
 			} );
 
-			await timeout( 0 );
-
-			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-			watchdog.simulateError( new Error( 'test' ), false );
-
-			await timeout( 0 );
-
-			expect( consoleError ).toHaveBeenCalledOnce();
+			await vi.waitFor( () => {
+				expect( consoleError ).toHaveBeenCalledWith( error );
+			} );
 
 			component.unmount();
 		} );
 
-		it( 'should not print error to console if watchdog error occurs and listener is provided', async () => {
-			const consoleError = vi.spyOn( console, 'error' ).mockReturnValue();
-			const component = mountComponent( {
-				editor: MockEditor,
-				onError: () => {}
-			} );
-
-			await timeout( 0 );
-
-			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-			watchdog.simulateError( new Error( 'test' ), false );
-
-			await timeout( 0 );
-
-			expect( consoleError ).not.toHaveBeenCalled();
-
-			component.unmount();
-		} );
-
-		it( 'should restore `disabled` state on restarted editor', async () => {
-			const component = mountComponent( {
-				editor: MockEditor,
-				disabled: true
-			} );
-
-			await timeout( 0 );
-
-			const firstInstance = component.vm.instance;
-
-			expect( firstInstance ).to.be.instanceOf( MockEditor );
-			expect( firstInstance!.isReadOnly ).to.be.true;
-
-			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-
-			watchdog.simulateError( new Error( 'test' ), true );
-
-			await timeout( 0 );
-
-			expect( component.vm.instance ).not.to.be.equal( firstInstance );
-			expect( component.vm.instance!.isReadOnly ).to.be.true;
-
-			component.unmount();
-		} );
-
-		it( 'should not crash if `error` occurs after unmounting component', async () => {
-			const component = mountComponent( {
-				editor: MockEditor,
-				disabled: true
-			} );
-
-			await timeout( 0 );
-
-			const firstInstance = component.vm.instance;
-
-			expect( firstInstance ).to.be.instanceOf( MockEditor );
-			expect( firstInstance!.isReadOnly ).to.be.true;
-
-			const watchdog = unwrapEditorWatchdog( component.vm.instance! ) as unknown as MockWatchdog;
-
-			component.unmount();
-			await timeout( 0 );
-
-			expect( () => {
-				watchdog.simulateError( new Error( 'test' ), true );
-			} ).not.to.throw();
-		} );
-
-		it( 'should properly forward `editorName` of the editor used in watchdog', async () => {
+		it( 'should properly forward `editorName` of the editor', async () => {
 			vi.stubGlobal( 'CKEDITOR_VERSION', '48.2.0' );
 
 			let passedConfig!: EditorRelaxedConfig;
