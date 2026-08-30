@@ -9,13 +9,13 @@ import { compareInstalledCKBaseVersion } from '@ckeditor/ckeditor5-integrations-
  * Hook that check if integration is compatible with installed version of the editor.
  */
 export function useEditorVersionCheck(): void {
-	switch ( compareInstalledCKBaseVersion( '42.0.0' ) ) {
+	switch ( compareInstalledCKBaseVersion( '49.0.0' ) ) {
 		case null:
 			console.warn( 'Cannot find the "CKEDITOR_VERSION" in the "window" scope.' );
 			break;
 
 		case -1:
-			console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 42+ or nightly build.' );
+			console.warn( 'The <CKEditor> component requires using CKEditor 5 in version 49+ or nightly build.' );
 			break;
 	}
 }
