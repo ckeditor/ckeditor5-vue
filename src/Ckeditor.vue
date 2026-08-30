@@ -13,7 +13,7 @@
 <script
 	setup
 	lang="ts"
-	generic="TEditorConstructor extends EditorRelaxedConstructor"
+	generic="TEditorConstructor extends EditorRelaxedConstructor & WithErrorReporting"
 >
 import {
 	ref,
@@ -24,8 +24,8 @@ import {
 	getCurrentInstance
 } from 'vue';
 
-import { onEditorError, type CKEditorError, type EditorConfig } from 'ckeditor5';
-import type { EditorErrorDescription, Props } from './types.js';
+import type { CKEditorError, EditorConfig } from 'ckeditor5';
+import type { EditorErrorDescription, Props, WithErrorReporting } from './types.js';
 
 import {
 	assignElementToEditorConfig,
@@ -139,7 +139,9 @@ onMounted( async () => {
 
 		// The runtime half of the `error` event. The other half is the rejected `create()` below, and both
 		// are needed: reporting only covers an editor that is already running.
-		offEditorError = onEditorError( ( { error, source } ) => {
+		// Off the editor class rather than imported: importing a value from CKEditor loads the npm build,
+		// and an application that meant to load it from a CDN is then refused.
+		offEditorError = props.editor.onEditorError( ( { error, source } ) => {
 			// One registration serves the whole page, so every component hears about every editor. This is
 			// what keeps an error with the component whose editor it came from.
 			if ( source !== editor || isUnmounted.value ) {

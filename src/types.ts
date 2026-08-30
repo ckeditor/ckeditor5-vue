@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import type { Editor, EditorConfig } from 'ckeditor5';
+import type { Editor, EditorConfig, EditorErrorCallback } from 'ckeditor5';
 
 /**
  * This file contains types for the CKEditor 5 Vue component.
@@ -12,6 +12,17 @@ import type { Editor, EditorConfig } from 'ckeditor5';
  * when the types were in the component file. This is a workaround
  * that may be fixed in the next versions of `vue-tsc`.
  */
+
+/**
+ * The part of an editor or context class the components reach for instead of importing `onEditorError()`.
+ *
+ * Importing a value from CKEditor loads the npm build, and an application that meant to load CKEditor from
+ * a CDN is then refused. Every editor and context class carries this static, so the class the integrator
+ * passes in is a handle that works on both installation paths.
+ */
+export type WithErrorReporting = {
+	onEditorError: ( callback: EditorErrorCallback ) => () => void;
+};
 
 /**
  * The props accepted by the `<ckeditor>` component.

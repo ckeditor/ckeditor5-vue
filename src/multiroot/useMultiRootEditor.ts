@@ -16,17 +16,16 @@ import {
 } from 'vue';
 import { debounce } from 'lodash-es';
 
-import {
-	onEditorError,
-	type AddRootEvent,
-	type CKEditorError,
-	type DetachRootEvent,
-	type EditorConfig,
-	type EventInfo,
-	type InlineEditableUIView,
-	type ModelRootElement,
-	type ModelWriter,
-	type MultiRootEditor
+import type {
+	AddRootEvent,
+	CKEditorError,
+	DetachRootEvent,
+	EditorConfig,
+	EventInfo,
+	InlineEditableUIView,
+	ModelRootElement,
+	ModelWriter,
+	MultiRootEditor
 } from 'ckeditor5';
 
 import {
@@ -216,7 +215,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRel
 
 			// The runtime half of the reported error. The other half is the rejected `create()` below, and
 			// both are needed: reporting only covers an editor that is already running.
-			offEditorError = onEditorError( ( { error, source } ) => {
+			// Off the editor class rather than imported — see the note in `Ckeditor.vue`.
+			offEditorError = Constructor.onEditorError( ( { error, source } ) => {
 				// One registration serves the whole page, so every composable hears about every editor. This
 				// is what keeps an error with the editor it came from.
 				if ( source !== editor || isUnmounted.value ) {

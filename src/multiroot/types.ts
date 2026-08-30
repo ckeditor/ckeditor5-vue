@@ -11,7 +11,7 @@ import type {
 
 import type { EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
 
-import type { EditorErrorDescription } from '../types.js';
+import type { EditorErrorDescription, WithErrorReporting } from '../types.js';
 import type { EditorElementDefinition } from '../utils/normalizeEditorElementDefinition.js';
 
 export type MultiRootEditorData = Record<string, string>;
@@ -21,7 +21,7 @@ export type MultiRootEditorRootAttributes = Record<string, unknown>;
 export type MultiRootEditorRootsAttributes = Record<string, MultiRootEditorRootAttributes>;
 
 export type MultiRootEditorRelaxedConstructor<TEditor extends MultiRootEditor = MultiRootEditor> =
-	EditorRelaxedConstructor<TEditor>;
+	EditorRelaxedConstructor<TEditor> & WithErrorReporting;
 
 export interface MultiRootProps<TEditorConstructor> {
 	editor: TEditorConstructor;
