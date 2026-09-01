@@ -25,8 +25,7 @@ import type {
 	InlineEditableUIView,
 	ModelRootElement,
 	ModelWriter,
-	MultiRootEditor,
-	WatchdogConfig
+	MultiRootEditor
 } from 'ckeditor5';
 
 import {
@@ -39,13 +38,6 @@ import {
 import { appendUsageDataPluginToConfig } from '../plugins/VueIntegrationUsageDataPlugin.js';
 import { useIsUnmounted } from '../composables/useIsUnmounted.js';
 import { useEditorReadOnly } from '../composables/useEditorReadOnly.js';
-import { cleanupOrphanEditorElements } from '../utils/cleanupOrphanEditorElements.js';
-import {
-	attachEditorWatchdogErrorHandler,
-	destroyEditorWithWatchdog,
-	resolveEditorConstructor,
-	type EditorWithAttachedWatchdog
-} from '../utils/wrapWithWatchdogIfPresent.js';
 
 import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from './constants.js';
 import type {
@@ -53,7 +45,7 @@ import type {
 	MultiRootEditorData,
 	MultiRootEditorErrorDescription,
 	MultiRootEditorRootsAttributes,
-	MultiRootEditorWithWatchdogRelaxedConstructor
+	MultiRootEditorRelaxedConstructor
 } from './types.js';
 
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
@@ -64,13 +56,16 @@ type EditorReadyCallback<TEditor extends MultiRootEditor> = {
 	reject: ( error: Error ) => void;
 };
 
-export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWithWatchdogRelaxedConstructor>(
+export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRelaxedConstructor>(
 	options: UseMultiRootEditorOptions<TEditorConstructor>
 ): UseMultiRootEditorResult<ExtractEditorType<TEditorConstructor> & MultiRootEditor> {
 	type TEditor = ExtractEditorType<TEditorConstructor> & MultiRootEditor;
 
 	const isUnmounted = useIsUnmounted();
-	const instance = ref<EditorWithAttachedWatchdog<TEditor>>();
+
+	// Unregisters the error reporting callback when the editor goes away.
+	let offEditorError: ( () => void ) | null = null;
+	const instance = ref<TEditor>();
 	const data = ref<MultiRootEditorData>( cloneData( toValue( options.data ) ) );
 	const rootsAttributes = ref<MultiRootEditorRootsAttributes>(
 		normalizeRootsAttributes( toValue( options.rootsAttributes ), data.value )
@@ -186,6 +181,9 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	onMounted( initializeEditor );
 
 	onBeforeUnmount( async () => {
+		offEditorError?.();
+		offEditorError = null;
+
 		const editor = instance.value;
 
 		rejectEditorReadyCallbacks( new Error( EDITOR_DESTROYED_BEFORE_READY_MESSAGE ) );
@@ -197,17 +195,13 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		instance.value = undefined;
 		forceAssignFakeEditableElements( editor );
 
-		await destroyEditorWithWatchdog( editor );
+		await editor.destroy();
 	} );
 
 	async function initializeEditor() {
 		const creationData = cloneData( data.value );
 		const creationRootsAttributes = cloneRootsAttributes( rootsAttributes.value );
-		const Constructor = resolveEditorConstructor(
-			toValue( options.editor ),
-			!!toValue( options.disableWatchdog ),
-			toValue( options.watchdogConfig )
-		);
+		const Constructor = toValue( options.editor );
 
 		try {
 			const editor = await createEditor( Constructor, creationData, creationRootsAttributes );
@@ -215,48 +209,29 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 			if ( isUnmounted.value ) {
 				rejectEditorReadyCallbacks( new Error( EDITOR_DESTROYED_BEFORE_READY_MESSAGE ) );
 				forceAssignFakeEditableElements( editor );
-				await destroyEditorWithWatchdog( editor );
+				await editor.destroy();
 				return;
 			}
 
-			const watchdog = attachEditorWatchdogErrorHandler( editor, {
-				isUnmounted: () => isUnmounted.value,
-				onError: ( { error, watchdog, editor, causesRestart } ) => {
-					reportError( error, {
-						phase: 'runtime',
-						watchdog,
-						editor,
-						causesRestart
-					} );
-				}
-			} );
-
-			if ( watchdog ) {
-				watchdog.on( 'restart', () => {
-					try {
-						/* istanbul ignore else -- @preserve - Restart is only handled after an editor instance is assigned. */
-						if ( instance.value ) {
-							cleanupOrphanEditorElements( instance.value );
-						}
-					} catch ( err ) {
-						console.error( err );
-					}
-
-					/* istanbul ignore if -- @preserve - Restart without an editor or after unmount is a watchdog edge case. */
-					if ( isUnmounted.value || !watchdog.editor ) {
-						return;
-					}
-
-					const restartedEditor = watchdog.editor as EditorWithAttachedWatchdog<TEditor>;
-
-					instance.value = markRaw( restartedEditor );
-					syncStateFromEditor( restartedEditor );
-					emitData( null, restartedEditor );
-					emitRootsAttributes( null, restartedEditor );
-				} );
-			}
-
+			// Held before anything else runs, so that whatever happens next the editor is still destroyed
+			// when the component goes away.
 			instance.value = markRaw( editor );
+
+			// The runtime half of the reported error. The other half is the rejected `create()` below, and
+			// both are needed: reporting only covers an editor that is already running.
+			// Off the editor class rather than imported — see the note in `Ckeditor.vue`.
+			offEditorError = Constructor.onEditorError( ( { error, source } ) => {
+				// One registration serves the whole page, so every composable hears about every editor. This
+				// is what keeps an error with the editor it came from.
+				if ( source !== editor || isUnmounted.value ) {
+					return;
+				}
+
+				reportError( error, {
+					phase: 'runtime',
+					editor
+				} );
+			} );
 
 			if (
 				areRecordsEqual( data.value, creationData ) &&
@@ -285,7 +260,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		Constructor: TEditorConstructor,
 		initialData: MultiRootEditorData,
 		initialRootsAttributes: MultiRootEditorRootsAttributes
-	): Promise<EditorWithAttachedWatchdog<TEditor>> {
+	): Promise<TEditor> {
 		let editorConfig = assignAttributesPropToMultiRootEditorConfig(
 			initialRootsAttributes,
 			{ ...toValue( options.config ) }
@@ -301,8 +276,8 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 		};
 		const supports = getInstalledCKBaseFeatures();
 		const Editor = Constructor as unknown as {
-			create( data: MultiRootEditorData, config: EditorConfig ): Promise<EditorWithAttachedWatchdog<TEditor>>;
-			create( config: EditorConfig ): Promise<EditorWithAttachedWatchdog<TEditor>>;
+			create( data: MultiRootEditorData, config: EditorConfig ): Promise<TEditor>;
+			create( config: EditorConfig ): Promise<TEditor>;
 		};
 
 		return await (
@@ -530,7 +505,7 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorWit
 	}
 
 	return {
-		instance: instance as Ref<EditorWithAttachedWatchdog<TEditor> | undefined>,
+		instance: instance as Ref<TEditor | undefined>,
 		roots,
 		data,
 		rootsAttributes,
@@ -702,14 +677,12 @@ function unique<TValue>( values: Array<TValue> ): Array<TValue> {
 	return [ ...new Set( values ) ];
 }
 
-export type UseMultiRootEditorOptions<TEditorConstructor extends MultiRootEditorWithWatchdogRelaxedConstructor> = {
+export type UseMultiRootEditorOptions<TEditorConstructor extends MultiRootEditorRelaxedConstructor> = {
 	editor: MaybeRefOrGetter<TEditorConstructor>;
 	data: MaybeRefOrGetter<MultiRootEditorData>;
 	rootsAttributes?: MaybeRefOrGetter<MultiRootEditorRootsAttributes | undefined>;
 	config?: MaybeRefOrGetter<EditorConfig | undefined>;
 	disabled?: MaybeRefOrGetter<boolean | undefined>;
-	watchdogConfig?: MaybeRefOrGetter<WatchdogConfig | undefined>;
-	disableWatchdog?: MaybeRefOrGetter<boolean | undefined>;
 	disableTwoWayDataBinding?: MaybeRefOrGetter<boolean | undefined>;
 	onReady?: ( editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
 	onDestroy?: ( editor: ExtractEditorType<TEditorConstructor> & MultiRootEditor ) => void;
@@ -733,7 +706,7 @@ export type UseMultiRootEditorOptions<TEditorConstructor extends MultiRootEditor
 };
 
 export type UseMultiRootEditorResult<TEditor extends MultiRootEditor> = {
-	instance: Ref<EditorWithAttachedWatchdog<TEditor> | undefined>;
+	instance: Ref<TEditor | undefined>;
 	roots: Ref<Array<string>>;
 	data: Ref<MultiRootEditorData>;
 	rootsAttributes: Ref<MultiRootEditorRootsAttributes>;

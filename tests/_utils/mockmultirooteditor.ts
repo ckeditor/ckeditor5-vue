@@ -3,9 +3,8 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import type { EditorConfig } from 'ckeditor5';
+import { onEditorError, type EditorConfig } from 'ckeditor5';
 import { SimpleEmitter } from './simpleemitter.js';
-import { MockWatchdog } from './mockwatchdog.js';
 
 type MultiRootEditorConfig = EditorConfig & Record<string, any>;
 
@@ -26,7 +25,10 @@ class EditorConfigAccessor {
 }
 
 export class MockMultiRootEditor extends SimpleEmitter {
-	public static EditorWatchdog = MockWatchdog as any;
+	/**
+	 * A real editor class carries this static, and the composable reaches for it instead of importing.
+	 */
+	public static onEditorError = onEditorError;
 
 	public static editorName = 'MultiRootEditor';
 
