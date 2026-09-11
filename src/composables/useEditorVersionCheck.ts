@@ -6,6 +6,15 @@
 import { compareInstalledCKBaseVersion } from '@ckeditor/ckeditor5-integrations-common';
 
 /**
+ * Said when the editor class handed to a component has no error reporting to read. It is the same cause as
+ * the version warning below, but a different consequence, and the multi-root path has no version check of
+ * its own — so this is the only thing an integrator there would hear.
+ */
+export const REPORTING_UNAVAILABLE_WARNING =
+	'Reporting errors that escape a running editor requires CKEditor 5 in version 49+ or a nightly build. ' +
+	'The "error" event will only report a failure to create an editor.';
+
+/**
  * Hook that check if integration is compatible with installed version of the editor.
  */
 export function useEditorVersionCheck(): void {

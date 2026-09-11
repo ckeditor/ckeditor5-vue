@@ -41,7 +41,7 @@ import { useIsUnmounted } from './composables/useIsUnmounted.js';
 import { EditorLifecycleEvents, useEditorLifecycleEvents } from './composables/useEditorLifecycleEvents.js';
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
-import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
+import { useEditorVersionCheck, REPORTING_UNAVAILABLE_WARNING } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
 import DynamicElement from './DynamicElement.vue';
 
@@ -145,22 +145,30 @@ onMounted( async () => {
 		// are needed: reporting only covers an editor that is already running.
 		// Off the editor class rather than imported: importing a value from CKEditor loads the npm build,
 		// and an application that meant to load it from a CDN is then refused.
-		offEditorError = props.editor.onEditorError( ( { error, source } ) => {
-			// One registration serves the whole page, so every component hears about every editor. This is
-			// what keeps an error with the component whose editor it came from.
-			if ( source !== editor || isUnmounted.value ) {
-				return;
-			}
+		//
+		// A class that predates the reporting API has no static to read. Say what stops working and carry
+		// on: the editor above is running, so a missing static must not be reported as a failure to create
+		// one.
+		if ( typeof props.editor.onEditorError != 'function' ) {
+			console.warn( REPORTING_UNAVAILABLE_WARNING );
+		} else {
+			offEditorError = props.editor.onEditorError( ( { error, source } ) => {
+				// One registration serves the whole page, so every component hears about every editor. This
+				// is what keeps an error with the component whose editor it came from.
+				if ( source !== editor || isUnmounted.value ) {
+					return;
+				}
 
-			if ( !hasErrorHandler() ) {
-				console.error( error );
-			}
+				if ( !hasErrorHandler() ) {
+					console.error( error );
+				}
 
-			emit( 'error', error, {
-				phase: 'runtime',
-				editor
+				emit( 'error', error, {
+					phase: 'runtime',
+					editor
+				} );
 			} );
-		} );
+		}
 
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {

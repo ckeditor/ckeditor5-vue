@@ -14,6 +14,7 @@ import { CkeditorPlugin } from '../src/plugin.js';
 import { MockModelRootElement, MockMultiRootEditor } from './_utils/mockmultirooteditor.js';
 import { turnOffErrors } from './_utils/turnofferrors.js';
 import { CKEditorError, Essentials, MultiRootEditor, Paragraph } from 'ckeditor5';
+import { REPORTING_UNAVAILABLE_WARNING } from '../src/composables/useEditorVersionCheck.js';
 
 class RealMultiRootEditor extends MultiRootEditor {
 	public static override builtinPlugins = [ Essentials, Paragraph ];
@@ -1162,6 +1163,26 @@ describe( 'CKEditor multi-root component', () => {
 			component.unmount();
 
 			expect( off ).toHaveBeenCalledOnce();
+		} );
+
+		// An older editor class has no reporting static. Creating the editor must still succeed — a missing
+		// static is not a failure to create one. This path runs no version check, so the warning asserted
+		// here is the only thing an integrator on such a class would hear.
+		it( 'should create the editor and warn when the class predates the reporting API', async () => {
+			class LegacyEditor extends MockMultiRootEditor {}
+
+			Object.defineProperty( LegacyEditor, 'onEditorError', { value: undefined } );
+
+			const consoleWarn = vi.spyOn( console, 'warn' ).mockReturnValue();
+			const component = mountComponent( { editor: LegacyEditor } );
+
+			await timeout( 0 );
+
+			expect( component.emitted().error ).to.be.undefined;
+			expect( component.emitted().ready ).to.have.length( 1 );
+			expect( consoleWarn ).toHaveBeenCalledWith( REPORTING_UNAVAILABLE_WARNING );
+
+			component.unmount();
 		} );
 
 		it( 'should stop reporting once the component is unmounted', async () => {

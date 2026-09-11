@@ -38,6 +38,7 @@ import {
 import { appendUsageDataPluginToConfig } from '../plugins/VueIntegrationUsageDataPlugin.js';
 import { useIsUnmounted } from '../composables/useIsUnmounted.js';
 import { useEditorReadOnly } from '../composables/useEditorReadOnly.js';
+import { REPORTING_UNAVAILABLE_WARNING } from '../composables/useEditorVersionCheck.js';
 
 import { ROOT_EDITABLE_OPTIONS_ATTRIBUTE } from './constants.js';
 import type {
@@ -220,18 +221,26 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRel
 			// The runtime half of the reported error. The other half is the rejected `create()` below, and
 			// both are needed: reporting only covers an editor that is already running.
 			// Off the editor class rather than imported — see the note in `Ckeditor.vue`.
-			offEditorError = Constructor.onEditorError( ( { error, source } ) => {
-				// One registration serves the whole page, so every composable hears about every editor. This
-				// is what keeps an error with the editor it came from.
-				if ( source !== editor || isUnmounted.value ) {
-					return;
-				}
+			//
+			// A class that predates the reporting API has no static to read. Unlike `<ckeditor>`, this path
+			// runs no version check, so the warning below is the only thing an integrator hears — without it
+			// the editor would look fully wired while no runtime error ever arrived.
+			if ( typeof Constructor.onEditorError != 'function' ) {
+				console.warn( REPORTING_UNAVAILABLE_WARNING );
+			} else {
+				offEditorError = Constructor.onEditorError( ( { error, source } ) => {
+					// One registration serves the whole page, so every composable hears about every editor.
+					// This is what keeps an error with the editor it came from.
+					if ( source !== editor || isUnmounted.value ) {
+						return;
+					}
 
-				reportError( error, {
-					phase: 'runtime',
-					editor
+					reportError( error, {
+						phase: 'runtime',
+						editor
+					} );
 				} );
-			} );
+			}
 
 			if (
 				areRecordsEqual( data.value, creationData ) &&

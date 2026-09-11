@@ -9,6 +9,7 @@ import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-commo
 
 import { Ckeditor } from '../src/plugin.js';
 import { turnOffErrors } from './_utils/turnofferrors.js';
+import { REPORTING_UNAVAILABLE_WARNING } from '../src/composables/useEditorVersionCheck.js';
 import { CKEditorError, ClassicEditor, Essentials, Paragraph } from 'ckeditor5';
 
 class RealClassicEditor extends ClassicEditor {
@@ -1226,6 +1227,25 @@ describe( 'CKEditor component', () => {
 			component.unmount();
 
 			expect( off ).toHaveBeenCalledOnce();
+		} );
+
+		// An older editor class has no reporting static. Creating the editor must still succeed — a missing
+		// static is not a failure to create one — and the integrator has to be told what stops working.
+		it( 'should create the editor and warn when the class predates the reporting API', async () => {
+			class LegacyEditor extends MockEditor {}
+
+			Object.defineProperty( LegacyEditor, 'onEditorError', { value: undefined } );
+
+			const consoleWarn = vi.spyOn( console, 'warn' ).mockReturnValue();
+			const component = mountComponent( { editor: LegacyEditor } );
+
+			await timeout( 0 );
+
+			expect( component.emitted().error ).to.be.undefined;
+			expect( component.emitted().ready ).to.have.length( 1 );
+			expect( consoleWarn ).toHaveBeenCalledWith( REPORTING_UNAVAILABLE_WARNING );
+
+			component.unmount();
 		} );
 
 		it( 'should print the error to the console when no listener is attached', async () => {
