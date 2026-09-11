@@ -4,9 +4,8 @@
  */
 
 import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue';
-import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
+import type { EditorRelaxedConfig, EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
 
-import type { EditorWithWatchdogRelaxedConstructor } from '../types.js';
 import type { EditorElementDefinition } from '../utils/normalizeEditorElementDefinition.js';
 import { isClassicEditor } from '../utils/isClassicEditor.js';
 
@@ -37,7 +36,7 @@ export function useEditorElementDefinition(
 }
 
 type Options = {
-	Editor: MaybeRefOrGetter<EditorWithWatchdogRelaxedConstructor>;
+	Editor: MaybeRefOrGetter<EditorRelaxedConstructor>;
 	config: MaybeRefOrGetter<EditorRelaxedConfig>;
 	defaultElementName: MaybeRefOrGetter<string>;
 };

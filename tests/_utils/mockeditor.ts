@@ -4,8 +4,8 @@
  */
 
 import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
+import { onEditorError } from 'ckeditor5';
 import { SimpleEmitter } from './simpleemitter.js';
-import { MockWatchdog } from './mockwatchdog.js';
 
 type EditorConfig = EditorRelaxedConfig & Record<string, unknown>;
 
@@ -32,10 +32,9 @@ class EditorConfigAccessor {
 
 export class MockEditor extends SimpleEmitter {
 	/**
-	 * Set to `MockWatchdog` (or a custom subclass) to activate watchdog wrapping.
-	 * `wrapWithWatchdogIfPresent` reads `Editor.EditorWatchdog` to decide whether to wrap.
+	 * A real editor class carries this static, and the components reach for it instead of importing.
 	 */
-	public static EditorWatchdog = MockWatchdog;
+	public static onEditorError = onEditorError;
 
 	public static editorName = 'ClassicEditor';
 
