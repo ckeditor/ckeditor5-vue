@@ -11,10 +11,9 @@
     However, they can be a good starting point for your own custom features.
   </p>
   <p class="info">
-    The &apos;Simulate an error&apos; button makes the editor throw an error to show you how it is restarted by
-    the <code>Watchdog</code> mechanism.<br>
-    Note, that <code>Watchdog</code> is enabled by default.<br>
-    It can be disabled by passing the <code>disableWatchdog</code> flag to the <code>CkeditorMultiRoot</code> component.
+    The &apos;Simulate an error&apos; button makes the editor throw an error, which is reported through the
+    <code>error</code> event.<br>
+    Nothing restarts any more: the editor keeps whatever you typed, and recovering is up to the application.
   </p>
   <p class="info">
     Component&apos;s events are logged to the console.
