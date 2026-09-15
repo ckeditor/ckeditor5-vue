@@ -75,7 +75,6 @@ const editorElementRef = ref<InstanceType<typeof DynamicElement>>();
 
 const instance = ref<Raw<TEditor>>();
 const isUnmounted = useIsUnmounted();
-const reportErrorsOf = useEditorErrorReporting( isUnmounted );
 
 const { lastEditorData } = useEditorVModel<TEditor>( {
 	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
@@ -93,6 +92,21 @@ const elementDefinition = useEditorElementDefinition({
 useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
 useEditorReadOnly( instance, () => props.disabled );
+
+// The runtime half of the `error` event. The other half is the rejected `create()` below, and both are
+// needed: reporting only covers an editor that is already running.
+// Off the editor class rather than imported: importing a value from CKEditor loads the npm build, and an
+// application that meant to load it from a CDN is then refused.
+useEditorErrorReporting( instance, () => props.editor, ( error, editor ) => {
+	if ( !hasErrorHandler() ) {
+		console.error( error );
+	}
+
+	emit( 'error', error, {
+		phase: 'runtime',
+		editor
+	} );
+} );
 
 defineExpose( {
 	instance,
@@ -140,21 +154,6 @@ onMounted( async () => {
 		// Held before anything else runs, so that whatever happens next the editor is still destroyed
 		// when the component goes away.
 		instance.value = markRaw( editor );
-
-		// The runtime half of the `error` event. The other half is the rejected `create()` below, and both
-		// are needed: reporting only covers an editor that is already running.
-		// Off the editor class rather than imported: importing a value from CKEditor loads the npm build,
-		// and an application that meant to load it from a CDN is then refused.
-		reportErrorsOf( props.editor, editor, error => {
-			if ( !hasErrorHandler() ) {
-				console.error( error );
-			}
-
-			emit( 'error', error, {
-				phase: 'runtime',
-				editor
-			} );
-		} );
 
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {

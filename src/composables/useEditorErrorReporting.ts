@@ -3,32 +3,31 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { onBeforeUnmount, type Ref } from 'vue';
+import { watch, type Ref } from 'vue';
 import type { CKEditorError, Editor } from 'ckeditor5';
 
 import { REPORTING_UNAVAILABLE_WARNING } from './useEditorVersionCheck.js';
 import type { WithErrorReporting } from '../types.js';
 
 /**
- * Reports the errors that escape a running editor, and releases the registration when the component goes
- * away. One registration serves the whole page, so the caller is told only about its own editor.
+ * Hook that reports the errors escaping a running editor, for as long as that editor is the current one.
  *
- * Returns the function that starts reporting, because the editor does not exist yet when the component is
- * set up. Call it once the editor is created.
+ * The registration follows the instance: it goes up when an editor becomes current and is released when it
+ * stops being, which covers replacing the editor and the component going away alike.
  */
-export function useEditorErrorReporting( isUnmounted: Ref<boolean> ) {
-	let off: ( () => void ) | null = null;
+export function useEditorErrorReporting<TEditor extends Editor>(
+	instance: Ref<TEditor | undefined>,
+	editorClass: () => Partial<WithErrorReporting>,
+	report: ( error: CKEditorError, editor: TEditor ) => void
+): void {
+	watch( instance, ( editor, _previousInstance, onCleanup ) => {
+		/* istanbul ignore if -- @preserve - Defensive check, the teardown releases the registration. */
+		if ( !editor ) {
+			return;
+		}
 
-	onBeforeUnmount( () => {
-		off?.();
-		off = null;
-	} );
+		const EditorClass = editorClass();
 
-	return function reportErrorsOf(
-		EditorClass: Partial<WithErrorReporting>,
-		editor: Editor,
-		report: ( error: CKEditorError ) => void
-	): void {
 		// A class that predates the reporting API has no static to read. Say what stops working and carry
 		// on: the editor is running, so a missing static must not be reported as a failure to create one.
 		if ( typeof EditorClass.onEditorError != 'function' ) {
@@ -37,12 +36,14 @@ export function useEditorErrorReporting( isUnmounted: Ref<boolean> ) {
 			return;
 		}
 
-		off = EditorClass.onEditorError( ( { error, source } ) => {
-			if ( source !== editor || isUnmounted.value ) {
+		// One registration serves the whole page, so every editor is heard about here. This is what keeps
+		// an error with the editor it came from.
+		onCleanup( EditorClass.onEditorError( ( { error, source } ) => {
+			if ( source !== editor ) {
 				return;
 			}
 
-			report( error );
-		} );
-	};
+			report( error, editor );
+		} ) );
+	}, { flush: 'post' } );
 }

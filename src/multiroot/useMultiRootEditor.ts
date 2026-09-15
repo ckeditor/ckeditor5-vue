@@ -63,9 +63,18 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRel
 	type TEditor = ExtractEditorType<TEditorConstructor> & MultiRootEditor;
 
 	const isUnmounted = useIsUnmounted();
-	const reportErrorsOf = useEditorErrorReporting( isUnmounted );
 
 	const instance = ref<TEditor>();
+
+	// The runtime half of the reported error. The other half is the rejected `create()` below, and both
+	// are needed: reporting only covers an editor that is already running.
+	// Off the editor class rather than imported — see the note in `Ckeditor.vue`.
+	useEditorErrorReporting( instance, () => toValue( options.editor ), ( error, editor ) => {
+		reportError( error, {
+			phase: 'runtime',
+			editor
+		} );
+	} );
 	const data = ref<MultiRootEditorData>( cloneData( toValue( options.data ) ) );
 	const rootsAttributes = ref<MultiRootEditorRootsAttributes>(
 		normalizeRootsAttributes( toValue( options.rootsAttributes ), data.value )
@@ -217,13 +226,6 @@ export function useMultiRootEditor<TEditorConstructor extends MultiRootEditorRel
 			// The runtime half of the reported error. The other half is the rejected `create()` below, and
 			// both are needed: reporting only covers an editor that is already running.
 			// Off the editor class rather than imported — see the note in `Ckeditor.vue`.
-			reportErrorsOf( Constructor, editor, error => {
-				reportError( error, {
-					phase: 'runtime',
-					editor
-				} );
-			} );
-
 			if (
 				areRecordsEqual( data.value, creationData ) &&
 				areRecordsEqual( rootsAttributes.value, creationRootsAttributes )
