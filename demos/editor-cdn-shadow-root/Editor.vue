@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { ClassicEditor } from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
+import type { ClassicEditor, EditorConfig } from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
 
 import useCKEditorCloud from '../../src/useCKEditorCloud.js';
 
@@ -40,8 +40,8 @@ const { data, loading, error } = useCKEditorCloud( {
 	}
 } );
 
-const config = {
-	licenseKey: 'GPL',
+const config: EditorConfig = {
+	licenseKey: import.meta.env.CKEDITOR_LICENSE_KEY ?? 'GPL',
 	toolbar: [ 'heading', '|', 'bold', 'italic' ]
 };
 

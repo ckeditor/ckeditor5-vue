@@ -5,7 +5,7 @@
     v-if="target && shadowRoot"
     :to="target"
   >
-    <slot :shadow-root="shadowRoot" />
+    <slot v-bind="{ shadowRoot }" />
   </Teleport>
 </template>
 
