@@ -1,20 +1,7 @@
 <template>
   <h2>Using CKEditor 5 from NPM in a shadow root</h2>
 
-  <p class="controls">
-    <label>
-      Shadow root mode
-      <select v-model="mode">
-        <option
-          v-for="item in MODES"
-          :key="item"
-          :value="item"
-        >
-          {{ item }}
-        </option>
-      </select>
-    </label>
-  </p>
+  <ShadowRootModeSelect v-model="mode" />
 
   <ShadowRootHost
     :key="mode"
@@ -42,9 +29,8 @@ import {
 } from 'ckeditor5';
 
 import ShadowRootHost from '../_internal/ShadowRootHost.vue';
+import ShadowRootModeSelect from '../_internal/ShadowRootModeSelect.vue';
 import { getCKEditorStyleSheet } from '../_internal/getCKEditorStyleSheet.js';
-
-const MODES: Array<ShadowRootMode> = [ 'open', 'closed' ];
 
 const mode = ref<ShadowRootMode>( 'open' );
 const data = ref( '<p>Hello from a shadow root!</p>' );
@@ -73,11 +59,5 @@ textarea {
 	width: 100%;
 	height: 100px;
 	font-family: monospace;
-}
-
-.controls {
-	display: flex;
-	align-items: center;
-	gap: 8px;
 }
 </style>
