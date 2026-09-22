@@ -35,6 +35,4 @@ onMounted( () => {
 	shadowRoot.value = root;
 	target.value = root.appendChild( document.createElement( 'div' ) );
 } );
-
-defineExpose( { shadowRoot } );
 </script>
