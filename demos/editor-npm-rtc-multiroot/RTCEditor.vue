@@ -199,11 +199,7 @@ function onReady( editor: MultiRootEditor ) {
 }
 
 function onError( error: Error, description: MultiRootEditorErrorDescription<MultiRootEditor> ) {
-	if ( 'causesRestart' in description && description.causesRestart ) {
-		console.warn( '[RTCEditor] Crashed - watchdog will restart.', error );
-	} else {
-		console.error( '[RTCEditor] Fatal error.', error );
-	}
+	console.error( `[RTCEditor] Error reported in the ${ description.phase } phase.`, error );
 }
 
 function addRootFromState() {

@@ -13,7 +13,7 @@
 <script
 	setup
 	lang="ts"
-	generic="TEditorConstructor extends EditorWithWatchdogRelaxedConstructor"
+	generic="TEditorConstructor extends EditorRelaxedConstructor & WithErrorReporting"
 >
 import {
 	ref,
@@ -25,32 +25,26 @@ import {
 } from 'vue';
 
 import type { CKEditorError, EditorConfig } from 'ckeditor5';
-import type { EditorErrorDescription, EditorWithWatchdogRelaxedConstructor, Props } from './types.js';
+import type { EditorErrorDescription, Props, WithErrorReporting } from './types.js';
 
 import {
 	assignElementToEditorConfig,
 	assignInitialDataToEditorConfig,
-	ExtractEditorType,
-	getInstalledCKBaseFeatures
+	getInstalledCKBaseFeatures,
+	type EditorRelaxedConstructor,
+	type ExtractEditorType
 } from '@ckeditor/ckeditor5-integrations-common';
 
 import { appendUsageDataPluginToConfig } from './plugins/VueIntegrationUsageDataPlugin.js';
-import { cleanupOrphanEditorElements } from './utils/cleanupOrphanEditorElements.js';
-import {
-	destroyEditorWithWatchdog,
-	attachEditorWatchdogErrorHandler,
-	resolveEditorConstructor,
-	type EditorWithAttachedWatchdog
-} from './utils/wrapWithWatchdogIfPresent.js';
 
 import { useIsUnmounted } from './composables/useIsUnmounted.js';
+import { useEditorErrorReporting } from './composables/useEditorErrorReporting.js';
 import { EditorLifecycleEvents, useEditorLifecycleEvents } from './composables/useEditorLifecycleEvents.js';
 import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVModel.js';
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
 import DynamicElement from './DynamicElement.vue';
-import { isClassicEditor } from './utils/isClassicEditor.js';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
 
@@ -62,7 +56,6 @@ const model = defineModel( 'modelValue', { type: String, default: '' } );
 const props = withDefaults( defineProps<Props<TEditorConstructor>>(), {
 	config: () => ( {} ),
 	tagName: 'div',
-	disableWatchdog: false,
 	disabled: false,
 	disableTwoWayDataBinding: false
 } );
@@ -79,10 +72,11 @@ const currentInstance = getCurrentInstance();
 const hasErrorHandler = () => !!currentInstance?.vnode.props?.onError;
 
 const editorElementRef = ref<InstanceType<typeof DynamicElement>>();
-const instance = ref<Raw<EditorWithAttachedWatchdog<TEditor>>>();
+
+const instance = ref<Raw<TEditor>>();
 const isUnmounted = useIsUnmounted();
 
-const { lastEditorData, assignEditorDataToModel } = useEditorVModel<TEditor>( {
+const { lastEditorData } = useEditorVModel<TEditor>( {
 	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
 	model,
 	emit,
@@ -98,6 +92,21 @@ const elementDefinition = useEditorElementDefinition({
 useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
 useEditorReadOnly( instance, () => props.disabled );
+
+// The runtime half of the `error` event. The other half is the rejected `create()` below, and both are
+// needed: reporting only covers an editor that is already running.
+// Off the editor class rather than imported: importing a value from CKEditor loads the npm build, and an
+// application that meant to load it from a CDN is then refused.
+useEditorErrorReporting( instance, () => props.editor, ( error, editor ) => {
+	if ( !hasErrorHandler() ) {
+		console.error( error );
+	}
+
+	emit( 'error', error, {
+		phase: 'runtime',
+		editor
+	} );
+} );
 
 defineExpose( {
 	instance,
@@ -118,8 +127,6 @@ onMounted( async () => {
 		editorConfig = assignInitialDataToEditorConfig( editorConfig, model.value, true );
 	}
 
-	const Constructor = resolveEditorConstructor( props.editor, props.disableWatchdog, props.watchdogConfig );
-
 	try {
 		const domElement = editorElementRef.value?.elementRef;
 
@@ -129,12 +136,12 @@ onMounted( async () => {
 
 		const editor = await (
 			supports.elementConfigAttachment ?
-				Constructor.create( assignElementToEditorConfig( Constructor, domElement, editorConfig ) ) :
-				Constructor.create( domElement, editorConfig )
-		) as unknown as EditorWithAttachedWatchdog<TEditor>;
+				props.editor.create( assignElementToEditorConfig( props.editor, domElement, editorConfig ) ) :
+				props.editor.create( domElement, editorConfig )
+		) as unknown as TEditor;
 
 		if ( isUnmounted.value ) {
-			await destroyEditorWithWatchdog( editor );
+			await editor.destroy();
 			return;
 		}
 
@@ -144,43 +151,10 @@ onMounted( async () => {
 			editor.data.set( model.value );
 		}
 
-		const watchdog = attachEditorWatchdogErrorHandler( editor, {
-			isUnmounted: () => isUnmounted.value,
-			onError: ( { error, watchdog, editor, causesRestart } ) => {
-				if ( !hasErrorHandler() ) {
-					console.error( error );
-				}
-
-				emit( 'error', error, {
-					phase: 'runtime',
-					watchdog,
-					editor,
-					causesRestart
-				} );
-			}
-		} );
-
-		if ( watchdog ) {
-			watchdog.on( 'restart', () => {
-				// Sometimes editor leave a lot of orphaned elements. Try to remove them.
-				try {
-					if ( instance.value && isClassicEditor( Constructor ) ) {
-						cleanupOrphanEditorElements( instance.value );
-					}
-				} catch ( err ) {
-					console.error( err );
-				}
-
-				if ( !isUnmounted.value ) {
-					instance.value = markRaw( watchdog.editor! as TEditor );
-
-					// Rewind vue model back to old working state.
-					assignEditorDataToModel( instance.value );
-				}
-			} );
-		}
-
+		// Held before anything else runs, so that whatever happens next the editor is still destroyed
+		// when the component goes away.
 		instance.value = markRaw( editor );
+
 	} catch ( error: any ) {
 		if ( isUnmounted.value ) {
 			return;
@@ -205,6 +179,6 @@ onBeforeUnmount( async () => {
 
 	instance.value = undefined;
 
-	await destroyEditorWithWatchdog( editor );
+	await editor.destroy();
 } );
 </script>

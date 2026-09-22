@@ -3,8 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import type { EditorRelaxedConstructor } from '@ckeditor/ckeditor5-integrations-common';
-import type { Editor, EditorConfig, EditorWatchdog, WatchdogConfig } from 'ckeditor5';
+import type { Editor, EditorConfig, EditorErrorCallback } from 'ckeditor5';
 
 /**
  * This file contains types for the CKEditor 5 Vue component.
@@ -15,6 +14,17 @@ import type { Editor, EditorConfig, EditorWatchdog, WatchdogConfig } from 'ckedi
  */
 
 /**
+ * The part of an editor or context class the components reach for instead of importing `onEditorError()`.
+ *
+ * Importing a value from CKEditor loads the npm build, and an application that meant to load CKEditor from
+ * a CDN is then refused. Every editor and context class carries this static, so the class the integrator
+ * passes in is a handle that works on both installation paths.
+ */
+export type WithErrorReporting = {
+	onEditorError: ( callback: EditorErrorCallback ) => () => void;
+};
+
+/**
  * The props accepted by the `<ckeditor>` component.
  */
 export interface Props<TEditorConstructor> {
@@ -22,8 +32,6 @@ export interface Props<TEditorConstructor> {
 	config?: EditorConfig;
 	disabled?: boolean;
 	disableTwoWayDataBinding?: boolean;
-	watchdogConfig?: WatchdogConfig;
-	disableWatchdog?: boolean;
 
 	/**
 	 * @deprecated Use `config.root.element` (or `config.roots.main.element`) instead.
@@ -32,14 +40,10 @@ export interface Props<TEditorConstructor> {
 }
 
 /**
- * Editor constructor with static watchdog class definition.
- */
-export type EditorWithWatchdogRelaxedConstructor<TEditor extends Editor = Editor> = EditorRelaxedConstructor<TEditor> & {
-	EditorWatchdog?: typeof EditorWatchdog;
-};
-
-/**
  * Error thrown during initialization or runtime of the editor.
+ *
+ * The two phases differ in what there is to hand over: an editor that failed to start does not exist,
+ * while one that failed later does.
  */
 export type EditorErrorDescription<TEditor extends Editor> = (
 	| {
@@ -47,8 +51,6 @@ export type EditorErrorDescription<TEditor extends Editor> = (
 	}
 	| {
 		phase: 'runtime';
-		causesRestart: boolean;
-		watchdog: EditorWatchdog;
 		editor: TEditor;
 	}
 );
