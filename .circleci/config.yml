@@ -25,10 +25,10 @@ commands:
           command: sudo corepack disable
       - run:
           name: Install pnpm
-          command: sudo npm i -g pnpm@^11
+          command: sudo npm i -g pnpm@11.14.0
       - run:
           name: Install dependencies
-          command: pnpm install
+          command: pnpm install --frozen-lockfile
 
   install_ssh_keys_command:
     description: "Install SSH keys"
@@ -47,7 +47,7 @@ commands:
     steps:
       - run:
           name: Install npm with CircleCI OIDC support
-          command: sudo npm i -g npm@^11.11.0
+          command: sudo npm i -g npm@11.19.1
       - run:
           name: Get npm OIDC token
           command: |
