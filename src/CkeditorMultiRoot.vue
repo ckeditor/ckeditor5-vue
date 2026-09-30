@@ -31,7 +31,7 @@
 <script
 	setup
 	lang="ts"
-	generic="TEditorConstructor extends MultiRootEditorWithWatchdogRelaxedConstructor"
+	generic="TEditorConstructor extends MultiRootEditorRelaxedConstructor"
 >
 import { getCurrentInstance } from 'vue';
 import type { CKEditorError, MultiRootEditor } from 'ckeditor5';
@@ -45,8 +45,8 @@ import type {
 	MultiRootEditorErrorDescription,
 	MultiRootEditorLifecycleEvents,
 	MultiRootEditorRootsAttributes,
+	MultiRootEditorRelaxedConstructor,
 	MultiRootEditorVModelEvents,
-	MultiRootEditorWithWatchdogRelaxedConstructor,
 	MultiRootProps
 } from './multiroot/types.js';
 
@@ -61,7 +61,6 @@ const rootsAttributesModel = defineModel<MultiRootEditorRootsAttributes>( 'roots
 
 const props = withDefaults( defineProps<MultiRootProps<TEditorConstructor>>(), {
 	config: () => ( {} ),
-	disableWatchdog: false,
 	disabled: false,
 	disableTwoWayDataBinding: false
 } );
@@ -91,9 +90,7 @@ const {
 	data: model,
 	rootsAttributes: rootsAttributesModel,
 	disabled: () => props.disabled,
-	disableWatchdog: () => props.disableWatchdog,
 	disableTwoWayDataBinding: () => props.disableTwoWayDataBinding,
-	watchdogConfig: () => props.watchdogConfig,
 	onReady: editor => emit( 'ready', editor as TEditor ),
 	onDestroy: editor => emit( 'destroy', editor as TEditor ),
 	onFocus: ( event, editor ) => emit( 'focus', event, editor as TEditor ),

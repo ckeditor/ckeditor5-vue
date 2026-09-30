@@ -1,6 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-vue",
-  "version": "8.2.0",
+  "version": "9.0.0-alpha.0",
   "description": "Official Vue.js 3+ component for CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
     "wysiwyg",
@@ -30,11 +30,11 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-integrations-common": "^2.4.0",
+    "@ckeditor/ckeditor5-integrations-common": "^3.2.0",
     "lodash-es": "^4.18.1"
   },
   "peerDependencies": {
-    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly || ^0.0.0-internal",
+    "ckeditor5": ">=49.0.0 || ^0.0.0-nightly || ^0.0.0-internal",
     "vue": "^3.4.0"
   },
   "devDependencies": {
@@ -45,13 +45,13 @@
     "@ckeditor/ckeditor5-dev-utils": "^58.0.0",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^6.0.7",
-    "@vitest/browser-playwright": "^4.1.10",
-    "@vitest/coverage-istanbul": "^4.1.10",
-    "@vitest/coverage-v8": "^4.1.10",
-    "@vitest/ui": "^4.1.10",
+    "@vitest/browser-playwright": "^5.0.0",
+    "@vitest/coverage-istanbul": "^5.0.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/ui": "^5.0.0",
     "@vue/test-utils": "^2.3.1",
-    "ckeditor5": "^48.2.0",
-    "ckeditor5-premium-features": "^48.2.0",
+    "ckeditor5": "nightly",
+    "ckeditor5-premium-features": "nightly",
     "eslint": "^10.0.0",
     "eslint-config-ckeditor5": "^20.0.0",
     "eslint-plugin-ckeditor5-rules": "^20.0.0",
@@ -67,7 +67,7 @@
     "typescript-eslint": "^8.32.1",
     "upath": "^2.0.1",
     "vite": "^8.1.0",
-    "vitest": "^4.1.10",
+    "vitest": "^5.0.0",
     "vue": "^3.4.30",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^2.1.6"
