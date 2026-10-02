@@ -44,6 +44,7 @@ import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVMod
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
+import { useEditorSiblingUI } from './composables/useEditorSiblingUI.js';
 import DynamicElement from './DynamicElement.vue';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
@@ -92,6 +93,7 @@ const elementDefinition = useEditorElementDefinition({
 useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
 useEditorReadOnly( instance, () => props.disabled );
+useEditorSiblingUI( instance, () => editorElementRef.value?.elementRef );
 
 // The runtime half of the `error` event. The other half is the rejected `create()` below, and both are
 // needed: reporting only covers an editor that is already running.
