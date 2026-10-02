@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## [9.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-vue/compare/v9.0.0-alpha.1...v9.0.0-alpha.2) (October 2, 2026)
+
+### Features
+
+* Added support for using the `<Ckeditor>` component inside `<KeepAlive>`. With `ClassicEditor`, the editor UI is now moved together with the component when it is deactivated and put back when it is activated, instead of staying on the page. The same editor instance is kept, so its content and undo history are preserved.
+
+### Bug fixes
+
+* Fixed the `Failed to execute 'insertBefore' on 'Node'` error thrown when the `<Ckeditor>` component with `ClassicEditor` was replaced, for example after changing its `:key`. Vue used the editor UI as the insertion point for the new component and the editor removed it while being destroyed.
+
+
 ## [9.0.0-alpha.1](https://github.com/ckeditor/ckeditor5-vue/compare/v9.0.0-alpha.0...v9.0.0-alpha.1) (October 1, 2026)
 
 ### Features
@@ -42,13 +53,6 @@ Changelog
 ### Features
 
 * Added multi-root editor integration with the `CkeditorMultiRoot`, `CkeditorMultiRootToolbar`, and `CkeditorMultiRootEditable` components and the `useMultiRootEditor()` composable.
-
-
-## [8.1.1](https://github.com/ckeditor/ckeditor5-vue/compare/v8.1.0...v8.1.1) (June 9, 2026)
-
-### Bug fixes
-
-* Fixed a crash when using `InlineEditor` with the `CKEditor` component and CKEditor 5 `>= 48.0.0`. Closes [#422](https://github.com/ckeditor/ckeditor5-vue/issues/422).
 
 ---
 
