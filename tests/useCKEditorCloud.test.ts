@@ -23,7 +23,7 @@ describe( 'useCKEditorCloud', { timeout: 8000 }, () => {
 		await flushPromises();
 		await vi.waitFor( () => {
 			expect( data.value?.CKEditor ).toBeDefined();
-		} );
+		}, { timeout: 4000 } );
 	} );
 
 	it( 'should load CKEditor premium bundle from CDN', async () => {

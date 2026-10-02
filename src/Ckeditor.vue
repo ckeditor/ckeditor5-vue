@@ -19,7 +19,6 @@ import {
 	ref,
 	onMounted,
 	onBeforeUnmount,
-	nextTick,
 	markRaw,
 	type Raw,
 	getCurrentInstance
@@ -45,7 +44,7 @@ import { EditorVModelEvents, useEditorVModel } from './composables/useEditorVMod
 import { useEditorReadOnly } from './composables/useEditorReadOnly.js';
 import { useEditorVersionCheck } from './composables/useEditorVersionCheck.js';
 import { useEditorElementDefinition } from './composables/useEditorElementDefinition.js';
-import { useEditorKeepAlive } from './composables/useEditorKeepAlive.js';
+import { useEditorSiblingUI } from './composables/useEditorSiblingUI.js';
 import DynamicElement from './DynamicElement.vue';
 
 type TEditor = ExtractEditorType<TEditorConstructor>;
@@ -94,7 +93,7 @@ const elementDefinition = useEditorElementDefinition({
 useEditorVersionCheck();
 useEditorLifecycleEvents( instance, emit );
 useEditorReadOnly( instance, () => props.disabled );
-useEditorKeepAlive( instance, () => editorElementRef.value?.elementRef );
+useEditorSiblingUI( instance, () => editorElementRef.value?.elementRef );
 
 // The runtime half of the `error` event. The other half is the rejected `create()` below, and both are
 // needed: reporting only covers an editor that is already running.
@@ -182,14 +181,6 @@ onBeforeUnmount( async () => {
 
 	instance.value = undefined;
 
-	// Destroy the editor only after Vue finishes the current update. `ClassicEditor` inserts its UI right after
-	// the source element, as a sibling Vue does not know about. On a `:key` change Vue reads that sibling as the
-	// insertion anchor, runs this hook, and then inserts the new element before it, all synchronously.
-	// `editor.destroy()` removes the UI before returning its promise, so calling it right away would remove the
-	// anchor mid-patch and make `insertBefore()` throw. Awaiting `nextTick()` first lets the patch complete; the
-	// old UI is still removed before the browser paints. Other editors insert no such sibling, so for them the
-	// delay changes nothing.
-	await nextTick();
 	await editor.destroy();
 } );
 </script>
