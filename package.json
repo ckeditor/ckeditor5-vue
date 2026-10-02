@@ -1,6 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-vue",
-  "version": "9.0.0-alpha.1",
+  "version": "9.0.0-alpha.2",
   "description": "Official Vue.js 3+ component for CKEditor 5 – the best browser-based rich text editor.",
   "keywords": [
     "wysiwyg",
@@ -38,11 +38,11 @@
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^58.0.0",
-    "@ckeditor/ckeditor5-dev-changelog": "^58.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^58.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^58.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^58.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^62.2.1",
+    "@ckeditor/ckeditor5-dev-changelog": "^62.2.1",
+    "@ckeditor/ckeditor5-dev-ci": "^62.2.1",
+    "@ckeditor/ckeditor5-dev-release-tools": "^62.2.1",
+    "@ckeditor/ckeditor5-dev-utils": "^62.2.1",
     "@types/lodash-es": "^4.17.6",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/browser-playwright": "^5.0.0",

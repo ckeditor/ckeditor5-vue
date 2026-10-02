@@ -3,8 +3,9 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
+import { describe, beforeEach, afterEach, it, expect, vi, type Mock } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { h, KeepAlive, nextTick, ref, type VNode } from 'vue';
 import type { EditorRelaxedConfig } from '@ckeditor/ckeditor5-integrations-common';
 
 import { Ckeditor } from '../src/plugin.js';
@@ -1108,6 +1109,295 @@ describe( 'CKEditor component', () => {
 
 				expect( component.emitted().error ).to.be.undefined;
 				expect( consoleError ).not.toHaveBeenCalled();
+			} );
+		} );
+	} );
+
+	// The classic editor hides the source element and inserts its UI right after it. That UI is a DOM node Vue
+	// did not render, so it has to be handled when the component is replaced, moved or removed. These tests use
+	// a real editor, because only a real one inserts such a node.
+	describe( 'remounting and <KeepAlive>', () => {
+		let container: HTMLElement;
+		let editors: Array<ClassicEditor>;
+		let errorHandler: Mock<( error: unknown ) => void>;
+
+		beforeEach( () => {
+			vi.stubGlobal( 'CKEDITOR_VERSION', '49.0.0' );
+
+			container = document.createElement( 'div' );
+			document.body.append( container );
+
+			editors = [];
+			errorHandler = vi.fn<( error: unknown ) => void>();
+		} );
+
+		afterEach( () => {
+			container.remove();
+		} );
+
+		const editorVNode = ( props: Record<string, any> = {} ) => h( Ckeditor as any, {
+			editor: RealClassicEditor,
+			onReady: ( editor: ClassicEditor ) => editors.push( editor ),
+			...props
+		} );
+
+		// Errors thrown while Vue patches the DOM do not reject anything the test could await, so they are
+		// collected by the app error handler instead.
+		function mountHost( render: () => VNode ) {
+			return mount( { render }, {
+				attachTo: container,
+				global: {
+					config: { errorHandler }
+				}
+			} );
+		}
+
+		// What the host element contains, in order, e.g. [ 'p', 'source', 'ck-editor', 'p' ].
+		function describeChildren( element: Element = container.querySelector( 'section' )! ) {
+			return Array.from( element.children ).map( child => {
+				if ( child.classList.contains( 'ck-editor' ) ) {
+					return 'ck-editor';
+				}
+
+				return child instanceof HTMLElement && child.style.display === 'none' ? 'source' : child.localName;
+			} );
+		}
+
+		const editorsInDocument = () => document.querySelectorAll( '.ck-editor' ).length;
+
+		// Vue renders no text nodes directly in the host element, so any that is there was left by the editor.
+		const strayTextNodes = () => Array.from( container.querySelector( 'section' )!.childNodes )
+			.filter( node => node.nodeType === Node.TEXT_NODE ).length;
+
+		describe( 'replacing the component (:key)', () => {
+			// The editor is the root of its parent, so Vue looks for the node after the editor to insert the
+			// new one before it.
+			it( 'should replace the editor and leave the DOM in order', async () => {
+				const key = ref( 0 );
+				const Root = { render: () => editorVNode( { key: key.value } ) };
+
+				mountHost( () => h( 'section', [ h( 'p', 'before' ), h( Root ), h( 'p', 'after' ) ] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				key.value++;
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 2 ) );
+				await vi.waitFor( () => expect( editors[ 0 ].state ).to.equal( 'destroyed' ) );
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( editors[ 1 ].state ).to.equal( 'ready' );
+				expect( editorsInDocument() ).to.equal( 1 );
+				expect( describeChildren() ).to.deep.equal( [ 'p', 'source', 'ck-editor', 'p' ] );
+				expect( strayTextNodes() ).to.be.at.most( 1 );
+			} );
+
+			it( 'should replace the editor when it is not the root of its parent', async () => {
+				const key = ref( 0 );
+
+				mountHost( () => h( 'section', [ h( 'p', 'before' ), editorVNode( { key: key.value } ), h( 'p', 'after' ) ] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				key.value++;
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 2 ) );
+				await vi.waitFor( () => expect( editors[ 0 ].state ).to.equal( 'destroyed' ) );
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( editorsInDocument() ).to.equal( 1 );
+				expect( describeChildren() ).to.deep.equal( [ 'p', 'source', 'ck-editor', 'p' ] );
+			} );
+
+			it( 'should replace the editor while the previous one is still being created', async () => {
+				const key = ref( 0 );
+				const Root = { render: () => editorVNode( { key: key.value } ) };
+
+				mountHost( () => h( 'section', [ h( Root ), h( 'p', 'after' ) ] ) );
+
+				// Replaced before the first editor is ready, so that one has to be dropped, not kept.
+				key.value++;
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+				await timeout( 100 );
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( editors ).to.have.length( 1 );
+				expect( editorsInDocument() ).to.equal( 1 );
+				expect( describeChildren() ).to.deep.equal( [ 'source', 'ck-editor', 'p' ] );
+			} );
+		} );
+
+		describe( 'removing the component', () => {
+			it( 'should remove the editor UI and emit #destroy', async () => {
+				const mounted = ref( true );
+				const onDestroy = vi.fn();
+
+				mountHost( () => h( 'section', [ mounted.value ? editorVNode( { onDestroy } ) : null, h( 'p', 'after' ) ] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				mounted.value = false;
+
+				await vi.waitFor( () => expect( editors[ 0 ].state ).to.equal( 'destroyed' ) );
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( onDestroy ).toHaveBeenCalledOnce();
+				expect( editorsInDocument() ).to.equal( 0 );
+				expect( describeChildren() ).to.deep.equal( [ 'p' ] );
+				expect( strayTextNodes() ).to.equal( 0 );
+			} );
+
+			it( 'should emit #destroy when the whole app is unmounted', async () => {
+				const onDestroy = vi.fn();
+				const host = mountHost( () => h( 'section', [ editorVNode( { onDestroy } ) ] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				host.unmount();
+
+				await vi.waitFor( () => expect( editors[ 0 ].state ).to.equal( 'destroyed' ) );
+
+				expect( onDestroy ).toHaveBeenCalledOnce();
+				expect( editorsInDocument() ).to.equal( 0 );
+			} );
+		} );
+
+		describe( '<KeepAlive>', () => {
+			it( 'should take the editor UI along when deactivated and bring it back when activated', async () => {
+				const active = ref( true );
+
+				mountHost( () => h( 'section', [
+					h( KeepAlive, null, [ active.value ? editorVNode() : h( 'p', { class: 'placeholder' } ) ] ),
+					h( 'p', 'after' )
+				] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				const [ editor ] = editors;
+
+				active.value = false;
+				await nextTick();
+
+				// Nothing of the editor stays on the page next to the placeholder.
+				expect( editorsInDocument() ).to.equal( 0 );
+				expect( describeChildren() ).to.deep.equal( [ 'p', 'p' ] );
+
+				active.value = true;
+				await nextTick();
+
+				// The very same editor is back, in the right place.
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( editors ).to.have.length( 1 );
+				expect( editor.state ).to.equal( 'ready' );
+				expect( editorsInDocument() ).to.equal( 1 );
+				expect( container.querySelector( '.ck-editor' ) ).to.equal( editor.ui.element );
+				expect( describeChildren() ).to.deep.equal( [ 'source', 'ck-editor', 'p' ] );
+			} );
+
+			it( 'should keep working after being deactivated and activated several times', async () => {
+				const active = ref( true );
+
+				mountHost( () => h( 'section', [
+					h( KeepAlive, null, [ active.value ? editorVNode() : h( 'p', { class: 'placeholder' } ) ] )
+				] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				for ( let i = 0; i < 3; i++ ) {
+					active.value = false;
+					await nextTick();
+
+					expect( editorsInDocument() ).to.equal( 0 );
+
+					active.value = true;
+					await nextTick();
+
+					expect( editorsInDocument() ).to.equal( 1 );
+					expect( describeChildren() ).to.deep.equal( [ 'source', 'ck-editor' ] );
+				}
+
+				expect( editors ).to.have.length( 1 );
+			} );
+
+			it( 'should destroy the editor and leave nothing behind when removed while deactivated', async () => {
+				const mounted = ref( true );
+				const active = ref( true );
+				const onDestroy = vi.fn();
+
+				mountHost( () => h( 'section', [
+					mounted.value ? h( KeepAlive, null, [
+						active.value ? editorVNode( { onDestroy } ) : h( 'p', { class: 'placeholder' } )
+					] ) : null,
+					h( 'p', 'after' )
+				] ) );
+
+				await vi.waitFor( () => expect( editors ).to.have.length( 1 ) );
+
+				active.value = false;
+				await nextTick();
+
+				mounted.value = false;
+
+				await vi.waitFor( () => expect( editors[ 0 ].state ).to.equal( 'destroyed' ) );
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( onDestroy ).toHaveBeenCalledOnce();
+				expect( editorsInDocument() ).to.equal( 0 );
+				expect( describeChildren() ).to.deep.equal( [ 'p' ] );
+				expect( strayTextNodes() ).to.equal( 0 );
+			} );
+
+			// Only a UI that the editor placed right after the source element is Vue's to keep together with it.
+			it( 'should not move an editor UI that is rendered elsewhere', async () => {
+				const active = ref( true );
+				const externalUI = document.createElement( 'div' );
+
+				document.body.append( externalUI );
+
+				class ExternalUIEditor extends MockEditor {
+					public readonly ui = { element: externalUI };
+				}
+
+				mountHost( () => h( 'section', [
+					h( KeepAlive, null, [ active.value ? editorVNode( { editor: ExternalUIEditor } ) : h( 'p' ) ] )
+				] ) );
+
+				await vi.waitFor( () => expect( container.querySelector( 'section > div' ) ).to.not.be.null );
+
+				active.value = false;
+				await nextTick();
+				active.value = true;
+				await nextTick();
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( externalUI.parentElement ).to.equal( document.body );
+
+				externalUI.remove();
+			} );
+
+			// `InlineEditor`, `BalloonEditor` and `DecoupledEditor` turn the source element itself into the UI.
+			it( 'should not touch an editor whose UI is the source element', async () => {
+				const active = ref( true );
+
+				class SourceUIEditor extends MockEditor {
+					public readonly ui = { element: this.element };
+				}
+
+				mountHost( () => h( 'section', [
+					h( KeepAlive, null, [ active.value ? editorVNode( { editor: SourceUIEditor } ) : h( 'p' ) ] ),
+					h( 'p', 'after' )
+				] ) );
+
+				await vi.waitFor( () => expect( container.querySelector( 'section > div' ) ).to.not.be.null );
+
+				active.value = false;
+				await nextTick();
+				active.value = true;
+				await nextTick();
+
+				expect( errorHandler ).not.toHaveBeenCalled();
+				expect( describeChildren() ).to.deep.equal( [ 'div', 'p' ] );
 			} );
 		} );
 	} );
