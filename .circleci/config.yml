@@ -21,9 +21,6 @@ commands:
     steps:
       - install_ssh_keys_command
       - run:
-          name: Disable Corepack
-          command: sudo corepack disable
-      - run:
           name: Install pnpm
           command: sudo npm i -g pnpm@11.14.0
       - run:
