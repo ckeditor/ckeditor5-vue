@@ -60,7 +60,7 @@ export default defineConfig( {
 			'tests/**/*.test.[j|t]s'
 		],
 		coverage: {
-			provider: 'istanbul',
+			provider: 'v8',
 			include: [ 'src/**/*.{ts,vue}' ],
 			thresholds: {
 				100: true
