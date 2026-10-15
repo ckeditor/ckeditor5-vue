@@ -42,9 +42,6 @@ importers:
       '@vitest/browser-playwright':
         specifier: ^5.0.0
         version: 5.0.2(playwright@1.62.1)(vite@8.1.3(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(terser@5.46.2)(yaml@2.8.3))(vitest@5.0.2)
-      '@vitest/coverage-istanbul':
-        specifier: ^5.0.0
-        version: 5.0.2(vitest@5.0.2)
       '@vitest/coverage-v8':
         specifier: ^5.0.0
         version: 5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)
@@ -3858,8 +3855,10 @@ snapshots:
     dependencies:
       '@babel/helper-validator-identifier': 8.0.6
       js-tokens: 10.0.0
+    optional: true
 
-  '@babel/compat-data@8.0.5': {}
+  '@babel/compat-data@8.0.5':
+    optional: true
 
   '@babel/core@8.0.6':
     dependencies:
@@ -3879,6 +3878,7 @@ snapshots:
       json5: 2.2.3
       obug: 2.2.1
       verkit: 0.3.2
+    optional: true
 
   '@babel/generator@8.0.6':
     dependencies:
@@ -3888,6 +3888,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
       '@types/jsesc': 2.5.1
       jsesc: 3.1.0
+    optional: true
 
   '@babel/helper-compilation-targets@8.0.6':
     dependencies:
@@ -3896,23 +3897,29 @@ snapshots:
       browserslist: 4.29.0
       flru: 1.0.2
       verkit: 0.3.2
+    optional: true
 
-  '@babel/helper-globals@8.0.6': {}
+  '@babel/helper-globals@8.0.6':
+    optional: true
 
   '@babel/helper-string-parser@7.29.7': {}
 
-  '@babel/helper-string-parser@8.0.6': {}
+  '@babel/helper-string-parser@8.0.6':
+    optional: true
 
   '@babel/helper-validator-identifier@7.29.7': {}
 
-  '@babel/helper-validator-identifier@8.0.6': {}
+  '@babel/helper-validator-identifier@8.0.6':
+    optional: true
 
-  '@babel/helper-validator-option@8.0.0': {}
+  '@babel/helper-validator-option@8.0.0':
+    optional: true
 
   '@babel/helpers@8.0.5':
     dependencies:
       '@babel/template': 8.0.0
       '@babel/types': 8.0.6
+    optional: true
 
   '@babel/parser@7.29.9':
     dependencies:
@@ -3921,12 +3928,14 @@ snapshots:
   '@babel/parser@8.0.6':
     dependencies:
       '@babel/types': 8.0.6
+    optional: true
 
   '@babel/template@8.0.0':
     dependencies:
       '@babel/code-frame': 8.0.6
       '@babel/parser': 8.0.6
       '@babel/types': 8.0.6
+    optional: true
 
   '@babel/traverse@8.0.6':
     dependencies:
@@ -3937,6 +3946,7 @@ snapshots:
       '@babel/template': 8.0.0
       '@babel/types': 8.0.6
       obug: 2.2.1
+    optional: true
 
   '@babel/types@7.29.8':
     dependencies:
@@ -3947,6 +3957,7 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 8.0.6
       '@babel/helper-validator-identifier': 8.0.6
+    optional: true
 
   '@bcoe/v8-coverage@1.0.2': {}
 
@@ -5316,17 +5327,20 @@ snapshots:
     dependencies:
       minipass: 7.1.3
 
-  '@istanbuljs/schema@0.1.6': {}
+  '@istanbuljs/schema@0.1.6':
+    optional: true
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
+    optional: true
 
   '@jridgewell/gen-mapping@0.4.0-beta.0':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
+    optional: true
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -5731,13 +5745,15 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/gensync@1.0.5': {}
+  '@types/gensync@1.0.5':
+    optional: true
 
   '@types/hast@3.0.4':
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/jsesc@2.5.1': {}
+  '@types/jsesc@2.5.1':
+    optional: true
 
   '@types/json-schema@7.0.15': {}
 
@@ -5984,6 +6000,7 @@ snapshots:
       obug: 2.2.1
       tinyrainbow: 3.1.1
       vitest: 5.0.2(@types/node@25.6.0)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-istanbul@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(vite@8.1.3(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(terser@5.46.2)(yaml@2.8.3))
+    optional: true
 
   '@vitest/coverage-v8@5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)':
     dependencies:
@@ -6008,6 +6025,7 @@ snapshots:
       '@istanbuljs/schema': 0.1.6
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/istanbul-lib-coverage': 1.0.1
+    optional: true
 
   '@vitest/istanbul-lib-report@1.0.1':
     dependencies:
@@ -6018,6 +6036,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/istanbul-lib-coverage': 1.0.1
       obug: 2.2.1
+    optional: true
 
   '@vitest/mocker@5.0.2(vite@8.1.3(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(terser@5.46.2)(yaml@2.8.3))':
     dependencies:
@@ -6205,7 +6224,8 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  baseline-browser-mapping@2.11.25: {}
+  baseline-browser-mapping@2.11.25:
+    optional: true
 
   before-after-hook@4.0.0: {}
 
@@ -6230,6 +6250,7 @@ snapshots:
       electron-to-chromium: 1.5.431
       node-releases: 2.0.56
       update-browserslist-db: 1.3.3(browserslist@4.29.0)
+    optional: true
 
   buffer-from@1.1.2:
     optional: true
@@ -6256,7 +6277,8 @@ snapshots:
 
   callsites@3.1.0: {}
 
-  caniuse-lite@1.0.30001810: {}
+  caniuse-lite@1.0.30001810:
+    optional: true
 
   ccount@2.0.1: {}
 
@@ -6544,13 +6566,15 @@ snapshots:
       minimatch: 9.0.7
       semver: 7.7.4
 
-  electron-to-chromium@1.5.431: {}
+  electron-to-chromium@1.5.431:
+    optional: true
 
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
 
-  empathic@2.1.0: {}
+  empathic@2.1.0:
+    optional: true
 
   end-of-stream@1.4.5:
     dependencies:
@@ -6643,7 +6667,8 @@ snapshots:
       '@esbuild/win32-x64': 0.28.1
     optional: true
 
-  escalade@3.2.0: {}
+  escalade@3.2.0:
+    optional: true
 
   escape-string-regexp@4.0.0: {}
 
@@ -6854,7 +6879,8 @@ snapshots:
 
   flatted@3.4.4: {}
 
-  flru@1.0.2: {}
+  flru@1.0.2:
+    optional: true
 
   foreground-child@3.3.1:
     dependencies:
@@ -6885,7 +6911,8 @@ snapshots:
 
   fuzzysort@3.1.0: {}
 
-  gensync@1.0.0-beta.2: {}
+  gensync@1.0.0-beta.2:
+    optional: true
 
   get-intrinsic@1.3.0:
     dependencies:
@@ -7135,7 +7162,8 @@ snapshots:
       parent-module: 1.0.1
       resolve-from: 4.0.0
 
-  import-meta-resolve@4.2.0: {}
+  import-meta-resolve@4.2.0:
+    optional: true
 
   imurmurhash@0.1.4: {}
 
@@ -7222,7 +7250,8 @@ snapshots:
 
   jsdoc-type-pratt-parser@4.1.0: {}
 
-  jsesc@3.1.0: {}
+  jsesc@3.1.0:
+    optional: true
 
   json-buffer@3.0.1: {}
 
@@ -7238,7 +7267,8 @@ snapshots:
 
   json-with-bigint@3.5.8: {}
 
-  json5@2.2.3: {}
+  json5@2.2.3:
+    optional: true
 
   jsonparse@1.3.1: {}
 
@@ -7873,7 +7903,8 @@ snapshots:
       undici: 6.29.0
       which: 6.0.1
 
-  node-releases@2.0.56: {}
+  node-releases@2.0.56:
+    optional: true
 
   nopt@7.2.1:
     dependencies:
@@ -8558,6 +8589,7 @@ snapshots:
       browserslist: 4.29.0
       escalade: 3.2.0
       picocolors: 1.1.1
+    optional: true
 
   uri-js@4.4.1:
     dependencies:
@@ -8578,7 +8610,8 @@ snapshots:
 
   vanilla-colorful@0.7.2: {}
 
-  verkit@0.3.2: {}
+  verkit@0.3.2:
+    optional: true
 
   vfile-message@4.0.3:
     dependencies:
