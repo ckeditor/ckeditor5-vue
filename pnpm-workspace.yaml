@@ -7,6 +7,8 @@ allowBuilds:
   snyk: true
 
 overrides:
+  'glob@^13': '^14.0.3'
+  'minimatch@^10': '^11.0.3'
   'ws@^8': '^8.21.0'
 
 minimumReleaseAge: 4320 # 3 days
