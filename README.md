@@ -32,7 +32,7 @@ pnpm install
 ```
 
 If you need to run tests or demos with a commercial license, copy `.env.example` to `.env` and fill in the required `CKEDITOR_*` variables.
-Keep `.env` local only. In CI, provide the same value via the `CKEDITOR_LICENSE_KEY` environment variable.
+Keep `.env` local only.
 
 ### Running the development server
 
@@ -50,22 +50,19 @@ To run the full automated test suite, use:
 pnpm run test
 ```
 
-To run only the real-editor integration test used by the CI version matrix, use:
+To run only the real-editor integration test used by the `tests_integration` CI job, use:
 
 ```bash
 pnpm run test:integration
 ```
 
 This command runs against the `ckeditor5` packages currently installed in `node_modules`.
-After a regular `pnpm install`, that means the default dependency versions from `package.json`, not the LTS version from the CI matrix.
+After a regular `pnpm install`, these are the versions locked in `pnpm-lock.yaml`, which may be older than the `latest` versions that the CI job installs.
 
-To reproduce an LTS matrix run locally, copy `.env.example` to `.env`, fill in `CKEDITOR_LICENSE_KEY`, and then install the matching `lts-v*` packages:
+To reproduce the `tests_integration` CI job locally, install the `latest` packages first:
 
 ```bash
-cp .env.example .env
-# fill in CKEDITOR_LICENSE_KEY in .env
-
-pnpm add -D ckeditor5@lts-v47 ckeditor5-premium-features@lts-v47
+pnpm add -D ckeditor5@latest ckeditor5-premium-features@latest
 pnpm run test:integration
 ```
 
